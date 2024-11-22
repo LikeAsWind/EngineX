@@ -1,0 +1,6 @@
+org.nstep.engine.framework.apilog.config.EngineApiLogAutoConfiguration
+org.nstep.engine.framework.jackson.config.EngineJacksonAutoConfiguration
+org.nstep.engine.framework.swagger.config.EngineSwaggerAutoConfiguration
+org.nstep.engine.framework.web.config.EngineWebAutoConfiguration
+org.nstep.engine.framework.apilog.config.EngineApiLogRpcAutoConfiguration
+org.nstep.engine.framework.banner.config.EngineBannerAutoConfiguration

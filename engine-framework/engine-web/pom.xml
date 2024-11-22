@@ -69,11 +69,5 @@
             <artifactId>mockito-inline</artifactId>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
-
-    <build>
-        <finalName>engine-web</finalName>
-    </build>
 </project>
