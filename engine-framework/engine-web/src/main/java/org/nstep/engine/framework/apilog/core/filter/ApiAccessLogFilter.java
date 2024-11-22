@@ -22,6 +22,7 @@ import org.nstep.engine.framework.pojo.CommonResult;
 import org.nstep.engine.framework.util.json.JsonUtils;
 import org.nstep.engine.framework.util.monitor.TracerUtils;
 import org.nstep.engine.framework.util.servlet.ServletUtils;
+import org.nstep.engine.framework.web.config.WebProperties;
 import org.nstep.engine.framework.web.core.filter.ApiRequestFilter;
 import org.nstep.engine.framework.web.core.util.WebFrameworkUtils;
 import org.springframework.web.bind.annotation.RequestMethod;

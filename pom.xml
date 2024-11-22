@@ -10,6 +10,7 @@
     <modules>
         <module>engine-boot-parent</module>
         <module>engine-framework</module>
+        <module>engine-service-infra</module>
     </modules>
 
     <name>${project.artifactId}</name>
