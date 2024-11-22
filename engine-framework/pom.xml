@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>engine-common</module>
+        <module>engine-web</module>
     </modules>
 
 

@@ -505,6 +505,13 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!--=====项目依赖开始========-->
+            <!-- 工具类相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
