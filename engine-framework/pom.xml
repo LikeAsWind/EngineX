@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>engine</artifactId>
+        <artifactId>EngineX</artifactId>
         <groupId>org.nstep.engine</groupId>
         <version>${revision}</version>
     </parent>
     <packaging>pom</packaging>
     <modules>
-
+        <module>engine-common</module>
     </modules>
 
 
