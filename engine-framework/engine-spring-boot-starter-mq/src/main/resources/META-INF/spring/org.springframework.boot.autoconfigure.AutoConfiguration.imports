@@ -1,0 +1,3 @@
+org.nstep.engine.framework.mq.redis.config.EngineRedisMQProducerAutoConfiguration
+org.nstep.engine.framework.mq.redis.config.EngineRedisMQConsumerAutoConfiguration
+org.nstep.engine.framework.mq.rabbitmq.config.EngineRabbitMQAutoConfiguration

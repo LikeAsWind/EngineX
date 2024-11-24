@@ -1,0 +1,3 @@
+org.nstep.engine.framework.datasource.config.EngineDataSourceAutoConfiguration
+org.nstep.engine.framework.mybatis.config.EngineMybatisAutoConfiguration
+org.nstep.engine.framework.translate.config.EngineTranslateAutoConfiguration

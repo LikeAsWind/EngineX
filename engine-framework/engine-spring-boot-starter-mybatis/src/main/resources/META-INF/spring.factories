@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  org.nstep.engine.framework.mybatis.config.IdTypeEnvironmentPostProcessor

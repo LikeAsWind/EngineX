@@ -1,0 +1,2 @@
+org.nstep.engine.framework.tenant.config.EngineTenantRpcAutoConfiguration
+org.nstep.engine.framework.tenant.config.EngineTenantAutoConfiguration

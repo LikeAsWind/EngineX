@@ -2,7 +2,6 @@ package org.nstep.engine.framework.common.core;
 
 /**
  * 可生成 Int 数组的接口
- *
  */
 public interface IntArrayValuable {
 

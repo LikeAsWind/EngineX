@@ -1,0 +1,5 @@
+org.nstep.engine.framework.security.config.EngineSecurityRpcAutoConfiguration
+org.nstep.engine.framework.security.config.EngineSecurityAutoConfiguration
+org.nstep.engine.framework.security.config.EngineWebSecurityConfigurerAdapter
+org.nstep.engine.framework.operatelog.config.EngineOperateLogConfiguration
+org.nstep.engine.framework.operatelog.config.EngineOperateLogRpcAutoConfiguration

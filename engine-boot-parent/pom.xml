@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.nstep.engine</groupId>
     <artifactId>engine-boot-parent</artifactId>
-    <packaging>pom</packaging>
     <version>${revision}</version>
+    <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
     <description>基础 bom 文件，管理整个项目的依赖版本</description>
@@ -71,12 +72,14 @@
         <reflections.version>0.10.2</reflections.version>
         <netty.version>4.1.113.Final</netty.version>
         <!-- 三方云服务相关 -->
+        <okio.version>3.5.0</okio.version>
+        <okhttp3.version>4.11.0</okhttp3.version>
         <commons-io.version>2.17.0</commons-io.version>
         <commons-compress.version>1.27.1</commons-compress.version>
-        <aws-java-sdk-s3.version>1.12.777</aws-java-sdk-s3.version>
+        <minio.version>8.5.7</minio.version>
         <justauth.version>2.0.5</justauth.version>
         <jimureport.version>1.8.1</jimureport.version>
-        <weixin-java.version>4.6.0</weixin-java.version>
+        <weixin-java.version>4.6.5.B</weixin-java.version>
     </properties>
 
     <dependencyManagement>
@@ -123,6 +126,22 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-biz-tenant</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-biz-data-permission</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-biz-ip</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!-- Spring 核心 -->
             <dependency>
                 <!-- 用于生成自定义的 Spring @ConfigurationProperties 配置类的说明文件 -->
@@ -130,6 +149,32 @@
                 <artifactId>spring-boot-configuration-processor</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-env</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Web 相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-web</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-security</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-websocket</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
@@ -145,6 +190,14 @@
                 <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
+
+            <!-- DB 相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-mybatis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-3-starter</artifactId>
@@ -201,6 +254,13 @@
                 <artifactId>easy-trans-anno</artifactId>
                 <version>${easy-trans.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-redis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
@@ -225,11 +285,34 @@
                 <version>${kingbase.jdbc.version}</version>
             </dependency>
 
+            <!-- RPC 远程调用相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-rpc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Registry 注册中心相关 -->
+
+            <!-- Config 配置中心相关 -->
+
             <!-- Job 定时任务相关 -->
             <dependency>
                 <groupId>com.xuxueli</groupId>
                 <artifactId>xxl-job-core</artifactId>
                 <version>${xxl-job.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-job</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 消息队列相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-mq</artifactId>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
@@ -237,6 +320,14 @@
                 <artifactId>rocketmq-spring-boot-starter</artifactId>
                 <version>${rocketmq-spring.version}</version>
             </dependency>
+
+            <!-- 服务保障相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-protection</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>lock4j-redisson-spring-boot-starter</artifactId>
@@ -247,6 +338,13 @@
                         <groupId>org.redisson</groupId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <!-- 监控相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-monitor</artifactId>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
@@ -263,6 +361,16 @@
                 <groupId>org.apache.skywalking</groupId>
                 <artifactId>apm-toolkit-opentracing</artifactId>
                 <version>${skywalking.version}</version>
+                <!--                <exclusions>-->
+                <!--                    <exclusion>-->
+                <!--                        <artifactId>opentracing-api</artifactId>-->
+                <!--                        <groupId>io.opentracing</groupId>-->
+                <!--                    </exclusion>-->
+                <!--                    <exclusion>-->
+                <!--                        <artifactId>opentracing-util</artifactId>-->
+                <!--                        <groupId>io.opentracing</groupId>-->
+                <!--                    </exclusion>-->
+                <!--                </exclusions>-->
             </dependency>
             <dependency>
                 <groupId>io.opentracing</groupId>
@@ -290,6 +398,7 @@
                 <artifactId>spring-boot-admin-starter-client</artifactId> <!-- 实现 Spring Boot Admin Server 服务端 -->
                 <version>${spring-boot-admin.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-inline</artifactId>
@@ -336,6 +445,19 @@
                 <version>${flowable.version}</version>
             </dependency>
             <!-- 工作流相关结束 -->
+
+            <!-- 工具类相关 -->
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.nstep.engine</groupId>
+                <artifactId>engine-spring-boot-starter-excel</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -460,9 +582,19 @@
 
             <!-- 三方云服务相关 -->
             <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-s3</artifactId>
-                <version>${aws-java-sdk-s3.version}</version>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>${okio.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
             </dependency>
 
             <dependency>
@@ -504,13 +636,6 @@
                         <artifactId>druid</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!--=====项目依赖开始========-->
-            <!-- 工具类相关 -->
-            <dependency>
-                <groupId>org.nstep.engine</groupId>
-                <artifactId>engine-common</artifactId>
-                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

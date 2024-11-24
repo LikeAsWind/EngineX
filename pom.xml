@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.nstep.engine</groupId>
-    <artifactId>EngineX</artifactId>
+    <artifactId>engine</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
         <module>engine-boot-parent</module>
+        <module>engine-gateway</module>
         <module>engine-framework</module>
-        <module>engine-service-infra</module>
+        <!--  各种 module 拓展 -->
+        <module>engine-module-system</module>
+        <module>engine-module-infra</module>
     </modules>
 
     <name>${project.artifactId}</name>
-    <description>engineX</description>
+    <description>engine项目基础脚手架</description>
     <url>https://github.com/LikeAsWind/EngineX</url>
 
     <properties>
@@ -26,6 +29,7 @@
         <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
+        <!-- 看看咋放到 bom 里 -->
         <lombok.version>1.18.34</lombok.version>
         <spring.boot.version>3.3.4</spring.boot.version>
         <mapstruct.version>1.6.2</mapstruct.version>
@@ -148,6 +152,5 @@
             </releases>
         </repository>
     </repositories>
-
 
 </project>

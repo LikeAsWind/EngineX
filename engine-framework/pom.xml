@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>EngineX</artifactId>
+        <artifactId>engine</artifactId>
         <groupId>org.nstep.engine</groupId>
         <version>${revision}</version>
     </parent>
     <packaging>pom</packaging>
     <modules>
         <module>engine-common</module>
-        <module>engine-web</module>
+        <module>engine-spring-boot-starter-env</module>
+        <module>engine-spring-boot-starter-mybatis</module>
+        <module>engine-spring-boot-starter-redis</module>
+        <module>engine-spring-boot-starter-web</module>
+        <module>engine-spring-boot-starter-security</module>
+        <module>engine-spring-boot-starter-websocket</module>
+
+        <module>engine-spring-boot-starter-monitor</module>
+        <module>engine-spring-boot-starter-protection</module>
+
+        <module>engine-spring-boot-starter-job</module>
+        <module>engine-spring-boot-starter-mq</module>
+        <module>engine-spring-boot-starter-rpc</module>
+
+        <module>engine-spring-boot-starter-excel</module>
+
+        <module>engine-spring-boot-starter-biz-tenant</module>
+        <module>engine-spring-boot-starter-biz-data-permission</module>
+        <module>engine-spring-boot-starter-biz-ip</module>
     </modules>
-
-
-    <url>https://github.com/LikeAsWind/EngineX</url>
-
 
     <artifactId>engine-framework</artifactId>
     <description>
@@ -29,4 +43,6 @@
         2. 业务组件：和业务相关的组件的封装，例如说数据字典、操作日志等等。
         如果是业务组件，Maven 名字会包含 biz
     </description>
+    <url>https://github.com/LikeAsWind/EngineX</url>
+
 </project>

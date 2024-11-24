@@ -1,0 +1,3 @@
+org.nstep.engine.framework.datapermission.config.EngineDataPermissionAutoConfiguration
+org.nstep.engine.framework.datapermission.config.EngineDeptDataPermissionAutoConfiguration
+org.nstep.engine.framework.datapermission.config.EngineDataPermissionRpcAutoConfiguration

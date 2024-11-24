@@ -1,0 +1,8 @@
+Application Version: ${engine.info.version}
+Spring Boot Version: ${spring-boot.version}
+
+ _______               __               ___ ___
+|    ___|.-----.-----.|__|.-----.-----.|   |   |
+|    ___||     |  _  ||  ||     |  -__||-     -|
+|_______||__|__|___  ||__||__|__|_____||___|___|
+               |_____|

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>engine-framework</artifactId>
+        <groupId>org.nstep.engine</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>engine-spring-boot-starter-biz-data-permission</artifactId>
+    <packaging>jar</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>数据权限</description>
+    <url>https://github.com/LikeAsWind/EngineX</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.nstep.engine</groupId>
+            <artifactId>engine-common</artifactId>
+        </dependency>
+
+        <!-- Web 相关 -->
+        <dependency>
+            <groupId>org.nstep.engine</groupId>
+            <artifactId>engine-spring-boot-starter-security</artifactId>
+            <optional>true</optional> <!-- 可选，如果使用 DeptDataPermissionRule 必须提供 -->
+        </dependency>
+
+        <!-- DB 相关 -->
+        <dependency>
+            <groupId>org.nstep.engine</groupId>
+            <artifactId>engine-spring-boot-starter-mybatis</artifactId>
+        </dependency>
+
+        <!-- RPC 远程调用相关 -->
+        <dependency>
+            <groupId>org.nstep.engine</groupId>
+            <artifactId>engine-spring-boot-starter-rpc</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 业务组件 -->
+        <dependency>
+            <groupId>org.nstep.engine</groupId>
+            <artifactId>engine-module-system-api</artifactId> <!-- 需要使用它，进行数据权限的获取 -->
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,2 @@
+org.nstep.engine.framework.quartz.config.EngineXxlJobAutoConfiguration
+org.nstep.engine.framework.quartz.config.EngineAsyncAutoConfiguration
