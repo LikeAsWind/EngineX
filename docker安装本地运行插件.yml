@@ -1,0 +1,163 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.0.30
+    restart: unless-stopped
+    container_name: mysql
+    volumes:
+      - /mydata/mysql/log:/var/log/mysql
+      - /mydata/mysql/data:/var/lib/mysql
+      - /mydata/mysql/conf/my.cnf:/etc/mysql/my.cnf
+      - /mydata/mysql/init:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=root
+      - TZ=Asia/Shanghai
+    ports:
+      - 3306:3306
+
+  redis:
+    image: redis:7.0.4
+    restart: unless-stopped
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - /mydata/redis/data:/data
+    command: redis-server --port 6379 --requirepass root --appendonly yes --protected-mode no
+
+  elasticsearch:
+    image: elasticsearch:7.17.6
+    restart: unless-stopped
+    container_name: elasticsearch
+    volumes:
+      - /mydata/elasticsearch/plugins/ik:/usr/share/elasticsearch/plugins/ik
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - cluster.name=elasticsearch
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+    networks:
+      - stack
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.6
+    restart: unless-stopped
+    container_name: kibana
+    ports:
+      - 5601:5601
+    networks:
+      - stack
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    image: logstash:7.17.6
+    restart: unless-stopped
+    container_name: logstash
+    volumes:
+      - /mydata/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - stack
+    depends_on:
+      - elasticsearch
+    ports:
+      - 4560:4560
+
+  rmqnamesrv:
+    image: apache/rocketmq:4.9.4
+    restart: unless-stopped
+    container_name: rocketmq-namesrv
+    networks:
+      - rocketmq
+    ports:
+      - 9876:9876
+    command: sh mqnamesrv
+
+  rmqbroker:
+    image: apache/rocketmq:4.9.4
+    restart: unless-stopped
+    container_name: rocketmq-broker
+    volumes:
+      - /mydata/rocketmq/broker.conf:/opt/rocketmq-4.9.4/conf/broker.conf
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
+      - JAVA_OPT_EXT=-server -Xms64m -Xmx64m -Xmn64m
+    depends_on:
+      - rmqnamesrv
+    networks:
+      - rocketmq
+    ports:
+      - 10909:10909
+      - 10911:10911
+    command: sh mqbroker -c /opt/rocketmq-4.9.4/conf/broker.conf
+
+  rmqdashboard:
+    image: apacherocketmq/rocketmq-dashboard:1.0.0
+    restart: unless-stopped
+    container_name: rocketmq-dashboard
+    environment:
+      - JAVA_OPTS=-Drocketmq.config.namesrvAddr=rmqnamesrv:9876 -Dserver.port=8180 -Drocketmq.config.isVIPChannel=false
+    depends_on:
+      - rmqnamesrv
+    networks:
+      - rocketmq
+    ports:
+      - 8180:8180
+
+  xxl-job:
+    image: xuxueli/xxl-job-admin:2.3.0
+    restart: unless-stopped
+    container_name: xxl-job
+    environment:
+      - PARAMS=--spring.datasource.url=jdbc:mysql://mysql:3306/xxl-job?Unicode=true&characterEncoding=UTF-8  --spring.datasource.username=root --spring.datasource.password=root --server.port=9001
+    depends_on:
+      - mysql
+    volumes:
+      - /mydata/xxl-job/applogs:/data/applogs
+    ports:
+      - 9001:9001
+
+networks:
+  rocketmq:
+    driver: bridge
+  stack:
+    driver: bridge
+
+# 命令
+#   mkdir /path/to/your/project
+#   cd /path/to/your/project
+#   # 创建并保存 docker-compose.yml 文件
+#   nano docker-compose.yml
+
+#  mkdir -p /mydata/mysql/log /mydata/mysql/data /mydata/mysql/conf /mydata/mysql/init
+#  mkdir -p /mydata/redis/data
+#  mkdir -p /mydata/elasticsearch/plugins/ik
+#  mkdir -p /mydata/logstash
+#  mkdir -p /mydata/rocketmq
+#  mkdir -p /mydata/xxl-job/applogs
+
+# docker-compose up -d
+# docker-compose ps
+# docker-compose logs <容器名>
+## 例如查看 mysql 的日志
+# docker-compose logs mysql
+# MySQL：端口 3306
+#Redis：端口 6379
+#Elasticsearch：端口 9200 和 9300
+#Kibana：端口 5601
+#Logstash：端口 4560
+#RocketMQ Namesrv：端口 9876
+#RocketMQ Broker：端口 10909 和 10911
+#RocketMQ Dashboard：端口 8180
+#XXL-JOB：端口 9001
