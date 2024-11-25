@@ -24,15 +24,19 @@ public class DemoWebSocketMessageListener implements WebSocketMessageListener<De
         Long fromUserId = WebSocketFrameworkUtils.getLoginUserId(session);
         // 情况一：单发
         if (message.getToUserId() != null) {
-            DemoReceiveMessage toMessage = new DemoReceiveMessage().setFromUserId(fromUserId)
-                    .setText(message.getText()).setSingle(true);
+            DemoReceiveMessage toMessage = new DemoReceiveMessage();
+            toMessage.setFromUserId(fromUserId);
+            toMessage.setText(message.getText());
+            toMessage.setSingle(true);
             webSocketMessageSender.sendObject(UserTypeEnum.ADMIN.getValue(), message.getToUserId(), // 给指定用户
                     "demo-message-receive", toMessage);
             return;
         }
         // 情况二：群发
-        DemoReceiveMessage toMessage = new DemoReceiveMessage().setFromUserId(fromUserId)
-                .setText(message.getText()).setSingle(false);
+        DemoReceiveMessage toMessage = new DemoReceiveMessage();
+        toMessage.setFromUserId(fromUserId);
+        toMessage.setText(message.getText());
+        toMessage.setSingle(false);
         webSocketMessageSender.sendObject(UserTypeEnum.ADMIN.getValue(), // 给所有用户
                 "demo-message-receive", toMessage);
     }

@@ -111,7 +111,9 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
     private Mono<LoginUser> getLoginUser(ServerWebExchange exchange, String token) {
         // 从缓存中，获取 LoginUser
         Long tenantId = WebFrameworkUtils.getTenantId(exchange);
-        KeyValue<Long, String> cacheKey = new KeyValue<Long, String>().setKey(tenantId).setValue(token);
+        KeyValue<Long, String> cacheKey = new KeyValue<>();
+        cacheKey.setKey(tenantId);
+        cacheKey.setValue(token);
         LoginUser localUser = loginUserCache.getIfPresent(cacheKey);
         if (localUser != null) {
             return Mono.just(localUser);
@@ -152,10 +154,14 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
 
         // 创建登录用户
         OAuth2AccessTokenCheckRespDTO tokenInfo = result.getData();
-        return new LoginUser().setId(tokenInfo.getUserId()).setUserType(tokenInfo.getUserType())
-                .setInfo(tokenInfo.getUserInfo()) // 额外的用户信息
-                .setTenantId(tokenInfo.getTenantId()).setScopes(tokenInfo.getScopes())
-                .setExpiresTime(tokenInfo.getExpiresTime());
+        LoginUser loginUser = new LoginUser();
+        loginUser.setId(tokenInfo.getUserId());
+        loginUser.setUserType(tokenInfo.getUserType());
+        loginUser.setInfo(tokenInfo.getUserInfo()); // 额外的用户信息
+        loginUser.setTenantId(tokenInfo.getTenantId());
+        loginUser.setScopes(tokenInfo.getScopes());
+        loginUser.setExpiresTime(tokenInfo.getExpiresTime());
+        return loginUser;
     }
 
     @Override

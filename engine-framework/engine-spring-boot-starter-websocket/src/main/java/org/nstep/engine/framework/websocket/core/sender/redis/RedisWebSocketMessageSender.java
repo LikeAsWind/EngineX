@@ -46,9 +46,12 @@ public class RedisWebSocketMessageSender extends AbstractWebSocketMessageSender 
      */
     private void sendRedisMessage(String sessionId, Long userId, Integer userType,
                                   String messageType, String messageContent) {
-        RedisWebSocketMessage mqMessage = new RedisWebSocketMessage()
-                .setSessionId(sessionId).setUserId(userId).setUserType(userType)
-                .setMessageType(messageType).setMessageContent(messageContent);
+        RedisWebSocketMessage mqMessage = new RedisWebSocketMessage();
+        mqMessage.setSessionId(sessionId);
+        mqMessage.setUserId(userId);
+        mqMessage.setUserType(userType);
+        mqMessage.setMessageType(messageType);
+        mqMessage.setMessageContent(messageContent);
         redisMQTemplate.send(mqMessage);
     }
 

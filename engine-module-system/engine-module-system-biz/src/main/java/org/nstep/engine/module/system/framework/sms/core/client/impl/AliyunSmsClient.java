@@ -79,12 +79,13 @@ public class AliyunSmsClient extends AbstractSmsClient {
         JSONObject response = request("SendSms", queryParam);
 
         // 2. 解析请求
-        return new SmsSendRespDTO()
-                .setSuccess(Objects.equals(response.getStr("Code"), RESPONSE_CODE_SUCCESS))
-                .setSerialNo(response.getStr("BizId"))
-                .setApiRequestId(response.getStr("RequestId"))
-                .setApiCode(response.getStr("Code"))
-                .setApiMsg(response.getStr("Message"));
+        SmsSendRespDTO smsSendRespDTO = new SmsSendRespDTO();
+        smsSendRespDTO.setSuccess(Objects.equals(response.getStr("Code"), RESPONSE_CODE_SUCCESS));
+        smsSendRespDTO.setSerialNo(response.getStr("BizId"));
+        smsSendRespDTO.setApiRequestId(response.getStr("RequestId"));
+        smsSendRespDTO.setApiCode(response.getStr("Code"));
+        smsSendRespDTO.setApiMsg(response.getStr("Message"));
+        return smsSendRespDTO;
     }
 
     @Override
@@ -93,14 +94,15 @@ public class AliyunSmsClient extends AbstractSmsClient {
         // 字段参考 https://help.aliyun.com/zh/sms/developer-reference/smsreport-2
         return convertList(statuses, status -> {
             JSONObject statusObj = (JSONObject) status;
-            return new SmsReceiveRespDTO()
-                    .setSuccess(statusObj.getBool("success")) // 是否接收成功
-                    .setErrorCode(statusObj.getStr("err_code")) // 状态报告编码
-                    .setErrorMsg(statusObj.getStr("err_msg")) // 状态报告说明
-                    .setMobile(statusObj.getStr("phone_number")) // 手机号
-                    .setReceiveTime(statusObj.getLocalDateTime("report_time", null)) // 状态报告时间
-                    .setSerialNo(statusObj.getStr("biz_id")) // 发送序列号
-                    .setLogId(statusObj.getLong("out_id")); // 用户序列号
+            SmsReceiveRespDTO smsReceiveRespDTO = new SmsReceiveRespDTO();
+            smsReceiveRespDTO.setSuccess(statusObj.getBool("success")); // 是否接收成功
+            smsReceiveRespDTO.setErrorCode(statusObj.getStr("err_code")); // 状态报告编码
+            smsReceiveRespDTO.setErrorMsg(statusObj.getStr("err_msg")); // 状态报告说明
+            smsReceiveRespDTO.setMobile(statusObj.getStr("phone_number")); // 手机号
+            smsReceiveRespDTO.setReceiveTime(statusObj.getLocalDateTime("report_time", null)); // 状态报告时间
+            smsReceiveRespDTO.setSerialNo(statusObj.getStr("biz_id"));// 发送序列号
+            smsReceiveRespDTO.setLogId(statusObj.getLong("out_id")); // 用户序列号
+            return smsReceiveRespDTO;
         });
     }
 
@@ -119,25 +121,22 @@ public class AliyunSmsClient extends AbstractSmsClient {
             return null;
         }
         // 2.2 请求成功
-        return new SmsTemplateRespDTO()
-                .setId(response.getStr("TemplateCode"))
-                .setContent(response.getStr("TemplateContent"))
-                .setAuditStatus(convertSmsTemplateAuditStatus(response.getInt("TemplateStatus")))
-                .setAuditReason(response.getStr("Reason"));
+        SmsTemplateRespDTO smsTemplateRespDTO = new SmsTemplateRespDTO();
+        smsTemplateRespDTO.setId(response.getStr("TemplateCode"));
+        smsTemplateRespDTO.setContent(response.getStr("TemplateContent"));
+        smsTemplateRespDTO.setAuditStatus(convertSmsTemplateAuditStatus(response.getInt("TemplateStatus")));
+        smsTemplateRespDTO.setAuditReason(response.getStr("Reason"));
+        return smsTemplateRespDTO;
     }
 
     @VisibleForTesting
     Integer convertSmsTemplateAuditStatus(Integer templateStatus) {
-        switch (templateStatus) {
-            case 0:
-                return SmsTemplateAuditStatusEnum.CHECKING.getStatus();
-            case 1:
-                return SmsTemplateAuditStatusEnum.SUCCESS.getStatus();
-            case 2:
-                return SmsTemplateAuditStatusEnum.FAIL.getStatus();
-            default:
-                throw new IllegalArgumentException(String.format("未知审核状态(%d)", templateStatus));
-        }
+        return switch (templateStatus) {
+            case 0 -> SmsTemplateAuditStatusEnum.CHECKING.getStatus();
+            case 1 -> SmsTemplateAuditStatusEnum.SUCCESS.getStatus();
+            case 2 -> SmsTemplateAuditStatusEnum.FAIL.getStatus();
+            default -> throw new IllegalArgumentException(String.format("未知审核状态(%d)", templateStatus));
+        };
     }
 
     /**

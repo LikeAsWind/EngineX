@@ -15,6 +15,7 @@ import org.nstep.engine.framework.common.util.servlet.ServletUtils;
 import org.nstep.engine.framework.common.util.validation.ValidationUtils;
 import org.nstep.engine.module.system.api.logger.dto.LoginLogCreateReqDTO;
 import org.nstep.engine.module.system.api.sms.SmsCodeApi;
+import org.nstep.engine.module.system.api.sms.dto.code.SmsCodeSendReqDTO;
 import org.nstep.engine.module.system.api.social.dto.SocialUserBindReqDTO;
 import org.nstep.engine.module.system.api.social.dto.SocialUserRespDTO;
 import org.nstep.engine.module.system.controller.admin.auth.vo.*;
@@ -114,7 +115,9 @@ public class AdminAuthServiceImpl implements AdminAuthService {
             throw exception(AUTH_MOBILE_NOT_EXISTS);
         }
         // 发送验证码
-        smsCodeApi.sendSmsCode(AuthConvert.INSTANCE.convert(reqVO).setCreateIp(getClientIP()));
+        SmsCodeSendReqDTO convert = AuthConvert.INSTANCE.convert(reqVO);
+        convert.setCreateIp(getClientIP());
+        smsCodeApi.sendSmsCode(convert);
     }
 
     @Override

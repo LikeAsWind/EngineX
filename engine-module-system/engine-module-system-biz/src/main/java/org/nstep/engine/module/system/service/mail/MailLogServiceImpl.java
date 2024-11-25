@@ -64,13 +64,21 @@ public class MailLogServiceImpl implements MailLogService {
     public void updateMailSendResult(Long logId, String messageId, Exception exception) {
         // 1. 成功
         if (exception == null) {
-            mailLogMapper.updateById(new MailLogDO().setId(logId).setSendTime(LocalDateTime.now())
-                    .setSendStatus(MailSendStatusEnum.SUCCESS.getStatus()).setSendMessageId(messageId));
+            MailLogDO mailLogDO = new MailLogDO();
+            mailLogDO.setId(logId);
+            mailLogDO.setSendTime(LocalDateTime.now());
+            mailLogDO.setSendStatus(MailSendStatusEnum.SUCCESS.getStatus());
+            mailLogDO.setSendMessageId(messageId);
+            mailLogMapper.updateById(mailLogDO);
             return;
         }
         // 2. 失败
-        mailLogMapper.updateById(new MailLogDO().setId(logId).setSendTime(LocalDateTime.now())
-                .setSendStatus(MailSendStatusEnum.FAILURE.getStatus()).setSendException(getRootCauseMessage(exception)));
+        MailLogDO mailLogDO = new MailLogDO();
+        mailLogDO.setId(logId);
+        mailLogDO.setSendTime(LocalDateTime.now());
+        mailLogDO.setSendStatus(MailSendStatusEnum.FAILURE.getStatus());
+        mailLogDO.setSendException(getRootCauseMessage(exception));
+        mailLogMapper.updateById(mailLogDO);
 
     }
 

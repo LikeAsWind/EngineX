@@ -30,9 +30,13 @@ public class MailProducer {
      */
     public void sendMailSendMessage(Long sendLogId, String mail, Long accountId,
                                     String nickname, String title, String content) {
-        MailSendMessage message = new MailSendMessage()
-                .setLogId(sendLogId).setMail(mail).setAccountId(accountId)
-                .setNickname(nickname).setTitle(title).setContent(content);
+        MailSendMessage message = new MailSendMessage();
+        message.setLogId(sendLogId);
+        message.setMail(mail);
+        message.setAccountId(accountId);
+        message.setNickname(nickname);
+        message.setTitle(title);
+        message.setContent(content);
         applicationContext.publishEvent(message);
     }
 

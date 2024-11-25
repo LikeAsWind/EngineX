@@ -49,8 +49,12 @@ public class DebugDingTalkSmsClient extends AbstractSmsClient {
         // 解析结果
         Map<?, ?> responseObj = JsonUtils.parseObject(responseText, Map.class);
         String errorCode = MapUtil.getStr(responseObj, "errcode");
-        return new SmsSendRespDTO().setSuccess(Objects.equals(errorCode, "0")).setSerialNo(StrUtil.uuid())
-                .setApiCode(errorCode).setApiMsg(MapUtil.getStr(responseObj, "errorMsg"));
+        SmsSendRespDTO smsSendRespDTO = new SmsSendRespDTO();
+        smsSendRespDTO.setSuccess(Objects.equals(errorCode, "0"));
+        smsSendRespDTO.setSerialNo(StrUtil.uuid());
+        smsSendRespDTO.setApiCode(errorCode);
+        smsSendRespDTO.setApiMsg(MapUtil.getStr(responseObj, "errorMsg"));
+        return smsSendRespDTO;
     }
 
     /**
@@ -82,8 +86,12 @@ public class DebugDingTalkSmsClient extends AbstractSmsClient {
 
     @Override
     public SmsTemplateRespDTO getSmsTemplate(String apiTemplateId) {
-        return new SmsTemplateRespDTO().setId(apiTemplateId).setContent("")
-                .setAuditStatus(SmsTemplateAuditStatusEnum.SUCCESS.getStatus()).setAuditReason("");
+        SmsTemplateRespDTO smsTemplateRespDTO = new SmsTemplateRespDTO();
+        smsTemplateRespDTO.setId(apiTemplateId);
+        smsTemplateRespDTO.setContent("");
+        smsTemplateRespDTO.setAuditStatus(SmsTemplateAuditStatusEnum.SUCCESS.getStatus());
+        smsTemplateRespDTO.setAuditReason("");
+        return smsTemplateRespDTO;
     }
 
 }

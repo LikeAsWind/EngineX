@@ -32,8 +32,12 @@ public class SmsProducer {
      */
     public void sendSmsSendMessage(Long logId, String mobile,
                                    Long channelId, String apiTemplateId, List<KeyValue<String, Object>> templateParams) {
-        SmsSendMessage message = new SmsSendMessage().setLogId(logId).setMobile(mobile);
-        message.setChannelId(channelId).setApiTemplateId(apiTemplateId).setTemplateParams(templateParams);
+        SmsSendMessage message = new SmsSendMessage();
+        message.setLogId(logId);
+        message.setMobile(mobile);
+        message.setChannelId(channelId);
+        message.setApiTemplateId(apiTemplateId);
+        message.setTemplateParams(templateParams);
         applicationContext.publishEvent(message);
     }
 

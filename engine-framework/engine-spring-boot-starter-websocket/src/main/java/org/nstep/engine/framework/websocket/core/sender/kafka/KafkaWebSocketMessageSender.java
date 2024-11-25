@@ -52,9 +52,13 @@ public class KafkaWebSocketMessageSender extends AbstractWebSocketMessageSender 
      */
     private void sendKafkaMessage(String sessionId, Long userId, Integer userType,
                                   String messageType, String messageContent) {
-        KafkaWebSocketMessage mqMessage = new KafkaWebSocketMessage()
-                .setSessionId(sessionId).setUserId(userId).setUserType(userType)
-                .setMessageType(messageType).setMessageContent(messageContent);
+        KafkaWebSocketMessage mqMessage = new KafkaWebSocketMessage();
+        mqMessage.setSessionId(sessionId);
+        mqMessage.setUserId(userId);
+        mqMessage.setUserType(userType);
+        mqMessage.setMessageType(messageType);
+        mqMessage.setMessageContent(messageContent);
+
         try {
             kafkaTemplate.send(topic, mqMessage).get();
         } catch (InterruptedException | ExecutionException e) {

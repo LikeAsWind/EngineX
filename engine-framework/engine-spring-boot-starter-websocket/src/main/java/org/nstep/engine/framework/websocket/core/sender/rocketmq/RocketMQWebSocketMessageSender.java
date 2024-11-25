@@ -50,9 +50,12 @@ public class RocketMQWebSocketMessageSender extends AbstractWebSocketMessageSend
      */
     private void sendRocketMQMessage(String sessionId, Long userId, Integer userType,
                                      String messageType, String messageContent) {
-        RocketMQWebSocketMessage mqMessage = new RocketMQWebSocketMessage()
-                .setSessionId(sessionId).setUserId(userId).setUserType(userType)
-                .setMessageType(messageType).setMessageContent(messageContent);
+        RocketMQWebSocketMessage mqMessage = new RocketMQWebSocketMessage();
+        mqMessage.setSessionId(sessionId);
+        mqMessage.setUserId(userId);
+        mqMessage.setUserType(userType);
+        mqMessage.setMessageType(messageType);
+        mqMessage.setMessageContent(messageContent);
         rocketMQTemplate.syncSend(topic, mqMessage);
     }
 

@@ -77,7 +77,9 @@ public abstract class AbstractWebSocketMessageSender implements WebSocketMessage
      * @param messageContent 消息内容
      */
     public void doSend(Collection<WebSocketSession> sessions, String messageType, String messageContent) {
-        JsonWebSocketMessage message = new JsonWebSocketMessage().setType(messageType).setContent(messageContent);
+        JsonWebSocketMessage message = new JsonWebSocketMessage();
+        message.setType(messageType);
+        message.setContent(messageContent);
         String payload = JsonUtils.toJsonString(message); // 关键，使用 JSON 序列化
         sessions.forEach(session -> {
             // 1. 各种校验，保证 Session 可以被发送

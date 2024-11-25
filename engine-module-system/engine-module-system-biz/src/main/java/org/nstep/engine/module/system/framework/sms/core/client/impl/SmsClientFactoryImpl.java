@@ -38,8 +38,10 @@ public class SmsClientFactoryImpl implements SmsClientFactory {
         // 初始化 channelCodeClients 集合
         Arrays.stream(SmsChannelEnum.values()).forEach(channel -> {
             // 创建一个空的 SmsChannelProperties 对象
-            SmsChannelProperties properties = new SmsChannelProperties().setCode(channel.getCode())
-                    .setApiKey("default default").setApiSecret("default");
+            SmsChannelProperties properties = new SmsChannelProperties();
+            properties.setCode(channel.getCode());
+            properties.setApiKey("default default");
+            properties.setApiSecret("default");
             // 创建 Sms 客户端
             AbstractSmsClient smsClient = createSmsClient(properties);
             channelCodeClients.put(channel.getCode(), smsClient);

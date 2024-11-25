@@ -116,7 +116,10 @@ public class TenantServiceImpl implements TenantService {
             // 创建用户，并分配角色
             Long userId = createUser(roleId, createReqVO);
             // 修改租户的管理员
-            tenantMapper.updateById(new TenantDO().setId(tenant.getId()).setContactUserId(userId));
+            TenantDO tenantDO = new TenantDO();
+            tenantDO.setId(tenant.getId());
+            tenantDO.setContactUserId(userId);
+            tenantMapper.updateById(tenantDO);
         });
         return tenant.getId();
     }
@@ -132,8 +135,10 @@ public class TenantServiceImpl implements TenantService {
     private Long createRole(TenantPackageDO tenantPackage) {
         // 创建角色
         RoleSaveReqVO reqVO = new RoleSaveReqVO();
-        reqVO.setName(RoleCodeEnum.TENANT_ADMIN.getName()).setCode(RoleCodeEnum.TENANT_ADMIN.getCode())
-                .setSort(0).setRemark("系统自动生成");
+        reqVO.setName(RoleCodeEnum.TENANT_ADMIN.getName());
+        reqVO.setCode(RoleCodeEnum.TENANT_ADMIN.getCode());
+        reqVO.setSort(0);
+        reqVO.setRemark("系统自动生成");
         Long roleId = roleService.createRole(reqVO, RoleTypeEnum.SYSTEM.getType());
         // 分配权限
         permissionService.assignRoleMenu(roleId, tenantPackage.getMenuIds());

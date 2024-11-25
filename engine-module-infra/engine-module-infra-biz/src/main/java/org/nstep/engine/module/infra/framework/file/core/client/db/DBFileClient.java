@@ -27,8 +27,10 @@ public class DBFileClient extends AbstractFileClient<DBFileClientConfig> {
 
     @Override
     public String upload(byte[] content, String path, String type) {
-        FileContentDO contentDO = new FileContentDO().setConfigId(getId())
-                .setPath(path).setContent(content);
+        FileContentDO contentDO = new FileContentDO();
+        contentDO.setConfigId(getId());
+        contentDO.setPath(path);
+        contentDO.setContent(content);
         fileContentMapper.insert(contentDO);
         // 拼接返回路径
         return super.formatFileUrl(config.getDomain(), path);

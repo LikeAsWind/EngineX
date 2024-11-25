@@ -92,10 +92,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 throw new AccessDeniedException("错误的用户类型");
             }
             // 构建登录用户
-            return new LoginUser().setId(accessToken.getUserId()).setUserType(accessToken.getUserType())
-                    .setInfo(accessToken.getUserInfo()) // 额外的用户信息
-                    .setTenantId(accessToken.getTenantId()).setScopes(accessToken.getScopes())
-                    .setExpiresTime(accessToken.getExpiresTime());
+            LoginUser loginUser = new LoginUser();
+            loginUser.setId(accessToken.getUserId());
+            loginUser.setUserType(accessToken.getUserType());
+            loginUser.setInfo(accessToken.getUserInfo()); // 额外的用户信息
+            loginUser.setTenantId(accessToken.getTenantId());
+            loginUser.setScopes(accessToken.getScopes());
+            loginUser.setExpiresTime(accessToken.getExpiresTime());
+            return loginUser;
         } catch (ServiceException serviceException) {
             // 校验 Token 不通过时，考虑到一些接口是无需登录的，所以直接返回 null 即可
             return null;
@@ -122,8 +126,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         // 构建模拟用户
         Long userId = Long.valueOf(token.substring(securityProperties.getMockSecret().length()));
-        return new LoginUser().setId(userId).setUserType(userType)
-                .setTenantId(WebFrameworkUtils.getTenantId(request));
+        LoginUser loginUser = new LoginUser();
+        loginUser.setId(userId);
+        loginUser.setUserType(userType);
+        loginUser.setTenantId(WebFrameworkUtils.getTenantId(request));
+        return loginUser;
     }
 
     private LoginUser buildLoginUserByHeader(HttpServletRequest request) {

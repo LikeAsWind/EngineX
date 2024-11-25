@@ -27,10 +27,16 @@ public class NotifyMessageServiceImpl implements NotifyMessageService {
     @Override
     public Long createNotifyMessage(Long userId, Integer userType,
                                     NotifyTemplateDO template, String templateContent, Map<String, Object> templateParams) {
-        NotifyMessageDO message = new NotifyMessageDO().setUserId(userId).setUserType(userType)
-                .setTemplateId(template.getId()).setTemplateCode(template.getCode())
-                .setTemplateType(template.getType()).setTemplateNickname(template.getNickname())
-                .setTemplateContent(templateContent).setTemplateParams(templateParams).setReadStatus(false);
+        NotifyMessageDO message = new NotifyMessageDO();
+        message.setUserId(userId);
+        message.setUserType(userType);
+        message.setTemplateId(template.getId());
+        message.setTemplateCode(template.getCode());
+        message.setTemplateType(template.getType());
+        message.setTemplateNickname(template.getNickname());
+        message.setTemplateContent(templateContent);
+        message.setTemplateParams(templateParams);
+        message.setReadStatus(false);
         notifyMessageMapper.insert(message);
         return message.getId();
     }

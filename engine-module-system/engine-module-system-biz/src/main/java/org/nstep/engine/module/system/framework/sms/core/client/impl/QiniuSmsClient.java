@@ -120,13 +120,14 @@ public class QiniuSmsClient extends AbstractSmsClient {
             @Override
             public SmsReceiveRespDTO apply(Object item) {
                 JSONObject statusObj = (JSONObject) item;
-                return new SmsReceiveRespDTO()
-                        .setSuccess("DELIVRD".equals(statusObj.getStr("status"))) // 是否接收成功
-                        .setErrorMsg(statusObj.getStr("status")) // 状态报告编码
-                        .setMobile(statusObj.getStr("mobile")) // 手机号
-                        .setReceiveTime(LocalDateTimeUtil.of(statusObj.getLong("delivrd_at") * 1000L)) // 状态报告时间
-                        .setSerialNo(statusObj.getStr("message_id")) // 发送序列号
-                        .setLogId(statusObj.getLong("seq")); // 用户序列号
+                SmsReceiveRespDTO smsReceiveRespDTO = new SmsReceiveRespDTO();
+                smsReceiveRespDTO.setSuccess("DELIVRD".equals(statusObj.getStr("status")));// 是否接收成功
+                smsReceiveRespDTO.setErrorMsg(statusObj.getStr("status"));// 状态报告编码
+                smsReceiveRespDTO.setMobile(statusObj.getStr("mobile"));// 手机号
+                smsReceiveRespDTO.setReceiveTime(LocalDateTimeUtil.of(statusObj.getLong("delivrd_at") * 1000L));// 状态报告时间
+                smsReceiveRespDTO.setSerialNo(statusObj.getStr("message_id")); // 发送序列号
+                smsReceiveRespDTO.setLogId(statusObj.getLong("seq")); // 用户序列号
+                return smsReceiveRespDTO;
             }
 
         });
@@ -139,24 +140,21 @@ public class QiniuSmsClient extends AbstractSmsClient {
         JSONObject response = request("GET", null, "/v1/template/" + apiTemplateId);
 
         // 2.2 解析请求
-        return new SmsTemplateRespDTO()
-                .setId(response.getStr("id"))
-                .setContent(response.getStr("template"))
-                .setAuditStatus(convertSmsTemplateAuditStatus(response.getStr("audit_status")))
-                .setAuditReason(response.getStr("reject_reason"));
+        SmsTemplateRespDTO smsTemplateRespDTO = new SmsTemplateRespDTO();
+        smsTemplateRespDTO.setId(response.getStr("id"));
+        smsTemplateRespDTO.setContent(response.getStr("template"));
+        smsTemplateRespDTO.setAuditStatus(convertSmsTemplateAuditStatus(response.getStr("audit_status")));
+        smsTemplateRespDTO.setAuditReason(response.getStr("reject_reason"));
+        return smsTemplateRespDTO;
     }
 
     @VisibleForTesting
     Integer convertSmsTemplateAuditStatus(String templateStatus) {
-        switch (templateStatus) {
-            case "passed":
-                return SmsTemplateAuditStatusEnum.SUCCESS.getStatus();
-            case "reviewing":
-                return SmsTemplateAuditStatusEnum.CHECKING.getStatus();
-            case "rejected":
-                return SmsTemplateAuditStatusEnum.FAIL.getStatus();
-            default:
-                throw new IllegalArgumentException(String.format("未知审核状态(%str)", templateStatus));
-        }
+        return switch (templateStatus) {
+            case "passed" -> SmsTemplateAuditStatusEnum.SUCCESS.getStatus();
+            case "reviewing" -> SmsTemplateAuditStatusEnum.CHECKING.getStatus();
+            case "rejected" -> SmsTemplateAuditStatusEnum.FAIL.getStatus();
+            default -> throw new IllegalArgumentException(String.format("未知审核状态(%str)", templateStatus));
+        };
     }
 }

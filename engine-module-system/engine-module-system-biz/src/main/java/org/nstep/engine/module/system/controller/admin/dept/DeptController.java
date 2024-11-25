@@ -67,8 +67,9 @@ public class DeptController {
     @GetMapping(value = {"/list-all-simple", "/simple-list"})
     @Operation(summary = "获取部门精简信息列表", description = "只包含被开启的部门，主要用于前端的下拉选项")
     public CommonResult<List<DeptSimpleRespVO>> getSimpleDeptList() {
-        List<DeptDO> list = deptService.getDeptList(
-                new DeptListReqVO().setStatus(CommonStatusEnum.ENABLE.getStatus()));
+        DeptListReqVO deptListReqVO = new DeptListReqVO();
+        deptListReqVO.setStatus(CommonStatusEnum.ENABLE.getStatus());
+        List<DeptDO> list = deptService.getDeptList(deptListReqVO);
         return success(BeanUtils.toBean(list, DeptSimpleRespVO.class));
     }
 

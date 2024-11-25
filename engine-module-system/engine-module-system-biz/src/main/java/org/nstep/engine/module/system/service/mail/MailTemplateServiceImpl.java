@@ -51,8 +51,8 @@ public class MailTemplateServiceImpl implements MailTemplateService {
         validateCodeUnique(null, createReqVO.getCode());
 
         // 插入
-        MailTemplateDO template = BeanUtils.toBean(createReqVO, MailTemplateDO.class)
-                .setParams(parseTemplateContentParams(createReqVO.getContent()));
+        MailTemplateDO template = BeanUtils.toBean(createReqVO, MailTemplateDO.class);
+        template.setParams(parseTemplateContentParams(createReqVO.getContent()));
         mailTemplateMapper.insert(template);
         return template.getId();
     }
@@ -67,8 +67,8 @@ public class MailTemplateServiceImpl implements MailTemplateService {
         validateCodeUnique(updateReqVO.getId(), updateReqVO.getCode());
 
         // 更新
-        MailTemplateDO updateObj = BeanUtils.toBean(updateReqVO, MailTemplateDO.class)
-                .setParams(parseTemplateContentParams(updateReqVO.getContent()));
+        MailTemplateDO updateObj = BeanUtils.toBean(updateReqVO, MailTemplateDO.class);
+        updateObj.setParams(parseTemplateContentParams(updateReqVO.getContent()));
         mailTemplateMapper.updateById(updateObj);
     }
 

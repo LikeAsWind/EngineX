@@ -35,8 +35,8 @@ public class ApiErrorLogServiceImpl implements ApiErrorLogService {
 
     @Override
     public void createApiErrorLog(ApiErrorLogCreateReqDTO createDTO) {
-        ApiErrorLogDO apiErrorLog = BeanUtils.toBean(createDTO, ApiErrorLogDO.class)
-                .setProcessStatus(ApiErrorLogProcessStatusEnum.INIT.getStatus());
+        ApiErrorLogDO apiErrorLog = BeanUtils.toBean(createDTO, ApiErrorLogDO.class);
+        apiErrorLog.setProcessStatus(ApiErrorLogProcessStatusEnum.INIT.getStatus());
         apiErrorLog.setRequestParams(StrUtil.maxLength(apiErrorLog.getRequestParams(), REQUEST_PARAMS_MAX_LENGTH));
         if (TenantContextHolder.getTenantId() != null) {
             apiErrorLogMapper.insert(apiErrorLog);

@@ -145,9 +145,15 @@ public class SocialUserServiceImpl implements SocialUserService {
         if (socialUser == null) {
             socialUser = new SocialUserDO();
         }
-        socialUser.setType(socialType).setCode(code).setState(state) // 需要保存 code + state 字段，保证后续可查询
-                .setOpenid(authUser.getUuid()).setToken(authUser.getToken().getAccessToken()).setRawTokenInfo((toJsonString(authUser.getToken())))
-                .setNickname(authUser.getNickname()).setAvatar(authUser.getAvatar()).setRawUserInfo(toJsonString(authUser.getRawUserInfo()));
+        socialUser.setType(socialType);
+        socialUser.setCode(code);
+        socialUser.setState(state); // 需要保存 code + state 字段，保证后续可查询
+        socialUser.setOpenid(authUser.getUuid());
+        socialUser.setToken(authUser.getToken().getAccessToken());
+        socialUser.setRawTokenInfo((toJsonString(authUser.getToken())));
+        socialUser.setNickname(authUser.getNickname());
+        socialUser.setAvatar(authUser.getAvatar());
+        socialUser.setRawUserInfo(toJsonString(authUser.getRawUserInfo()));
         if (socialUser.getId() == null) {
             socialUserMapper.insert(socialUser);
         } else {

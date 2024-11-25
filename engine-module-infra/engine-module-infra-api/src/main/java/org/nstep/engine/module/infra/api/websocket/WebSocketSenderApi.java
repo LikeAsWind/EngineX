@@ -30,8 +30,12 @@ public interface WebSocketSenderApi {
      * @param messageContent 消息内容，JSON 格式
      */
     default void send(Integer userType, Long userId, String messageType, String messageContent) {
-        send(new WebSocketSendReqDTO().setUserType(userType).setUserId(userId)
-                .setMessageType(messageType).setMessageContent(messageContent)).checkError();
+        WebSocketSendReqDTO webSocketSendReqDTO = new WebSocketSendReqDTO();
+        webSocketSendReqDTO.setUserType(userType);
+        webSocketSendReqDTO.setUserId(userId);
+        webSocketSendReqDTO.setMessageType(messageType);
+        webSocketSendReqDTO.setMessageContent(messageContent);
+        send(webSocketSendReqDTO).checkError();
     }
 
     /**
@@ -42,8 +46,11 @@ public interface WebSocketSenderApi {
      * @param messageContent 消息内容，JSON 格式
      */
     default void send(Integer userType, String messageType, String messageContent) {
-        send(new WebSocketSendReqDTO().setUserType(userType)
-                .setMessageType(messageType).setMessageContent(messageContent)).checkError();
+        WebSocketSendReqDTO webSocketSendReqDTO = new WebSocketSendReqDTO();
+        webSocketSendReqDTO.setUserType(userType);
+        webSocketSendReqDTO.setMessageType(messageType);
+        webSocketSendReqDTO.setMessageContent(messageContent);
+        send(webSocketSendReqDTO).checkError();
     }
 
     /**
@@ -54,8 +61,11 @@ public interface WebSocketSenderApi {
      * @param messageContent 消息内容，JSON 格式
      */
     default void send(String sessionId, String messageType, String messageContent) {
-        send(new WebSocketSendReqDTO().setSessionId(sessionId)
-                .setMessageType(messageType).setMessageContent(messageContent)).checkError();
+        WebSocketSendReqDTO webSocketSendReqDTO = new WebSocketSendReqDTO();
+        webSocketSendReqDTO.setSessionId(sessionId);
+        webSocketSendReqDTO.setMessageType(messageType);
+        webSocketSendReqDTO.setMessageContent(messageContent);
+        send(webSocketSendReqDTO).checkError();
     }
 
     default void sendObject(Integer userType, Long userId, String messageType, Object messageContent) {

@@ -49,7 +49,11 @@ public interface FileApi {
     default String createFile(@RequestParam("name") String name,
                               @RequestParam("path") String path,
                               @RequestParam("content") byte[] content) {
-        return createFile(new FileCreateReqDTO().setName(name).setPath(path).setContent(content)).getCheckedData();
+        FileCreateReqDTO fileCreateReqDTO = new FileCreateReqDTO();
+        fileCreateReqDTO.setName(name);
+        fileCreateReqDTO.setPath(path);
+        fileCreateReqDTO.setContent(content);
+        return createFile(fileCreateReqDTO).getCheckedData();
     }
 
     @PostMapping(PREFIX + "/create")

@@ -92,8 +92,13 @@ public class OAuth2ApproveServiceImpl implements OAuth2ApproveService {
     void saveApprove(Long userId, Integer userType, String clientId,
                      String scope, Boolean approved, LocalDateTime expireTime) {
         // 先更新
-        OAuth2ApproveDO approveDO = new OAuth2ApproveDO().setUserId(userId).setUserType(userType)
-                .setClientId(clientId).setScope(scope).setApproved(approved).setExpiresTime(expireTime);
+        OAuth2ApproveDO approveDO = new OAuth2ApproveDO();
+        approveDO.setUserId(userId);
+        approveDO.setUserType(userType);
+        approveDO.setClientId(clientId);
+        approveDO.setScope(scope);
+        approveDO.setApproved(approved);
+        approveDO.setExpiresTime(expireTime);
         if (oauth2ApproveMapper.update(approveDO) == 1) {
             return;
         }
