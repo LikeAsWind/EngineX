@@ -190,7 +190,11 @@ service.interceptors.response.use(
     } else if (message.includes('Request failed with status code')) {
       message = t('sys.api.apiRequestFailed') + message.substr(message.length - 3)
     }
-    ElMessage.error(message)
+    ElMessage({
+      grouping:true,
+      type:'error',
+      message,
+    })
     return Promise.reject(error)
   }
 )

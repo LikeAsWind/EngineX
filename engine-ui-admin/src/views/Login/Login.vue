@@ -9,7 +9,7 @@
       >
         <!-- 左上角的 logo + 系统标题 -->
         <div class="relative flex items-center text-white">
-          <img alt="" class="mr-10px h-48px w-48px" src="@/assets/imgs/logo.png" />
+          <img alt="" class="mr-10px h-49px w-90px" src="https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png" />
           <span class="text-20px font-bold">{{ underlineToHump(appStore.getTitle) }}</span>
         </div>
         <!-- 左边的背景图 + 欢迎语 -->
@@ -20,10 +20,10 @@
             tag="div"
           >
             <img key="1" alt="" class="w-350px" src="@/assets/svgs/login-box-bg.svg" />
-            <div key="2" class="text-3xl text-white">{{ t('login.welcome') }}</div>
-            <div key="3" class="mt-5 text-14px font-normal text-white">
+            <div key="2" class="text-3xl text-white text-center">{{ t('login.welcome') }}</div>
+            <!-- <div key="3" class="mt-5 text-14px font-normal text-white">
               {{ t('login.message') }}
-            </div>
+            </div> -->
           </TransitionGroup>
         </div>
       </div>
@@ -36,7 +36,7 @@
           style="color: var(--el-text-color-primary);"
         >
           <div class="flex items-center at-2xl:hidden at-xl:hidden">
-            <img alt="" class="mr-10px h-48px w-48px" src="@/assets/imgs/logo.png" />
+            <img alt="" class="mr-10px h-48px w-48px" src="https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png" />
             <span class="text-20px font-bold" >{{ underlineToHump(appStore.getTitle) }}</span>
           </div>
           <div class="flex items-center justify-end space-x-10px h-48px">
@@ -58,7 +58,7 @@
             <!-- 注册 -->
             <RegisterForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
             <!-- 三方登录 -->
-            <SSOLoginVue class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
+            <!-- <SSOLoginVue class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" /> -->
           </div>
         </Transition>
       </div>

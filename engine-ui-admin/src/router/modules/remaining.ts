@@ -234,413 +234,413 @@ const remainingRouter: AppRouteRecordRaw[] = [
       noTagsView: true
     }
   },
-  {
-    path: '/bpm',
-    component: Layout,
-    name: 'bpm',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'manager/form/edit',
-        component: () => import('@/views/bpm/form/editor/index.vue'),
-        name: 'BpmFormEditor',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '设计流程表单',
-          activeMenu: '/bpm/manager/form'
-        }
-      },
-      {
-        path: 'manager/model/edit',
-        component: () => import('@/views/bpm/model/editor/index.vue'),
-        name: 'BpmModelEditor',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '设计流程',
-          activeMenu: '/bpm/manager/model'
-        }
-      },
-      {
-        path: 'manager/simple/model',
-        component: () => import('@/views/bpm/simple/SimpleModelDesign.vue'),
-        name: 'SimpleModelDesign',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '仿钉钉设计流程',
-          activeMenu: '/bpm/manager/model'
-        }
-      },
-      {
-        path: 'manager/definition',
-        component: () => import('@/views/bpm/definition/index.vue'),
-        name: 'BpmProcessDefinition',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '流程定义',
-          activeMenu: '/bpm/manager/model'
-        }
-      },
-      {
-        path: 'process-instance/detail',
-        component: () => import('@/views/bpm/processInstance/detail/index.vue'),
-        name: 'BpmProcessInstanceDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '流程详情',
-          activeMenu: '/bpm/task/my'
-        },
-        props: (route) => ({
-          id: route.query.id,
-          taskId: route.query.taskId,
-          activityId: route.query.activityId
-        })
-      },
-      {
-        path: 'oa/leave/create',
-        component: () => import('@/views/bpm/oa/leave/create.vue'),
-        name: 'OALeaveCreate',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '发起 OA 请假',
-          activeMenu: '/bpm/oa/leave'
-        }
-      },
-      {
-        path: 'oa/leave/detail',
-        component: () => import('@/views/bpm/oa/leave/detail.vue'),
-        name: 'OALeaveDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: '查看 OA 请假',
-          activeMenu: '/bpm/oa/leave'
-        }
-      }
-    ]
-  },
-  {
-    path: '/mall/product', // 商品中心
-    component: Layout,
-    name: 'ProductCenter',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'spu/add',
-        component: () => import('@/views/mall/product/spu/form/index.vue'),
-        name: 'ProductSpuAdd',
-        meta: {
-          noCache: false, // 需要缓存
-          hidden: true,
-          canTo: true,
-          icon: 'ep:edit',
-          title: '商品添加',
-          activeMenu: '/mall/product/spu'
-        }
-      },
-      {
-        path: 'spu/edit/:id(\\d+)',
-        component: () => import('@/views/mall/product/spu/form/index.vue'),
-        name: 'ProductSpuEdit',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: 'ep:edit',
-          title: '商品编辑',
-          activeMenu: '/mall/product/spu'
-        }
-      },
-      {
-        path: 'spu/detail/:id(\\d+)',
-        component: () => import('@/views/mall/product/spu/form/index.vue'),
-        name: 'ProductSpuDetail',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: 'ep:view',
-          title: '商品详情',
-          activeMenu: '/mall/product/spu'
-        }
-      },
-      {
-        path: 'property/value/:propertyId(\\d+)',
-        component: () => import('@/views/mall/product/property/value/index.vue'),
-        name: 'ProductPropertyValue',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: 'ep:view',
-          title: '商品属性值',
-          activeMenu: '/product/property'
-        }
-      }
-    ]
-  },
-  {
-    path: '/mall/trade', // 交易中心
-    component: Layout,
-    name: 'TradeCenter',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'order/detail/:id(\\d+)',
-        component: () => import('@/views/mall/trade/order/detail/index.vue'),
-        name: 'TradeOrderDetail',
-        meta: { title: '订单详情', icon: 'ep:view', activeMenu: '/mall/trade/order' }
-      },
-      {
-        path: 'after-sale/detail/:id(\\d+)',
-        component: () => import('@/views/mall/trade/afterSale/detail/index.vue'),
-        name: 'TradeAfterSaleDetail',
-        meta: { title: '退款详情', icon: 'ep:view', activeMenu: '/mall/trade/after-sale' }
-      }
-    ]
-  },
-  {
-    path: '/member',
-    component: Layout,
-    name: 'MemberCenter',
-    meta: { hidden: true },
-    children: [
-      {
-        path: 'user/detail/:id',
-        name: 'MemberUserDetail',
-        meta: {
-          title: '会员详情',
-          noCache: true,
-          hidden: true
-        },
-        component: () => import('@/views/member/user/detail/index.vue')
-      }
-    ]
-  },
-  {
-    path: '/pay',
-    component: Layout,
-    name: 'pay',
-    meta: { hidden: true },
-    children: [
-      {
-        path: 'cashier',
-        name: 'PayCashier',
-        meta: {
-          title: '收银台',
-          noCache: true,
-          hidden: true
-        },
-        component: () => import('@/views/pay/cashier/index.vue')
-      }
-    ]
-  },
-  {
-    path: '/diy',
-    name: 'DiyCenter',
-    meta: { hidden: true },
-    component: Layout,
-    children: [
-      {
-        path: 'template/decorate/:id',
-        name: 'DiyTemplateDecorate',
-        meta: {
-          title: '模板装修',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/mall/promotion/diy/template'
-        },
-        component: () => import('@/views/mall/promotion/diy/template/decorate.vue')
-      },
-      {
-        path: 'page/decorate/:id',
-        name: 'DiyPageDecorate',
-        meta: {
-          title: '页面装修',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/mall/promotion/diy/page'
-        },
-        component: () => import('@/views/mall/promotion/diy/page/decorate.vue')
-      }
-    ]
-  },
-  {
-    path: '/crm',
-    component: Layout,
-    name: 'CrmCenter',
-    meta: { hidden: true },
-    children: [
-      {
-        path: 'clue/detail/:id',
-        name: 'CrmClueDetail',
-        meta: {
-          title: '线索详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/clue'
-        },
-        component: () => import('@/views/crm/clue/detail/index.vue')
-      },
-      {
-        path: 'customer/detail/:id',
-        name: 'CrmCustomerDetail',
-        meta: {
-          title: '客户详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/customer'
-        },
-        component: () => import('@/views/crm/customer/detail/index.vue')
-      },
-      {
-        path: 'business/detail/:id',
-        name: 'CrmBusinessDetail',
-        meta: {
-          title: '商机详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/business'
-        },
-        component: () => import('@/views/crm/business/detail/index.vue')
-      },
-      {
-        path: 'contract/detail/:id',
-        name: 'CrmContractDetail',
-        meta: {
-          title: '合同详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/contract'
-        },
-        component: () => import('@/views/crm/contract/detail/index.vue')
-      },
-      {
-        path: 'receivable-plan/detail/:id',
-        name: 'CrmReceivablePlanDetail',
-        meta: {
-          title: '回款计划详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/receivable-plan'
-        },
-        component: () => import('@/views/crm/receivable/plan/detail/index.vue')
-      },
-      {
-        path: 'receivable/detail/:id',
-        name: 'CrmReceivableDetail',
-        meta: {
-          title: '回款详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/receivable'
-        },
-        component: () => import('@/views/crm/receivable/detail/index.vue')
-      },
-      {
-        path: 'contact/detail/:id',
-        name: 'CrmContactDetail',
-        meta: {
-          title: '联系人详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/contact'
-        },
-        component: () => import('@/views/crm/contact/detail/index.vue')
-      },
-      {
-        path: 'product/detail/:id',
-        name: 'CrmProductDetail',
-        meta: {
-          title: '产品详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/product'
-        },
-        component: () => import('@/views/crm/product/detail/index.vue')
-      }
-    ]
-  },
-  {
-    path: '/ai',
-    component: Layout,
-    name: 'Ai',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'image/square',
-        component: () => import('@/views/ai/image/square/index.vue'),
-        name: 'AiImageSquare',
-        meta: {
-          title: '绘图作品',
-          icon: 'ep:home-filled',
-          noCache: false
-        }
-      }
-    ]
-  },
-  {
-    path: '/:pathMatch(.*)*',
-    component: () => import('@/views/Error/404.vue'),
-    name: '',
-    meta: {
-      title: '404',
-      hidden: true,
-      breadcrumb: false
-    }
-  },
-  {
-    path: '/iot',
-    component: Layout,
-    name: 'IOT',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'product/detail/:id',
-        name: 'IoTProductDetail',
-        meta: {
-          title: '产品详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/iot/product'
-        },
-        component: () => import('@/views/iot/product/detail/index.vue')
-      },
-      {
-        path: 'device/detail/:id',
-        name: 'IoTDeviceDetail',
-        meta: {
-          title: '设备详情',
-          noCache: true,
-          hidden: true,
-          activeMenu: '/iot/device'
-        },
-        component: () => import('@/views/iot/device/detail/index.vue')
-      }
-    ]
-  }
+  // {
+  //   path: '/bpm',
+  //   component: Layout,
+  //   name: 'bpm',
+  //   meta: {
+  //     hidden: true
+  //   },
+  //   children: [
+  //     {
+  //       path: 'manager/form/edit',
+  //       component: () => import('@/views/bpm/form/editor/index.vue'),
+  //       name: 'BpmFormEditor',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         title: '设计流程表单',
+  //         activeMenu: '/bpm/manager/form'
+  //       }
+  //     },
+  //     {
+  //       path: 'manager/model/edit',
+  //       component: () => import('@/views/bpm/model/editor/index.vue'),
+  //       name: 'BpmModelEditor',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         title: '设计流程',
+  //         activeMenu: '/bpm/manager/model'
+  //       }
+  //     },
+  //     {
+  //       path: 'manager/simple/model',
+  //       component: () => import('@/views/bpm/simple/SimpleModelDesign.vue'),
+  //       name: 'SimpleModelDesign',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         title: '仿钉钉设计流程',
+  //         activeMenu: '/bpm/manager/model'
+  //       }
+  //     },
+  //     {
+  //       path: 'manager/definition',
+  //       component: () => import('@/views/bpm/definition/index.vue'),
+  //       name: 'BpmProcessDefinition',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         title: '流程定义',
+  //         activeMenu: '/bpm/manager/model'
+  //       }
+  //     },
+  //     {
+  //       path: 'process-instance/detail',
+  //       component: () => import('@/views/bpm/processInstance/detail/index.vue'),
+  //       name: 'BpmProcessInstanceDetail',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         title: '流程详情',
+  //         activeMenu: '/bpm/task/my'
+  //       },
+  //       props: (route) => ({
+  //         id: route.query.id,
+  //         taskId: route.query.taskId,
+  //         activityId: route.query.activityId
+  //       })
+  //     },
+  //     {
+  //       path: 'oa/leave/create',
+  //       component: () => import('@/views/bpm/oa/leave/create.vue'),
+  //       name: 'OALeaveCreate',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         title: '发起 OA 请假',
+  //         activeMenu: '/bpm/oa/leave'
+  //       }
+  //     },
+  //     {
+  //       path: 'oa/leave/detail',
+  //       component: () => import('@/views/bpm/oa/leave/detail.vue'),
+  //       name: 'OALeaveDetail',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         title: '查看 OA 请假',
+  //         activeMenu: '/bpm/oa/leave'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/mall/product', // 商品中心
+  //   component: Layout,
+  //   name: 'ProductCenter',
+  //   meta: {
+  //     hidden: true
+  //   },
+  //   children: [
+  //     {
+  //       path: 'spu/add',
+  //       component: () => import('@/views/mall/product/spu/form/index.vue'),
+  //       name: 'ProductSpuAdd',
+  //       meta: {
+  //         noCache: false, // 需要缓存
+  //         hidden: true,
+  //         canTo: true,
+  //         icon: 'ep:edit',
+  //         title: '商品添加',
+  //         activeMenu: '/mall/product/spu'
+  //       }
+  //     },
+  //     {
+  //       path: 'spu/edit/:id(\\d+)',
+  //       component: () => import('@/views/mall/product/spu/form/index.vue'),
+  //       name: 'ProductSpuEdit',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         icon: 'ep:edit',
+  //         title: '商品编辑',
+  //         activeMenu: '/mall/product/spu'
+  //       }
+  //     },
+  //     {
+  //       path: 'spu/detail/:id(\\d+)',
+  //       component: () => import('@/views/mall/product/spu/form/index.vue'),
+  //       name: 'ProductSpuDetail',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         icon: 'ep:view',
+  //         title: '商品详情',
+  //         activeMenu: '/mall/product/spu'
+  //       }
+  //     },
+  //     {
+  //       path: 'property/value/:propertyId(\\d+)',
+  //       component: () => import('@/views/mall/product/property/value/index.vue'),
+  //       name: 'ProductPropertyValue',
+  //       meta: {
+  //         noCache: true,
+  //         hidden: true,
+  //         canTo: true,
+  //         icon: 'ep:view',
+  //         title: '商品属性值',
+  //         activeMenu: '/product/property'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/mall/trade', // 交易中心
+  //   component: Layout,
+  //   name: 'TradeCenter',
+  //   meta: {
+  //     hidden: true
+  //   },
+  //   children: [
+  //     {
+  //       path: 'order/detail/:id(\\d+)',
+  //       component: () => import('@/views/mall/trade/order/detail/index.vue'),
+  //       name: 'TradeOrderDetail',
+  //       meta: { title: '订单详情', icon: 'ep:view', activeMenu: '/mall/trade/order' }
+  //     },
+  //     {
+  //       path: 'after-sale/detail/:id(\\d+)',
+  //       component: () => import('@/views/mall/trade/afterSale/detail/index.vue'),
+  //       name: 'TradeAfterSaleDetail',
+  //       meta: { title: '退款详情', icon: 'ep:view', activeMenu: '/mall/trade/after-sale' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/member',
+  //   component: Layout,
+  //   name: 'MemberCenter',
+  //   meta: { hidden: true },
+  //   children: [
+  //     {
+  //       path: 'user/detail/:id',
+  //       name: 'MemberUserDetail',
+  //       meta: {
+  //         title: '会员详情',
+  //         noCache: true,
+  //         hidden: true
+  //       },
+  //       component: () => import('@/views/member/user/detail/index.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/pay',
+  //   component: Layout,
+  //   name: 'pay',
+  //   meta: { hidden: true },
+  //   children: [
+  //     {
+  //       path: 'cashier',
+  //       name: 'PayCashier',
+  //       meta: {
+  //         title: '收银台',
+  //         noCache: true,
+  //         hidden: true
+  //       },
+  //       component: () => import('@/views/pay/cashier/index.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/diy',
+  //   name: 'DiyCenter',
+  //   meta: { hidden: true },
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'template/decorate/:id',
+  //       name: 'DiyTemplateDecorate',
+  //       meta: {
+  //         title: '模板装修',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/mall/promotion/diy/template'
+  //       },
+  //       component: () => import('@/views/mall/promotion/diy/template/decorate.vue')
+  //     },
+  //     {
+  //       path: 'page/decorate/:id',
+  //       name: 'DiyPageDecorate',
+  //       meta: {
+  //         title: '页面装修',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/mall/promotion/diy/page'
+  //       },
+  //       component: () => import('@/views/mall/promotion/diy/page/decorate.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/crm',
+  //   component: Layout,
+  //   name: 'CrmCenter',
+  //   meta: { hidden: true },
+  //   children: [
+  //     {
+  //       path: 'clue/detail/:id',
+  //       name: 'CrmClueDetail',
+  //       meta: {
+  //         title: '线索详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/clue'
+  //       },
+  //       component: () => import('@/views/crm/clue/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'customer/detail/:id',
+  //       name: 'CrmCustomerDetail',
+  //       meta: {
+  //         title: '客户详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/customer'
+  //       },
+  //       component: () => import('@/views/crm/customer/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'business/detail/:id',
+  //       name: 'CrmBusinessDetail',
+  //       meta: {
+  //         title: '商机详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/business'
+  //       },
+  //       component: () => import('@/views/crm/business/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'contract/detail/:id',
+  //       name: 'CrmContractDetail',
+  //       meta: {
+  //         title: '合同详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/contract'
+  //       },
+  //       component: () => import('@/views/crm/contract/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'receivable-plan/detail/:id',
+  //       name: 'CrmReceivablePlanDetail',
+  //       meta: {
+  //         title: '回款计划详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/receivable-plan'
+  //       },
+  //       component: () => import('@/views/crm/receivable/plan/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'receivable/detail/:id',
+  //       name: 'CrmReceivableDetail',
+  //       meta: {
+  //         title: '回款详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/receivable'
+  //       },
+  //       component: () => import('@/views/crm/receivable/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'contact/detail/:id',
+  //       name: 'CrmContactDetail',
+  //       meta: {
+  //         title: '联系人详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/contact'
+  //       },
+  //       component: () => import('@/views/crm/contact/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'product/detail/:id',
+  //       name: 'CrmProductDetail',
+  //       meta: {
+  //         title: '产品详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/crm/product'
+  //       },
+  //       component: () => import('@/views/crm/product/detail/index.vue')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/ai',
+  //   component: Layout,
+  //   name: 'Ai',
+  //   meta: {
+  //     hidden: true
+  //   },
+  //   children: [
+  //     {
+  //       path: 'image/square',
+  //       component: () => import('@/views/ai/image/square/index.vue'),
+  //       name: 'AiImageSquare',
+  //       meta: {
+  //         title: '绘图作品',
+  //         icon: 'ep:home-filled',
+  //         noCache: false
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/:pathMatch(.*)*',
+  //   component: () => import('@/views/Error/404.vue'),
+  //   name: '',
+  //   meta: {
+  //     title: '404',
+  //     hidden: true,
+  //     breadcrumb: false
+  //   }
+  // },
+  // {
+  //   path: '/iot',
+  //   component: Layout,
+  //   name: 'IOT',
+  //   meta: {
+  //     hidden: true
+  //   },
+  //   children: [
+  //     {
+  //       path: 'product/detail/:id',
+  //       name: 'IoTProductDetail',
+  //       meta: {
+  //         title: '产品详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/iot/product'
+  //       },
+  //       component: () => import('@/views/iot/product/detail/index.vue')
+  //     },
+  //     {
+  //       path: 'device/detail/:id',
+  //       name: 'IoTDeviceDetail',
+  //       meta: {
+  //         title: '设备详情',
+  //         noCache: true,
+  //         hidden: true,
+  //         activeMenu: '/iot/device'
+  //       },
+  //       component: () => import('@/views/iot/device/detail/index.vue')
+  //     }
+  //   ]
+  // }
 ]
 
 export default remainingRouter

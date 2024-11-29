@@ -6,7 +6,7 @@ import { useNow } from '@/hooks/web/useNow'
 import { useDesign } from '@/hooks/web/useDesign'
 import { useTagsViewStore } from '@/store/modules/tagsView'
 import { useUserStore } from '@/store/modules/user'
-import avatarImg from '@/assets/imgs/avatar.gif'
+import avatarImg from 'https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png'
 
 const tagsViewStore = useTagsViewStore()
 

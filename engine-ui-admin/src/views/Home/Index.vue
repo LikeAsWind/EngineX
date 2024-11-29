@@ -6,7 +6,7 @@
           <el-col :xl="12" :lg="12" :md="12" :sm="24" :xs="24">
             <div class="flex items-center">
               <el-avatar :src="avatar" :size="70" class="mr-16px">
-                <img src="@/assets/imgs/avatar.gif" alt="" />
+                <img src="https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png" alt="" />
               </el-avatar>
               <div>
                 <div class="text-20px">
@@ -151,7 +151,7 @@
           <div v-for="(item, index) in notice" :key="`dynamics-${index}`">
             <div class="flex items-center">
               <el-avatar :src="avatar" :size="35" class="mr-16px">
-                <img src="@/assets/imgs/avatar.gif" alt="" />
+                <img src="https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png" alt="" />
               </el-avatar>
               <div>
                 <div class="text-14px">

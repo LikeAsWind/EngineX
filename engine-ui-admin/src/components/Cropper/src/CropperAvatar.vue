@@ -18,7 +18,7 @@ import { useDesign } from '@/hooks/web/useDesign'
 import { propTypes } from '@/utils/propTypes'
 import { useI18n } from 'vue-i18n'
 import CopperModal from './CopperModal.vue'
-import avatar from '@/assets/imgs/avatar.gif'
+import avatar from 'https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png'
 
 defineOptions({ name: 'CropperAvatar' })
 

@@ -62,7 +62,7 @@ onMounted(() => {
           <el-scrollbar class="message-list">
             <template v-for="item in list" :key="item.id">
               <div class="message-item">
-                <img alt="" class="message-icon" src="@/assets/imgs/avatar.gif" />
+                <img alt="" class="message-icon" src="https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png" />
                 <div class="message-content">
                   <span class="message-title">
                     {{ item.templateNickname }}：{{ item.templateContent }}
