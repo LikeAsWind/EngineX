@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.nstep.engine.framework.common.exception.enums.GlobalErrorCodeConstants;
 import org.nstep.engine.framework.common.pojo.CommonResult;
 import org.nstep.engine.framework.common.util.servlet.ServletUtils;
@@ -31,13 +32,12 @@ import java.util.Objects;
 @Slf4j
 public class TenantSecurityWebFilter extends ApiRequestFilter {
 
-    private final TenantProperties tenantProperties;
+    private final TenantProperties tenantProperties; // 存储租户相关配置
+    private final AntPathMatcher pathMatcher; // 用于匹配 URL 路径
+    private final GlobalExceptionHandler globalExceptionHandler; // 处理全局异常
+    private final TenantFrameworkService tenantFrameworkService; // 租户框架服务，用于校验租户合法性
 
-    private final AntPathMatcher pathMatcher;
-
-    private final GlobalExceptionHandler globalExceptionHandler;
-    private final TenantFrameworkService tenantFrameworkService;
-
+    // 构造函数，初始化相关依赖
     public TenantSecurityWebFilter(TenantProperties tenantProperties,
                                    WebProperties webProperties,
                                    GlobalExceptionHandler globalExceptionHandler,
@@ -50,18 +50,19 @@ public class TenantSecurityWebFilter extends ApiRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain chain)
             throws ServletException, IOException {
-        Long tenantId = TenantContextHolder.getTenantId();
+        Long tenantId = TenantContextHolder.getTenantId(); // 获取当前请求的租户 ID
+
         // 1. 登陆的用户，校验是否有权限访问该租户，避免越权问题。
-        LoginUser user = SecurityFrameworkUtils.getLoginUser();
+        LoginUser user = SecurityFrameworkUtils.getLoginUser(); // 获取当前登录用户
         if (user != null) {
-            // 如果获取不到租户编号，则尝试使用登陆用户的租户编号
+            // 如果请求中没有传递租户 ID，则尝试使用登录用户的租户 ID
             if (tenantId == null) {
                 tenantId = user.getTenantId();
                 TenantContextHolder.setTenantId(tenantId);
-                // 如果传递了租户编号，则进行比对租户编号，避免越权问题
             } else if (!Objects.equals(user.getTenantId(), TenantContextHolder.getTenantId())) {
+                // 如果请求中的租户 ID 与登录用户的租户 ID 不一致，说明存在越权访问
                 log.error("[doFilterInternal][租户({}) User({}/{}) 越权访问租户({}) URL({}/{})]",
                         user.getTenantId(), user.getId(), user.getUserType(),
                         TenantContextHolder.getTenantId(), request.getRequestURI(), request.getMethod());
@@ -71,7 +72,7 @@ public class TenantSecurityWebFilter extends ApiRequestFilter {
             }
         }
 
-        // 如果非允许忽略租户的 URL，则校验租户是否合法
+        // 如果请求的 URL 不在忽略列表中，则校验租户是否合法
         if (!isIgnoreUrl(request)) {
             // 2. 如果请求未带租户的编号，不允许访问。
             if (tenantId == null) {
@@ -80,10 +81,12 @@ public class TenantSecurityWebFilter extends ApiRequestFilter {
                         "请求的租户标识未传递，请进行排查"));
                 return;
             }
-            // 3. 校验租户是合法，例如说被禁用、到期
+
+            // 3. 校验租户是否合法，例如说被禁用、到期
             try {
-                tenantFrameworkService.validTenant(tenantId);
+                tenantFrameworkService.validTenant(tenantId); // 校验租户的有效性
             } catch (Throwable ex) {
+                // 如果校验失败，返回异常信息
                 CommonResult<?> result = globalExceptionHandler.allExceptionHandler(request, ex);
                 ServletUtils.writeJSON(response, result);
                 return;
@@ -94,10 +97,11 @@ public class TenantSecurityWebFilter extends ApiRequestFilter {
             }
         }
 
-        // 继续过滤
+        // 继续执行过滤链
         chain.doFilter(request, response);
     }
 
+    // 判断请求 URL 是否在忽略列表中
     private boolean isIgnoreUrl(HttpServletRequest request) {
         // 快速匹配，保证性能
         if (CollUtil.contains(tenantProperties.getIgnoreUrls(), request.getRequestURI())) {
@@ -111,5 +115,4 @@ public class TenantSecurityWebFilter extends ApiRequestFilter {
         }
         return false;
     }
-
 }

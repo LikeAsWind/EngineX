@@ -1,21 +1,6 @@
-/*
- * Copyright 2002-2023 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springframework.messaging.handler.invocation;
 
+import lombok.Setter;
 import org.nstep.engine.framework.tenant.core.context.TenantContextHolder;
 import org.nstep.engine.framework.tenant.core.util.TenantUtils;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -34,110 +19,102 @@ import java.util.Arrays;
 
 import static org.nstep.engine.framework.web.core.util.WebFrameworkUtils.HEADER_TENANT_ID;
 
+
 /**
- * Extension of {@link HandlerMethod} that invokes the underlying method with
- * argument values resolved from the current HTTP request through a list of
- * {@link HandlerMethodArgumentResolver}.
+ * {@link HandlerMethod} 的扩展类，用于在当前 HTTP 请求上下文中通过一组 {@link HandlerMethodArgumentResolver} 解析方法参数值并调用底层方法。
  * <p>
- * 针对 rabbitmq-spring 和 kafka-spring，不存在合适的拓展点，可以实现 Consumer 消费前，读取 Header 中的 tenant-id 设置到 {@link TenantContextHolder} 中
- * TODO 芋艿：持续跟进，看看有没新的拓展点
+ * 针对 rabbitmq-spring 和 kafka-spring，目前没有合适的扩展点，可以在消费者（Consumer）消费消息之前，读取消息 Header 中的 tenant-id 并设置到 {@link TenantContextHolder} 中。
  *
  * @since 4.0
  */
 public class InvocableHandlerMethod extends HandlerMethod {
 
-    private static final Object[] EMPTY_ARGS = new Object[0];
+    private static final Object[] EMPTY_ARGS = new Object[0];  // 空参数数组
 
-
-    private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
-
-    private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
-
+    private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();  // 参数解析器
+    @Setter
+    private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();  // 参数名称发现器
 
     /**
-     * Create an instance from a {@code HandlerMethod}.
+     * 从 {@code HandlerMethod} 创建一个实例。
+     *
+     * @param handlerMethod 原始的 HandlerMethod 实例
      */
     public InvocableHandlerMethod(HandlerMethod handlerMethod) {
         super(handlerMethod);
     }
 
     /**
-     * Create an instance from a bean instance and a method.
+     * 从一个 bean 实例和方法创建一个实例。
+     *
+     * @param bean   bean 实例
+     * @param method 方法对象
      */
     public InvocableHandlerMethod(Object bean, Method method) {
         super(bean, method);
     }
 
     /**
-     * Construct a new handler method with the given bean instance, method name and parameters.
+     * 使用给定的 bean 实例、方法名和参数类型构造一个新的 handler 方法。
      *
-     * @param bean           the object bean
-     * @param methodName     the method name
-     * @param parameterTypes the method parameter types
-     * @throws NoSuchMethodException when the method cannot be found
+     * @param bean           bean 对象
+     * @param methodName     方法名
+     * @param parameterTypes 方法参数类型
+     * @throws NoSuchMethodException 如果方法找不到
      */
-    public InvocableHandlerMethod(Object bean, String methodName, Class<?>... parameterTypes)
-            throws NoSuchMethodException {
-
+    public InvocableHandlerMethod(Object bean, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
         super(bean, methodName, parameterTypes);
     }
 
-
     /**
-     * Set {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers} to use for resolving method argument values.
+     * 设置 {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers}，用于解析方法参数值。
+     *
+     * @param argumentResolvers 参数解析器集合
      */
     public void setMessageMethodArgumentResolvers(HandlerMethodArgumentResolverComposite argumentResolvers) {
         this.resolvers = argumentResolvers;
     }
 
-    /**
-     * Set the ParameterNameDiscoverer for resolving parameter names when needed
-     * (e.g. default request attribute name).
-     * <p>Default is a {@link org.springframework.core.DefaultParameterNameDiscoverer}.
-     */
-    public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
-        this.parameterNameDiscoverer = parameterNameDiscoverer;
-    }
-
 
     /**
-     * Invoke the method after resolving its argument values in the context of the given message.
-     * <p>Argument values are commonly resolved through
-     * {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers}.
-     * The {@code providedArgs} parameter however may supply argument values to be used directly,
-     * i.e. without argument resolution.
-     * <p>Delegates to {@link #getMethodArgumentValues} and calls {@link #doInvoke} with the
-     * resolved arguments.
+     * 在给定消息的上下文中解析方法参数值后调用方法。
+     * <p>参数值通常通过 {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers} 解析。
+     * 然而，{@code providedArgs} 参数可以直接提供匹配类型的参数值，而无需解析。
+     * <p>委托给 {@link #getMethodArgumentValues} 并使用解析后的参数调用 {@link #doInvoke}。
      *
-     * @param message      the current message being processed
-     * @param providedArgs "given" arguments matched by type, not resolved
-     * @return the raw value returned by the invoked method
-     * @throws Exception raised if no suitable argument resolver can be found,
-     *                   or if the method raised an exception
+     * @param message      当前处理的消息
+     * @param providedArgs 直接提供的参数值
+     * @return 调用方法时返回的原始值
+     * @throws Exception 如果找不到合适的参数解析器，或者方法抛出异常
      * @see #getMethodArgumentValues
      * @see #doInvoke
      */
     @Nullable
     public Object invoke(Message<?> message, Object... providedArgs) throws Exception {
+        // 获取方法参数的值
         Object[] args = getMethodArgumentValues(message, providedArgs);
         if (logger.isTraceEnabled()) {
-            logger.trace("Arguments: " + Arrays.toString(args));
+            logger.trace("Arguments: " + Arrays.toString(args));  // 日志记录参数
         }
-        // 注意：如下是本类的改动点！！！
-        // 情况一：无租户编号的情况
-        Long tenantId = parseTenantId(message);
-        if (tenantId == null) {
-            return doInvoke(args);
-        }
-        // 情况二：有租户的情况下
-        return TenantUtils.execute(tenantId, () -> doInvoke(args));
+
+        // 处理租户 ID
+        Long tenantId = parseTenantId(message);  // 从消息中解析租户 ID
+        // 如果有租户 ID，使用租户上下文执行方法
+        return TenantUtils.execute(tenantId, () -> doInvoke(args));  // 在租户上下文中执行方法
     }
 
+    /**
+     * 从消息中解析租户 ID。
+     *
+     * @param message 消息对象
+     * @return 租户 ID 或 null
+     */
     private Long parseTenantId(Message<?> message) {
-        Object tenantId = message.getHeaders().get(HEADER_TENANT_ID);
+        Object tenantId = message.getHeaders().get(HEADER_TENANT_ID);  // 获取消息头中的租户 ID
         if (tenantId == null) {
-            return null;
+            return null;  // 如果没有租户 ID，返回 null
         }
+        // 根据不同的类型进行转换
         if (tenantId instanceof Long) {
             return (Long) tenantId;
         }
@@ -150,93 +127,105 @@ public class InvocableHandlerMethod extends HandlerMethod {
         if (tenantId instanceof byte[]) {
             return Long.parseLong(new String((byte[]) tenantId));
         }
+        // 如果租户 ID 类型不合法，抛出异常
         throw new IllegalArgumentException("未知的数据类型：" + tenantId);
     }
 
     /**
-     * Get the method argument values for the current message, checking the provided
-     * argument values and falling back to the configured argument resolvers.
-     * <p>The resulting array will be passed into {@link #doInvoke}.
+     * 获取当前消息的参数值，检查提供的参数值并回退到配置的参数解析器。
+     * <p>最终生成的数组将传递给 {@link #doInvoke} 方法。
      *
      * @since 5.1.2
      */
     protected Object[] getMethodArgumentValues(Message<?> message, Object... providedArgs) throws Exception {
-        MethodParameter[] parameters = getMethodParameters();
+        MethodParameter[] parameters = getMethodParameters();  // 获取方法的参数信息
         if (ObjectUtils.isEmpty(parameters)) {
-            return EMPTY_ARGS;
+            return EMPTY_ARGS;  // 如果没有参数，返回空数组
         }
 
-        Object[] args = new Object[parameters.length];
+        Object[] args = new Object[parameters.length];  // 参数数组
         for (int i = 0; i < parameters.length; i++) {
             MethodParameter parameter = parameters[i];
-            parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
-            args[i] = findProvidedArgument(parameter, providedArgs);
+            parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);  // 初始化参数名称发现器
+            args[i] = findProvidedArgument(parameter, providedArgs);  // 查找提供的参数值
             if (args[i] != null) {
-                continue;
+                continue;  // 如果参数值已提供，则跳过
             }
+            // 如果没有提供参数值，检查是否支持解析该参数
             if (!this.resolvers.supportsParameter(parameter)) {
-                throw new MethodArgumentResolutionException(
-                        message, parameter, formatArgumentError(parameter, "No suitable resolver"));
+                throw new MethodArgumentResolutionException(message, parameter, formatArgumentError(parameter, "No suitable resolver"));
             }
             try {
+                // 使用参数解析器解析参数
                 args[i] = this.resolvers.resolveArgument(parameter, message);
             } catch (Exception ex) {
-                // Leave stack trace for later, exception may actually be resolved and handled...
+                // 异常处理，日志记录解析错误
                 if (logger.isDebugEnabled()) {
                     String exMsg = ex.getMessage();
                     if (exMsg != null && !exMsg.contains(parameter.getExecutable().toGenericString())) {
                         logger.debug(formatArgumentError(parameter, exMsg));
                     }
                 }
-                throw ex;
+                throw ex;  // 抛出异常
             }
         }
-        return args;
+        return args;  // 返回解析后的参数数组
     }
 
     /**
-     * Invoke the handler method with the given argument values.
+     * 使用给定的参数值调用 handler 方法。
+     *
+     * @param args 方法参数
+     * @return 方法返回值
+     * @throws Exception 调用方法时可能抛出的异常
      */
     @Nullable
     protected Object doInvoke(Object... args) throws Exception {
         try {
-            return getBridgedMethod().invoke(getBean(), args);
+            return getBridgedMethod().invoke(getBean(), args);  // 调用方法
         } catch (IllegalArgumentException ex) {
+            // 如果方法参数不合法，抛出异常
             assertTargetBean(getBridgedMethod(), getBean(), args);
-            String text = (ex.getMessage() == null || ex.getCause() instanceof NullPointerException) ?
-                    "Illegal argument" : ex.getMessage();
+            String text = (ex.getMessage() == null || ex.getCause() instanceof NullPointerException) ? "Illegal argument" : ex.getMessage();
             throw new IllegalStateException(formatInvokeError(text, args), ex);
         } catch (InvocationTargetException ex) {
-            // Unwrap for HandlerExceptionResolvers ...
+            // 解包 InvocationTargetException 中的目标异常
             Throwable targetException = ex.getTargetException();
             if (targetException instanceof RuntimeException runtimeException) {
-                throw runtimeException;
+                throw runtimeException;  // 重新抛出 RuntimeException
             } else if (targetException instanceof Error error) {
-                throw error;
+                throw error;  // 重新抛出 Error
             } else if (targetException instanceof Exception exception) {
-                throw exception;
+                throw exception;  // 重新抛出 Exception
             } else {
                 throw new IllegalStateException(formatInvokeError("Invocation failure", args), targetException);
             }
         }
     }
 
+    /**
+     * 获取异步返回值的类型。
+     *
+     * @param returnValue 方法的返回值
+     * @return 异步结果方法参数
+     */
     MethodParameter getAsyncReturnValueType(@Nullable Object returnValue) {
-        return new AsyncResultMethodParameter(returnValue);
+        return new AsyncResultMethodParameter(returnValue);  // 返回异步结果参数
     }
 
-
+    /**
+     * 异步结果方法参数类，用于处理返回值类型。
+     */
     private class AsyncResultMethodParameter extends AnnotatedMethodParameter {
 
         @Nullable
-        private final Object returnValue;
-
-        private final ResolvableType returnType;
+        private final Object returnValue;  // 返回值
+        private final ResolvableType returnType;  // 返回值类型
 
         public AsyncResultMethodParameter(@Nullable Object returnValue) {
             super(-1);
             this.returnValue = returnValue;
-            this.returnType = ResolvableType.forType(super.getGenericParameterType()).getGeneric();
+            this.returnType = ResolvableType.forType(super.getGenericParameterType()).getGeneric();  // 获取返回值的类型
         }
 
         protected AsyncResultMethodParameter(AsyncResultMethodParameter original) {
@@ -248,23 +237,22 @@ public class InvocableHandlerMethod extends HandlerMethod {
         @Override
         public Class<?> getParameterType() {
             if (this.returnValue != null) {
-                return this.returnValue.getClass();
+                return this.returnValue.getClass();  // 返回值类型
             }
             if (!ResolvableType.NONE.equals(this.returnType)) {
-                return this.returnType.toClass();
+                return this.returnType.toClass();  // 返回解析的类型
             }
-            return super.getParameterType();
+            return super.getParameterType();  // 默认类型
         }
 
         @Override
         public Type getGenericParameterType() {
-            return this.returnType.getType();
+            return this.returnType.getType();  // 返回泛型类型
         }
 
         @Override
         public AsyncResultMethodParameter clone() {
-            return new AsyncResultMethodParameter(this);
+            return new AsyncResultMethodParameter(this);  // 克隆方法参数
         }
     }
-
 }
