@@ -29,6 +29,10 @@ import static org.nstep.engine.framework.common.util.collection.CollectionUtils.
 
 /**
  * 基于固定 sheet 实现下拉框
+ * <p>
+ * 该类用于在 Excel 中创建下拉框，具体做法是通过一个单独的 sheet（"字典sheet"）来存放下拉框的数据源。
+ * 然后在目标 sheet 中的指定列插入下拉框，供用户选择。
+ * 下拉框的数据源可以来自字典数据或自定义方法。
  */
 @Slf4j
 public class SelectSheetWriteHandler implements SheetWriteHandler {
@@ -36,31 +40,43 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
     /**
      * 数据起始行从 0 开始
      * <p>
-     * 约定：本项目第一行有标题所以从 1 开始如果您的 Excel 有多行标题请自行更改
+     * 约定：本项目第一行有标题，所以数据从第 2 行开始（索引为 1）。如果您的 Excel 有多行标题，请自行调整此值。
      */
     public static final int FIRST_ROW = 1;
+
     /**
-     * 下拉列需要创建下拉框的行数，默认两千行如需更多请自行调整
+     * 下拉列需要创建下拉框的行数，默认两千行。若需要更多行，请自行调整此值。
      */
     public static final int LAST_ROW = 2000;
 
+    /**
+     * 字典 sheet 的名称，用于存放所有的下拉数据源。
+     */
     private static final String DICT_SHEET_NAME = "字典sheet";
 
     /**
-     * key: 列 value: 下拉数据源
+     * 存储每一列的下拉数据源，key 为列索引，value 为对应的下拉数据源。
      */
     private final Map<Integer, List<String>> selectMap = new HashMap<>();
 
+    /**
+     * 构造方法，初始化下拉数据源。
+     * <p>
+     * 该方法会解析传入类的字段，查找被 @ExcelColumnSelect 注解标记的字段，并获取对应的下拉数据源。
+     *
+     * @param head 要解析的类（通常是 Excel 数据的实体类）
+     */
     public SelectSheetWriteHandler(Class<?> head) {
         // 解析下拉数据
         int colIndex = 0;
         for (Field field : head.getDeclaredFields()) {
+            // 查找带有 @ExcelColumnSelect 注解的字段
             if (field.isAnnotationPresent(ExcelColumnSelect.class)) {
                 ExcelProperty excelProperty = field.getAnnotation(ExcelProperty.class);
                 if (excelProperty != null && excelProperty.index() != -1) {
-                    colIndex = excelProperty.index();
+                    colIndex = excelProperty.index(); // 获取列索引
                 }
-                getSelectDataList(colIndex, field);
+                getSelectDataList(colIndex, field); // 获取该列的下拉数据源
             }
             colIndex++;
         }
@@ -68,6 +84,13 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
 
     /**
      * 设置单元格下拉选择
+     * <p>
+     * 该方法用于为 Excel 的指定列创建下拉框，并设置相关的验证约束。
+     *
+     * @param writeSheetHolder 写入的 sheet 对象
+     * @param workbook         工作簿对象
+     * @param helper           数据验证助手
+     * @param keyValue         存储列索引和下拉数据源的键值对
      */
     private static void setColumnSelect(WriteSheetHolder writeSheetHolder, Workbook workbook, DataValidationHelper helper,
                                         KeyValue<Integer, List<String>> keyValue) {
@@ -86,10 +109,10 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
                 keyValue.getKey(), keyValue.getKey());
         DataValidation validation = helper.createValidation(constraint, rangeAddressList);
         if (validation instanceof HSSFDataValidation) {
-            validation.setSuppressDropDownArrow(false);
+            validation.setSuppressDropDownArrow(false); // 显示下拉箭头
         } else {
-            validation.setSuppressDropDownArrow(true);
-            validation.setShowErrorBox(true);
+            validation.setSuppressDropDownArrow(true); // 隐藏下拉箭头
+            validation.setShowErrorBox(true); // 显示错误框
         }
         // 2.2 阻止输入非下拉框的值
         validation.setErrorStyle(DataValidation.ErrorStyle.STOP);
@@ -100,6 +123,10 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
 
     /**
      * 获得下拉数据，并添加到 {@link #selectMap} 中
+     * <p>
+     * 该方法根据列索引和字段获取下拉数据源，支持两种方式：
+     * 1. 使用字典类型（dictType）获取下拉数据。
+     * 2. 使用自定义方法名称（functionName）获取下拉数据。
      *
      * @param colIndex 列索引
      * @param field    字段
@@ -112,8 +139,8 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
                 "Field({}) 的 @ExcelColumnSelect 注解，dictType 和 functionName 不能同时为空", field.getName());
 
         // 情况一：使用 dictType 获得下拉数据
-        if (StrUtil.isNotEmpty(dictType)) { // 情况一： 字典数据 （默认）
-            selectMap.put(colIndex, DictFrameworkUtils.getDictDataLabelList(dictType));
+        if (StrUtil.isNotEmpty(dictType)) {
+            selectMap.put(colIndex, DictFrameworkUtils.getDictDataLabelList(dictType)); // 使用字典数据
             return;
         }
 
@@ -121,9 +148,17 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
         Map<String, ExcelColumnSelectFunction> functionMap = SpringUtil.getApplicationContext().getBeansOfType(ExcelColumnSelectFunction.class);
         ExcelColumnSelectFunction function = CollUtil.findOne(functionMap.values(), item -> item.getName().equals(functionName));
         Assert.notNull(function, "未找到对应的 function({})", functionName);
-        selectMap.put(colIndex, function.getOptions());
+        selectMap.put(colIndex, function.getOptions()); // 使用自定义方法获取数据
     }
 
+    /**
+     * 在 Excel 工作簿创建后，设置下拉框数据。
+     * <p>
+     * 该方法会在 Excel sheet 创建后执行，主要用于设置字典 sheet 和目标 sheet 中的下拉框。
+     *
+     * @param writeWorkbookHolder 写入工作簿的操作对象
+     * @param writeSheetHolder    写入 sheet 的操作对象
+     */
     @Override
     public void afterSheetCreate(WriteWorkbookHolder writeWorkbookHolder, WriteSheetHolder writeSheetHolder) {
         if (CollUtil.isEmpty(selectMap)) {
@@ -134,7 +169,7 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
         DataValidationHelper helper = writeSheetHolder.getSheet().getDataValidationHelper(); // 需要设置下拉框的 sheet 页的数据验证助手
         Workbook workbook = writeWorkbookHolder.getWorkbook(); // 获得工作簿
         List<KeyValue<Integer, List<String>>> keyValues = convertList(selectMap.entrySet(), entry -> new KeyValue<>(entry.getKey(), entry.getValue()));
-        keyValues.sort(Comparator.comparing(item -> item.getValue().size())); // 升序不然创建下拉会报错
+        keyValues.sort(Comparator.comparing(item -> item.getValue().size())); // 升序排序，以避免创建下拉框时出错
 
         // 2. 创建数据字典的 sheet 页
         Sheet dictSheet = workbook.createSheet(DICT_SHEET_NAME);
