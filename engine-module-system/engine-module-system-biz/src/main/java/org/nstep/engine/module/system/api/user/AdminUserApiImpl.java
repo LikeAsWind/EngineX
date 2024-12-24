@@ -22,7 +22,7 @@ import java.util.List;
 import static org.nstep.engine.framework.common.pojo.CommonResult.success;
 import static org.nstep.engine.framework.common.util.collection.CollectionUtils.convertSet;
 
-@RestController // 提供 RESTful API 接口，给 Feign 调用
+@RestController // 提供 RESTFul API 接口，给 Feign 调用
 @Validated
 public class AdminUserApiImpl implements AdminUserApi {
 

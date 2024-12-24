@@ -10,4 +10,5 @@ public interface IntArrayValuable {
      */
     int[] array();
 
+
 }

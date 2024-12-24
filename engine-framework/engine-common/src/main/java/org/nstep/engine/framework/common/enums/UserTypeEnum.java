@@ -28,12 +28,27 @@ public enum UserTypeEnum implements IntArrayValuable {
      */
     private final String name;
 
+    /**
+     * 根据给定的整数类型值返回对应的枚举常量
+     *
+     * @param value 要查找的整数类型值
+     * @return 如果找到对应的枚举常量，则返回该枚举常量；否则返回 null
+     */
     public static UserTypeEnum valueOf(Integer value) {
+        // 使用 ArrayUtil.firstMatch 方法查找第一个满足条件的枚举常量
         return ArrayUtil.firstMatch(userType -> userType.getValue().equals(value), UserTypeEnum.values());
     }
 
+
+    /**
+     * 重写 IntArrayValuable 接口的 array 方法
+     * 返回一个整数数组，该数组包含了枚举类中所有状态值
+     *
+     * @return 整数数组，包含了枚举类中所有状态值
+     */
     @Override
     public int[] array() {
         return ARRAYS;
     }
+
 }

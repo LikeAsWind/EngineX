@@ -14,7 +14,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class KeyValue<K, V> implements Serializable {
 
+    /**
+     * 键
+     */
     private K key;
+    /**
+     * 值
+     */
     private V value;
 
 }

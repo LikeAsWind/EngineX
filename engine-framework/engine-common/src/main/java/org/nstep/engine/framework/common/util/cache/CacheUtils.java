@@ -26,10 +26,11 @@ public class CacheUtils {
      * @return LoadingCache 对象
      */
     public static <K, V> LoadingCache<K, V> buildAsyncReloadingCache(Duration duration, CacheLoader<K, V> loader) {
+        // 使用 CacheBuilder 创建一个新的缓存构建器
         return CacheBuilder.newBuilder()
-                // 只阻塞当前数据加载线程，其他线程返回旧值
+                // 设置缓存项在写入后经过指定的持续时间后刷新
                 .refreshAfterWrite(duration)
-                // 通过 asyncReloading 实现全异步加载，包括 refreshAfterWrite 被阻塞的加载线程
+                // 使用 asyncReloading 方法构建一个异步加载缓存
                 .build(CacheLoader.asyncReloading(loader, Executors.newCachedThreadPool())); // TODO 芋艿：可能要思考下，未来要不要做成可配置
     }
 
@@ -41,7 +42,12 @@ public class CacheUtils {
      * @return LoadingCache 对象
      */
     public static <K, V> LoadingCache<K, V> buildCache(Duration duration, CacheLoader<K, V> loader) {
-        return CacheBuilder.newBuilder().refreshAfterWrite(duration).build(loader);
+        // 使用 CacheBuilder 创建一个新的缓存构建器
+        return CacheBuilder.newBuilder()
+                // 设置缓存项在写入后经过指定的持续时间后刷新
+                .refreshAfterWrite(duration)
+                // 构建一个同步加载缓存
+                .build(loader);
     }
 
 }
