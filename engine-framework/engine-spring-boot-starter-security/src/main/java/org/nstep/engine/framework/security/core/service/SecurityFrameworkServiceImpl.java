@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.nstep.engine.framework.common.core.KeyValue;
 import org.nstep.engine.framework.security.core.LoginUser;
 import org.nstep.engine.framework.security.core.util.SecurityFrameworkUtils;
@@ -30,10 +31,11 @@ public class SecurityFrameworkServiceImpl implements SecurityFrameworkService {
      */
     private final LoadingCache<KeyValue<Long, List<String>>, Boolean> hasAnyRolesCache = buildCache(
             Duration.ofMinutes(1L), // 过期时间 1 分钟
-            new CacheLoader<KeyValue<Long, List<String>>, Boolean>() {
+            new CacheLoader<>() {
 
+                @NotNull
                 @Override
-                public Boolean load(KeyValue<Long, List<String>> key) {
+                public Boolean load(@NotNull KeyValue<Long, List<String>> key) {
                     return permissionApi.hasAnyRoles(key.getKey(), key.getValue().toArray(new String[0])).getCheckedData();
                 }
 
@@ -44,10 +46,11 @@ public class SecurityFrameworkServiceImpl implements SecurityFrameworkService {
      */
     private final LoadingCache<KeyValue<Long, List<String>>, Boolean> hasAnyPermissionsCache = buildCache(
             Duration.ofMinutes(1L), // 过期时间 1 分钟
-            new CacheLoader<KeyValue<Long, List<String>>, Boolean>() {
+            new CacheLoader<>() {
 
+                @NotNull
                 @Override
-                public Boolean load(KeyValue<Long, List<String>> key) {
+                public Boolean load(@NotNull KeyValue<Long, List<String>> key) {
                     return permissionApi.hasAnyPermissions(key.getKey(), key.getValue().toArray(new String[0])).getCheckedData();
                 }
 

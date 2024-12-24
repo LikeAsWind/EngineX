@@ -31,7 +31,8 @@ public class CacheUtils {
                 // 设置缓存项在写入后经过指定的持续时间后刷新
                 .refreshAfterWrite(duration)
                 // 使用 asyncReloading 方法构建一个异步加载缓存
-                .build(CacheLoader.asyncReloading(loader, Executors.newCachedThreadPool())); // TODO 芋艿：可能要思考下，未来要不要做成可配置
+                // 可能要思考下，未来要不要做成可配置
+                .build(CacheLoader.asyncReloading(loader, Executors.newCachedThreadPool()));
     }
 
     /**
