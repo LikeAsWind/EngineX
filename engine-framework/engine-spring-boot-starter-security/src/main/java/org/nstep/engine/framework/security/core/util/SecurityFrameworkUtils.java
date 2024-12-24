@@ -17,16 +17,21 @@ import java.util.Collections;
 
 /**
  * 安全服务工具类
+ * <p>
+ * 该工具类提供了一些与安全相关的辅助方法，例如从请求中获取认证信息、设置当前用户等操作。
  */
 public class SecurityFrameworkUtils {
 
     /**
      * HEADER 认证头 value 的前缀
+     * <p>
+     * 用于处理 Bearer 类型的认证 Token。
      */
     public static final String AUTHORIZATION_BEARER = "Bearer";
 
     public static final String LOGIN_USER_HEADER = "login-user";
 
+    // 私有化构造方法，防止实例化
     private SecurityFrameworkUtils() {
     }
 
@@ -40,7 +45,7 @@ public class SecurityFrameworkUtils {
      */
     public static String obtainAuthorization(HttpServletRequest request,
                                              String headerName, String parameterName) {
-        // 1. 获得 Token。优先级：Header > Parameter
+        // 1. 获取 Token，优先级：Header > Parameter
         String token = request.getHeader(headerName);
         if (StrUtil.isEmpty(token)) {
             token = request.getParameter(parameterName);
@@ -48,7 +53,7 @@ public class SecurityFrameworkUtils {
         if (!StringUtils.hasText(token)) {
             return null;
         }
-        // 2. 去除 Token 中带的 Bearer
+        // 2. 去除 Token 中的 Bearer 前缀
         int index = token.indexOf(AUTHORIZATION_BEARER + " ");
         return index >= 0 ? token.substring(index + 7).trim() : token;
     }
@@ -56,7 +61,7 @@ public class SecurityFrameworkUtils {
     /**
      * 获得当前认证信息
      *
-     * @return 认证信息
+     * @return 当前认证信息
      */
     public static Authentication getAuthentication() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -77,13 +82,14 @@ public class SecurityFrameworkUtils {
         if (authentication == null) {
             return null;
         }
+        // 获取当前认证用户，如果是 LoginUser 类型，则返回该用户
         return authentication.getPrincipal() instanceof LoginUser ? (LoginUser) authentication.getPrincipal() : null;
     }
 
     /**
      * 获得当前用户的编号，从上下文中
      *
-     * @return 用户编号
+     * @return 当前用户编号
      */
     @Nullable
     public static Long getLoginUserId() {
@@ -94,7 +100,7 @@ public class SecurityFrameworkUtils {
     /**
      * 获得当前用户的昵称，从上下文中
      *
-     * @return 昵称
+     * @return 当前用户昵称
      */
     @Nullable
     public static String getLoginUserNickname() {
@@ -105,7 +111,7 @@ public class SecurityFrameworkUtils {
     /**
      * 获得当前用户的部门编号，从上下文中
      *
-     * @return 部门编号
+     * @return 当前用户部门编号
      */
     @Nullable
     public static Long getLoginUserDeptId() {
@@ -124,16 +130,23 @@ public class SecurityFrameworkUtils {
         Authentication authentication = buildAuthentication(loginUser, request);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 额外设置到 request 中，用于 ApiAccessLogFilter 可以获取到用户编号；
-        // 原因是，Spring Security 的 Filter 在 ApiAccessLogFilter 后面，在它记录访问日志时，线上上下文已经没有用户编号等信息
+        // 额外设置到 request 中，便于 ApiAccessLogFilter 获取用户编号
         WebFrameworkUtils.setLoginUserId(request, loginUser.getId());
         WebFrameworkUtils.setLoginUserType(request, loginUser.getUserType());
     }
 
+    /**
+     * 构建 Authentication 对象
+     *
+     * @param loginUser 登录用户
+     * @param request   请求
+     * @return Authentication 对象
+     */
     private static Authentication buildAuthentication(LoginUser loginUser, HttpServletRequest request) {
-        // 创建 UsernamePasswordAuthenticationToken 对象
+        // 创建 UsernamePasswordAuthenticationToken 对象，代表当前认证的用户
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginUser, null, Collections.emptyList());
+        // 设置 Web 请求相关的认证信息
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         return authenticationToken;
     }

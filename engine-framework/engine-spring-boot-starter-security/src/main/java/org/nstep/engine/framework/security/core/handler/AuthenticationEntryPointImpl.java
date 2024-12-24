@@ -22,10 +22,19 @@ import static org.nstep.engine.framework.common.exception.enums.GlobalErrorCodeC
 @SuppressWarnings("JavadocReference") // 忽略文档引用报错
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
+    /**
+     * 处理未认证（未登录）访问的情况，当用户访问需要认证的 URL 资源，但未登录时，调用此方法。
+     *
+     * @param request  请求对象
+     * @param response 响应对象
+     * @param e        认证异常
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) {
+        // 打印调试日志，记录访问的 URL 和异常信息
         log.debug("[commence][访问 URL({}) 时，没有登录]", request.getRequestURI(), e);
-        // 返回 401
+
+        // 返回 401 错误，表示未认证，前端可以根据此错误码跳转到登录页
         ServletUtils.writeJSON(response, CommonResult.error(UNAUTHORIZED));
     }
 

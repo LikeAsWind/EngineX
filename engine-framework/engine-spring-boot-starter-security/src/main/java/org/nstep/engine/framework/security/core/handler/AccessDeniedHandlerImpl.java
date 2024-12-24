@@ -26,13 +26,23 @@ import static org.nstep.engine.framework.common.exception.enums.GlobalErrorCodeC
 @SuppressWarnings("JavadocReference")
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
 
+    /**
+     * 处理权限不足的情况，当用户已经认证（登录），但没有足够权限访问某个资源时，调用此方法。
+     *
+     * @param request  请求对象
+     * @param response 响应对象
+     * @param e        访问被拒绝的异常
+     * @throws IOException      IO 异常
+     * @throws ServletException Servlet 异常
+     */
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
             throws IOException, ServletException {
-        // 打印 warn 的原因是，不定期合并 warn，看看有没恶意破坏
+        // 打印警告日志，记录访问 URL 和用户信息，以便定期检查是否有恶意破坏行为
         log.warn("[commence][访问 URL({}) 时，用户({}) 权限不够]", request.getRequestURI(),
                 SecurityFrameworkUtils.getLoginUserId(), e);
-        // 返回 403
+
+        // 返回 403 错误，表示权限不足
         ServletUtils.writeJSON(response, CommonResult.error(FORBIDDEN));
     }
 
