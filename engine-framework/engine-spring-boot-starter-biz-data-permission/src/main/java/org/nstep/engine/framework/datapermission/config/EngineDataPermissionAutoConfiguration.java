@@ -19,14 +19,26 @@ import java.util.List;
 @AutoConfiguration
 public class EngineDataPermissionAutoConfiguration {
 
+    /**
+     * 创建数据权限规则工厂的Bean
+     *
+     * @param rules 一个包含所有数据权限规则的列表
+     * @return 返回一个数据权限规则工厂实例
+     */
     @Bean
     public DataPermissionRuleFactory dataPermissionRuleFactory(List<DataPermissionRule> rules) {
         return new DataPermissionRuleFactoryImpl(rules);
     }
 
+    /**
+     * 创建数据权限规则处理器的Bean
+     *
+     * @param interceptor MyBatis Plus拦截器
+     * @param ruleFactory 数据权限规则工厂
+     * @return 返回一个数据权限规则处理器实例
+     */
     @Bean
-    public DataPermissionRuleHandler dataPermissionRuleHandler(MybatisPlusInterceptor interceptor,
-                                                               DataPermissionRuleFactory ruleFactory) {
+    public DataPermissionRuleHandler dataPermissionRuleHandler(MybatisPlusInterceptor interceptor, DataPermissionRuleFactory ruleFactory) {
         // 创建 DataPermissionInterceptor 拦截器
         DataPermissionRuleHandler handler = new DataPermissionRuleHandler(ruleFactory);
         DataPermissionInterceptor inner = new DataPermissionInterceptor(handler);
@@ -36,6 +48,11 @@ public class EngineDataPermissionAutoConfiguration {
         return handler;
     }
 
+    /**
+     * 创建数据权限注解顾问的Bean
+     *
+     * @return 返回一个数据权限注解顾问实例
+     */
     @Bean
     public DataPermissionAnnotationAdvisor dataPermissionAnnotationAdvisor() {
         return new DataPermissionAnnotationAdvisor();

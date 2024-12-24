@@ -54,9 +54,13 @@ public class DeptDataPermissionRule implements DataPermissionRule {
      * LoginUser 的 Context 缓存 Key
      */
     protected static final String CONTEXT_KEY = DeptDataPermissionRule.class.getSimpleName();
+    // 用于表示空表达式的常量。
     static final Expression EXPRESSION_NULL = new NullValue();
+    // 默认部门字段名。
     private static final String DEPT_COLUMN_NAME = "dept_id";
+    // 默认用户字段名。
     private static final String USER_COLUMN_NAME = "user_id";
+    // 注入的权限API。
     private final PermissionApi permissionApi;
 
     /**
@@ -126,11 +130,10 @@ public class DeptDataPermissionRule implements DataPermissionRule {
         Expression deptExpression = buildDeptExpression(tableName, tableAlias, deptDataPermission.getDeptIds());
         Expression userExpression = buildUserExpression(tableName, tableAlias, deptDataPermission.getSelf(), loginUser.getId());
         if (deptExpression == null && userExpression == null) {
-            // TODO 芋艿：获得不到条件的时候，暂时不抛出异常，而是不返回数据
+            // 获得不到条件的时候，暂时不抛出异常，而是不返回数据
             log.warn("[getExpression][LoginUser({}) Table({}/{}) DeptDataPermission({}) 构建的条件为空]",
                     JsonUtils.toJsonString(loginUser), tableName, tableAlias, JsonUtils.toJsonString(deptDataPermission));
-//            throw new NullPointerException(String.format("LoginUser(%d) Table(%s/%s) 构建的条件为空",
-//                    loginUser.getId(), tableName, tableAlias.getName()));
+
             return EXPRESSION_NULL;
         }
         if (deptExpression == null) {
@@ -140,7 +143,7 @@ public class DeptDataPermissionRule implements DataPermissionRule {
             return deptExpression;
         }
         // 目前，如果有指定部门 + 可查看自己，采用 OR 条件。即，WHERE (dept_id IN ? OR user_id = ?)
-        return new ParenthesedExpressionList(new OrExpression(deptExpression, userExpression));
+        return new ParenthesedExpressionList<>(new OrExpression(deptExpression, userExpression));
     }
 
     private Expression buildDeptExpression(String tableName, Alias tableAlias, Set<Long> deptIds) {
@@ -156,7 +159,7 @@ public class DeptDataPermissionRule implements DataPermissionRule {
         // 拼接条件
         return new InExpression(MyBatisUtils.buildColumn(tableName, tableAlias, columnName),
                 // Parenthesis 的目的，是提供 (1,2,3) 的 () 左右括号
-                new ParenthesedExpressionList(new ExpressionList<LongValue>(CollectionUtils.convertList(deptIds, LongValue::new))));
+                new ParenthesedExpressionList<>(new ExpressionList<>(CollectionUtils.convertList(deptIds, LongValue::new))));
     }
 
     private Expression buildUserExpression(String tableName, Alias tableAlias, Boolean self, Long userId) {

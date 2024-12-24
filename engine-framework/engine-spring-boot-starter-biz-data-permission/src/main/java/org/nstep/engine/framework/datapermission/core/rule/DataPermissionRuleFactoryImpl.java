@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 数据权限规则工厂实现类，用于提供数据权限规则。
  * 默认的 DataPermissionRuleFactoryImpl 实现类
  * 支持通过 {@link DataPermissionContextHolder} 过滤数据权限
  */

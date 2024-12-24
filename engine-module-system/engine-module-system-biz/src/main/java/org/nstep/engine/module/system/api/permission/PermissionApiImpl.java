@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static org.nstep.engine.framework.common.pojo.CommonResult.success;
 
-@RestController // 提供 RESTful API 接口，给 Feign 调用
+@RestController // 提供 RESTFul API 接口，给 Feign 调用
 @Validated
 public class PermissionApiImpl implements PermissionApi {
 
