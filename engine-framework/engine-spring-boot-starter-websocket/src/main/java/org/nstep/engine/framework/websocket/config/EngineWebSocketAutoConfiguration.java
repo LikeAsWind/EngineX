@@ -36,54 +36,84 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.List;
 
 /**
- * WebSocket 自动配置
+ * WebSocket 自动配置类。
+ * <p>
+ * 提供 WebSocket 的自动化配置，支持多种消息发送方式（本地、Redis、RocketMQ、RabbitMQ、Kafka）。
+ * 通过注解和条件配置，动态启用或禁用相关功能。
  */
 @AutoConfiguration(before = EngineRedisMQConsumerAutoConfiguration.class)
-// before EngineRedisMQConsumerAutoConfiguration 的原因是，需要保证 RedisWebSocketMessageConsumer 先创建，才能创建 RedisMessageListenerContainer
-@EnableWebSocket // 开启 websocket
+// 确保在 EngineRedisMQConsumerAutoConfiguration 之前加载，以便 RedisWebSocketMessageConsumer 优先创建。
+@EnableWebSocket // 启用 WebSocket 功能
 @ConditionalOnProperty(prefix = "engine.websocket", value = "enable", matchIfMissing = true)
-// 允许使用 engine.websocket.enable=false 禁用 websocket
+// 如果 engine.websocket.enable 未设置或为 true，则启用 WebSocket 配置。
 @EnableConfigurationProperties(WebSocketProperties.class)
+// 将 WebSocketProperties 配置类注入到 Spring 容器中。
 public class EngineWebSocketAutoConfiguration {
 
+    /**
+     * 配置 WebSocket 服务。
+     *
+     * @param handshakeInterceptors WebSocket 握手拦截器
+     * @param webSocketHandler      WebSocket 消息处理器
+     * @param webSocketProperties   WebSocket 配置属性
+     * @return WebSocketConfigurer 实例
+     */
     @Bean
-    public WebSocketConfigurer webSocketConfigurer(HandshakeInterceptor[] handshakeInterceptors,
-                                                   WebSocketHandler webSocketHandler,
-                                                   WebSocketProperties webSocketProperties) {
-        return registry -> registry
-                // 添加 WebSocketHandler
-                .addHandler(webSocketHandler, webSocketProperties.getPath())
-                .addInterceptors(handshakeInterceptors)
-                // 允许跨域，否则前端连接会直接断开
-                .setAllowedOriginPatterns("*");
+    public WebSocketConfigurer webSocketConfigurer(HandshakeInterceptor[] handshakeInterceptors, WebSocketHandler webSocketHandler, WebSocketProperties webSocketProperties) {
+        return registry -> registry.addHandler(webSocketHandler, webSocketProperties.getPath()) // 注册 WebSocketHandler
+                .addInterceptors(handshakeInterceptors) // 添加拦截器
+                .setAllowedOriginPatterns("*"); // 允许跨域访问
     }
 
+    /**
+     * 配置默认的握手拦截器。
+     *
+     * @return HandshakeInterceptor 实例
+     */
     @Bean
     public HandshakeInterceptor handshakeInterceptor() {
         return new LoginUserHandshakeInterceptor();
     }
 
+    /**
+     * 配置 WebSocket 消息处理器。
+     *
+     * @param sessionManager   WebSocket 会话管理器
+     * @param messageListeners 消息监听器列表
+     * @return WebSocketHandler 实例
+     */
     @Bean
-    public WebSocketHandler webSocketHandler(WebSocketSessionManager sessionManager,
-                                             List<? extends WebSocketMessageListener<?>> messageListeners) {
-        // 1. 创建 JsonWebSocketMessageHandler 对象，处理消息
+    public WebSocketHandler webSocketHandler(WebSocketSessionManager sessionManager, List<? extends WebSocketMessageListener<?>> messageListeners) {
         JsonWebSocketMessageHandler messageHandler = new JsonWebSocketMessageHandler(messageListeners);
-        // 2. 创建 WebSocketSessionHandlerDecorator 对象，处理连接
         return new WebSocketSessionHandlerDecorator(messageHandler, sessionManager);
     }
 
+    /**
+     * 配置 WebSocket 会话管理器。
+     *
+     * @return WebSocketSessionManager 实例
+     */
     @Bean
     public WebSocketSessionManager webSocketSessionManager() {
         return new WebSocketSessionManagerImpl();
     }
 
+    /**
+     * 配置 WebSocket 授权请求自定义器。
+     *
+     * @param webSocketProperties WebSocket 配置属性
+     * @return WebSocketAuthorizeRequestsCustomizer 实例
+     */
     @Bean
     public WebSocketAuthorizeRequestsCustomizer webSocketAuthorizeRequestsCustomizer(WebSocketProperties webSocketProperties) {
         return new WebSocketAuthorizeRequestsCustomizer(webSocketProperties);
     }
 
-    // ==================== Sender 相关 ====================
+    // ==================== Sender 相关配置 ====================
 
+    /**
+     * 本地消息发送配置。
+     */
     @Configuration
     @ConditionalOnProperty(prefix = "engine.websocket", name = "sender-type", havingValue = "local")
     public class LocalWebSocketMessageSenderConfiguration {
@@ -95,86 +125,88 @@ public class EngineWebSocketAutoConfiguration {
 
     }
 
+    /**
+     * Redis 消息发送配置。
+     */
     @Configuration
     @ConditionalOnProperty(prefix = "engine.websocket", name = "sender-type", havingValue = "redis")
     public class RedisWebSocketMessageSenderConfiguration {
 
         @Bean
-        public RedisWebSocketMessageSender redisWebSocketMessageSender(WebSocketSessionManager sessionManager,
-                                                                       RedisMQTemplate redisMQTemplate) {
+        public RedisWebSocketMessageSender redisWebSocketMessageSender(WebSocketSessionManager sessionManager, RedisMQTemplate redisMQTemplate) {
             return new RedisWebSocketMessageSender(sessionManager, redisMQTemplate);
         }
 
         @Bean
-        public RedisWebSocketMessageConsumer redisWebSocketMessageConsumer(
-                RedisWebSocketMessageSender redisWebSocketMessageSender) {
+        public RedisWebSocketMessageConsumer redisWebSocketMessageConsumer(RedisWebSocketMessageSender redisWebSocketMessageSender) {
             return new RedisWebSocketMessageConsumer(redisWebSocketMessageSender);
         }
 
     }
 
+    /**
+     * RocketMQ 消息发送配置。
+     */
     @Configuration
     @ConditionalOnProperty(prefix = "engine.websocket", name = "sender-type", havingValue = "rocketmq")
     public class RocketMQWebSocketMessageSenderConfiguration {
 
         @Bean
-        public RocketMQWebSocketMessageSender rocketMQWebSocketMessageSender(
-                WebSocketSessionManager sessionManager, RocketMQTemplate rocketMQTemplate,
-                @Value("${engine.websocket.sender-rocketmq.topic}") String topic) {
+        public RocketMQWebSocketMessageSender rocketMQWebSocketMessageSender(WebSocketSessionManager sessionManager, RocketMQTemplate rocketMQTemplate, @Value("${engine.websocket.sender-rocketmq.topic}") String topic) {
             return new RocketMQWebSocketMessageSender(sessionManager, rocketMQTemplate, topic);
         }
 
         @Bean
-        public RocketMQWebSocketMessageConsumer rocketMQWebSocketMessageConsumer(
-                RocketMQWebSocketMessageSender rocketMQWebSocketMessageSender) {
+        public RocketMQWebSocketMessageConsumer rocketMQWebSocketMessageConsumer(RocketMQWebSocketMessageSender rocketMQWebSocketMessageSender) {
             return new RocketMQWebSocketMessageConsumer(rocketMQWebSocketMessageSender);
         }
 
     }
 
+    /**
+     * RabbitMQ 消息发送配置。
+     */
     @Configuration
     @ConditionalOnProperty(prefix = "engine.websocket", name = "sender-type", havingValue = "rabbitmq")
     public class RabbitMQWebSocketMessageSenderConfiguration {
 
         @Bean
-        public RabbitMQWebSocketMessageSender rabbitMQWebSocketMessageSender(
-                WebSocketSessionManager sessionManager, RabbitTemplate rabbitTemplate,
-                TopicExchange websocketTopicExchange) {
+        public RabbitMQWebSocketMessageSender rabbitMQWebSocketMessageSender(WebSocketSessionManager sessionManager, RabbitTemplate rabbitTemplate, TopicExchange websocketTopicExchange) {
             return new RabbitMQWebSocketMessageSender(sessionManager, rabbitTemplate, websocketTopicExchange);
         }
 
         @Bean
-        public RabbitMQWebSocketMessageConsumer rabbitMQWebSocketMessageConsumer(
-                RabbitMQWebSocketMessageSender rabbitMQWebSocketMessageSender) {
+        public RabbitMQWebSocketMessageConsumer rabbitMQWebSocketMessageConsumer(RabbitMQWebSocketMessageSender rabbitMQWebSocketMessageSender) {
             return new RabbitMQWebSocketMessageConsumer(rabbitMQWebSocketMessageSender);
         }
 
         /**
-         * 创建 Topic Exchange
+         * 创建 Topic Exchange。
+         *
+         * @param exchange 交换机名称
+         * @return TopicExchange 实例
          */
         @Bean
         public TopicExchange websocketTopicExchange(@Value("${engine.websocket.sender-rabbitmq.exchange}") String exchange) {
-            return new TopicExchange(exchange,
-                    true,  // durable: 是否持久化
-                    false);  // exclusive: 是否排它
+            return new TopicExchange(exchange, true, false);
         }
 
     }
 
+    /**
+     * Kafka 消息发送配置。
+     */
     @Configuration
     @ConditionalOnProperty(prefix = "engine.websocket", name = "sender-type", havingValue = "kafka")
     public class KafkaWebSocketMessageSenderConfiguration {
 
         @Bean
-        public KafkaWebSocketMessageSender kafkaWebSocketMessageSender(
-                WebSocketSessionManager sessionManager, KafkaTemplate<Object, Object> kafkaTemplate,
-                @Value("${engine.websocket.sender-kafka.topic}") String topic) {
+        public KafkaWebSocketMessageSender kafkaWebSocketMessageSender(WebSocketSessionManager sessionManager, KafkaTemplate<Object, Object> kafkaTemplate, @Value("${engine.websocket.sender-kafka.topic}") String topic) {
             return new KafkaWebSocketMessageSender(sessionManager, kafkaTemplate, topic);
         }
 
         @Bean
-        public KafkaWebSocketMessageConsumer kafkaWebSocketMessageConsumer(
-                KafkaWebSocketMessageSender kafkaWebSocketMessageSender) {
+        public KafkaWebSocketMessageConsumer kafkaWebSocketMessageConsumer(KafkaWebSocketMessageSender kafkaWebSocketMessageSender) {
             return new KafkaWebSocketMessageConsumer(kafkaWebSocketMessageSender);
         }
 
