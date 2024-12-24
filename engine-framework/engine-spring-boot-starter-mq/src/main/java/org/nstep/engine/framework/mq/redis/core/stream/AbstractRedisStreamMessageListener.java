@@ -17,8 +17,10 @@ import java.util.List;
 
 /**
  * Redis Stream 监听器抽象类，用于实现集群消费
+ * <p>
+ * 该类是 Redis Stream 消息的消费者监听器的抽象基类，所有使用 Redis Stream 进行集群消费的类应继承此类。
  *
- * @param <T> 消息类型。一定要填写噢，不然会报错
+ * @param <T> 消息类型。必须指定消息类型，否则会报错。
  */
 public abstract class AbstractRedisStreamMessageListener<T extends AbstractRedisStreamMessage>
         implements StreamListener<String, ObjectRecord<String, String>> {
@@ -28,53 +30,57 @@ public abstract class AbstractRedisStreamMessageListener<T extends AbstractRedis
      */
     private final Class<T> messageType;
     /**
-     * Redis Channel
+     * Redis Stream Key
      */
     @Getter
     private final String streamKey;
 
     /**
-     * Redis 消费者分组，默认使用 spring.application.name 名字
+     * Redis 消费者分组，默认使用 spring.application.name 配置的名称
      */
     @Value("${spring.application.name}")
     @Getter
     private String group;
+
     /**
-     * RedisMQTemplate
+     * RedisMQTemplate 用于操作 Redis
      */
     @Setter
     private RedisMQTemplate redisMQTemplate;
 
+    /**
+     * 构造函数，初始化消息类型和 Stream Key
+     */
     @SneakyThrows
     protected AbstractRedisStreamMessageListener() {
-        this.messageType = getMessageClass();
-        this.streamKey = messageType.getDeclaredConstructor().newInstance().getStreamKey();
+        this.messageType = getMessageClass(); // 获取消息类型
+        this.streamKey = messageType.getDeclaredConstructor().newInstance().getStreamKey(); // 获取 Stream Key
     }
 
+    /**
+     * 处理接收到的消息
+     *
+     * @param message Redis Stream 消息
+     */
     @Override
     public void onMessage(ObjectRecord<String, String> message) {
-        // 消费消息
+        // 将消息体解析为指定类型的消息对象
         T messageObj = JsonUtils.parseObject(message.getValue(), messageType);
         try {
-            consumeMessageBefore(messageObj);
+            consumeMessageBefore(messageObj); // 消费前处理
             // 消费消息
             this.onMessage(messageObj);
-            // ack 消息消费完成
+            // ack 消息，表示消息已成功消费
             redisMQTemplate.getRedisTemplate().opsForStream().acknowledge(group, message);
-            // TODO 芋艿：需要额外考虑以下几个点：
-            // 1. 处理异常的情况
-            // 2. 发送日志；以及事务的结合
-            // 3. 消费日志；以及通用的幂等性
-            // 4. 消费失败的重试，https://zhuanlan.zhihu.com/p/60501638
         } finally {
-            consumeMessageAfter(messageObj);
+            consumeMessageAfter(messageObj); // 消费后处理
         }
     }
 
     /**
-     * 处理消息
+     * 消费消息的具体实现，由子类实现
      *
-     * @param message 消息
+     * @param message 消息对象
      */
     public abstract void onMessage(T message);
 
@@ -92,17 +98,23 @@ public abstract class AbstractRedisStreamMessageListener<T extends AbstractRedis
         return (Class<T>) type;
     }
 
+    /**
+     * 消费前的处理，执行所有拦截器的前置操作
+     */
     private void consumeMessageBefore(AbstractRedisMessage message) {
         assert redisMQTemplate != null;
         List<RedisMessageInterceptor> interceptors = redisMQTemplate.getInterceptors();
-        // 正序
+        // 正序执行拦截器的前置操作
         interceptors.forEach(interceptor -> interceptor.consumeMessageBefore(message));
     }
 
+    /**
+     * 消费后的处理，执行所有拦截器的后置操作
+     */
     private void consumeMessageAfter(AbstractRedisMessage message) {
         assert redisMQTemplate != null;
         List<RedisMessageInterceptor> interceptors = redisMQTemplate.getInterceptors();
-        // 倒序
+        // 倒序执行拦截器的后置操作
         for (int i = interceptors.size() - 1; i >= 0; i--) {
             interceptors.get(i).consumeMessageAfter(message);
         }
