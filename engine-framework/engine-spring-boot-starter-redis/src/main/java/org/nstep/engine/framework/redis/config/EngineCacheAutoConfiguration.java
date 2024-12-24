@@ -23,6 +23,9 @@ import static org.nstep.engine.framework.redis.config.EngineRedisAutoConfigurati
 
 /**
  * Cache 配置类，基于 Redis 实现
+ * <p>
+ * 该类配置了基于 Redis 的缓存管理，使用 Spring Boot 的自动配置功能来设置 Redis 缓存的相关参数。
+ * 它包括缓存配置的自定义设置，如缓存前缀、序列化方式、TTL（过期时间）等。
  */
 @AutoConfiguration
 @EnableConfigurationProperties({CacheProperties.class, EngineCacheProperties.class})
@@ -32,15 +35,19 @@ public class EngineCacheAutoConfiguration {
     /**
      * RedisCacheConfiguration Bean
      * <p>
-     * 参考 org.springframework.boot.autoconfigure.cache.RedisCacheConfiguration 的 createConfiguration 方法
+     * 配置 Redis 缓存的相关属性，包括缓存前缀、序列化方式、过期时间等。
+     * 参考 org.springframework.boot.autoconfigure.cache.RedisCacheConfiguration 的 createConfiguration 方法。
+     *
+     * @param cacheProperties 缓存相关的配置属性
+     * @return 配置好的 RedisCacheConfiguration
      */
     @Bean
     @Primary
     public RedisCacheConfiguration redisCacheConfiguration(CacheProperties cacheProperties) {
+        // 获取默认的缓存配置
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
-        // 设置使用 : 单冒号，而不是双 :: 冒号，避免 Redis Desktop Manager 多余空格
-        // 详细可见 https://blog.csdn.net/chuixue24/article/details/103928965 博客
-        // 再次修复单冒号，而不是双 :: 冒号问题，Issues 详情：https://gitee.com/zhijiantianya/engine-cloud/issues/I86VY2
+
+        // 设置缓存键的前缀
         config = config.computePrefixWith(cacheName -> {
             String keyPrefix = cacheProperties.getRedis().getKeyPrefix();
             if (StringUtils.hasText(keyPrefix)) {
@@ -49,33 +56,50 @@ public class EngineCacheAutoConfiguration {
             }
             return cacheName + StrUtil.COLON;
         });
-        // 设置使用 JSON 序列化方式
+
+        // 设置缓存值的序列化方式为 JSON
         config = config.serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(buildRedisSerializer()));
 
-        // 设置 CacheProperties.Redis 的属性
+        // 设置缓存的过期时间（TTL）
         CacheProperties.Redis redisProperties = cacheProperties.getRedis();
         if (redisProperties.getTimeToLive() != null) {
             config = config.entryTtl(redisProperties.getTimeToLive());
         }
+
+        // 禁用缓存 null 值
         if (!redisProperties.isCacheNullValues()) {
             config = config.disableCachingNullValues();
         }
+
+        // 禁用缓存键的前缀
         if (!redisProperties.isUseKeyPrefix()) {
             config = config.disableKeyPrefix();
         }
+
         return config;
     }
 
+    /**
+     * RedisCacheManager Bean
+     * <p>
+     * 配置 Redis 缓存管理器，负责与 Redis 交互进行缓存操作。
+     *
+     * @param redisTemplate           Redis 模板，用于与 Redis 进行交互
+     * @param redisCacheConfiguration Redis 缓存配置
+     * @param engineCacheProperties   引擎缓存相关配置
+     * @return 配置好的 RedisCacheManager
+     */
     @Bean
     public RedisCacheManager redisCacheManager(RedisTemplate<String, Object> redisTemplate,
                                                RedisCacheConfiguration redisCacheConfiguration,
                                                EngineCacheProperties engineCacheProperties) {
-        // 创建 RedisCacheWriter 对象
+        // 创建 RedisCacheWriter 对象，用于执行缓存的读写操作
         RedisConnectionFactory connectionFactory = Objects.requireNonNull(redisTemplate.getConnectionFactory());
         RedisCacheWriter cacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory,
                 BatchStrategies.scan(engineCacheProperties.getRedisScanBatchSize()));
-        // 创建 TenantRedisCacheManager 对象
+
+        // 创建 TimeoutRedisCacheManager 对象，设置缓存过期时间
         return new TimeoutRedisCacheManager(cacheWriter, redisCacheConfiguration);
     }
 
