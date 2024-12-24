@@ -18,6 +18,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+// Lombok注解，生成`toString`方法时排除`parent`属性，避免循环引用。
 @ToString(exclude = {"parent"}) // 参见 https://gitee.com/enginecode/engine-cloud-mini/pulls/2 原因
 public class Area {
 
@@ -46,11 +47,13 @@ public class Area {
     private Integer type;
 
     /**
+     * 父区域节点，使用@JsonManagedReference注解防止JSON序列化时的循环引用。
      * 父节点
      */
     @JsonManagedReference
     private Area parent;
     /**
+     * 子区域节点列表，使用@JsonBackReference注解防止JSON序列化时的循环引用。
      * 子节点
      */
     @JsonBackReference

@@ -20,7 +20,7 @@ import static org.nstep.engine.framework.common.util.collection.CollectionUtils.
 import static org.nstep.engine.framework.common.util.collection.CollectionUtils.findFirst;
 
 /**
- * 区域工具类
+ * 区域工具类，提供区域相关的操作和数据。
  */
 @Slf4j
 public class AreaUtils {
@@ -36,6 +36,9 @@ public class AreaUtils {
      */
     private static Map<Integer, Area> areas;
 
+    /**
+     * 私有构造函数，确保外部无法直接实例化。
+     */
     private AreaUtils() {
         long now = System.currentTimeMillis();
         areas = new HashMap<>();
@@ -64,7 +67,7 @@ public class AreaUtils {
     }
 
     /**
-     * 获得指定编号对应的区域
+     * 获得指定编号对应的区域。
      *
      * @param id 区域编号
      * @return 区域
@@ -74,10 +77,10 @@ public class AreaUtils {
     }
 
     /**
-     * 获得指定区域对应的编号
+     * 根据区域路径字符串解析区域对象。
      *
-     * @param pathStr 区域路径，例如说：河南省/石家庄市/新华区
-     * @return 区域
+     * @param pathStr 区域路径字符串，例如："河南省/石家庄市/新华区"
+     * @return 区域对象
      */
     public static Area parseArea(String pathStr) {
         String[] paths = pathStr.split("/");
@@ -93,7 +96,7 @@ public class AreaUtils {
     }
 
     /**
-     * 获取所有节点的全路径名称如：河南省/石家庄市/新华区
+     * 获取所有节点的全路径名称如："河北省/石家庄市/新华区"。
      *
      * @param areas 地区树
      * @return 所有节点的全路径名称
@@ -105,11 +108,11 @@ public class AreaUtils {
     }
 
     /**
-     * 构建一棵树的所有节点的全路径名称，并将其存储为 "祖先/父级/子级" 的形式
+     * 构建一棵树的所有节点的全路径名称，并将其存储为 "祖先/父级/子级" 的形式。
      *
      * @param node  父节点
      * @param path  全路径名称
-     * @param paths 全路径名称列表，省份/城市/地区
+     * @param paths 全路径名称列表
      */
     private static void getAreaNodePathList(Area node, String path, List<String> paths) {
         if (node == null) {
@@ -119,23 +122,21 @@ public class AreaUtils {
         String currentPath = path.isEmpty() ? node.getName() : path + "/" + node.getName();
         paths.add(currentPath);
         // 递归遍历子节点
-        for (Area child : node.getChildren()) {
-            getAreaNodePathList(child, currentPath, paths);
-        }
+        node.getChildren().forEach(child -> getAreaNodePathList(child, currentPath, paths));
     }
 
     /**
-     * 格式化区域
+     * 格式化区域为字符串。
      *
      * @param id 区域编号
-     * @return 格式化后的区域
+     * @return 格式化后的区域字符串
      */
     public static String format(Integer id) {
         return format(id, " ");
     }
 
     /**
-     * 格式化区域
+     * 格式化区域为字符串，允许自定义分隔符。
      * <p>
      * 例如说：
      * 1. id = “静安区”时：上海 上海市 静安区
@@ -143,10 +144,10 @@ public class AreaUtils {
      * 3. id = “上海”时：上海
      * 4. id = “美国”时：美国
      * 当区域在中国时，默认不显示中国
-     *
-     * @param id        区域编号
-     * @param separator 分隔符
-     * @return 格式化后的区域
+     * <p>
+     * * @param id        区域编号
+     * * @param separator 分隔符
+     * * @return 格式化后的区域字符串
      */
     public static String format(Integer id, String separator) {
         // 获得区域
