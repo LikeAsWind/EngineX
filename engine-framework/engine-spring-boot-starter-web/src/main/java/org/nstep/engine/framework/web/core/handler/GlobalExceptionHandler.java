@@ -42,7 +42,11 @@ import java.util.Set;
 import static org.nstep.engine.framework.common.exception.enums.GlobalErrorCodeConstants.*;
 
 /**
- * 全局异常处理器，将 Exception 翻译成 CommonResult + 对应的异常编号
+ * 全局异常处理器，将各种异常翻译成通用的返回结果 {@link CommonResult}，并返回对应的异常编号。
+ * <p>
+ * 该类通过 {@link RestControllerAdvice} 注解，将所有异常捕获并处理，确保系统在发生异常时能返回统一的错误响应。
+ * 它处理了多种常见的异常类型，包括请求参数错误、权限不足、资源未找到、服务异常等，并记录相关日志。
+ * 还提供了一个兜底的异常处理方法，确保所有未处理的异常都能被捕获。
  */
 @RestControllerAdvice
 @AllArgsConstructor
@@ -50,18 +54,20 @@ import static org.nstep.engine.framework.common.exception.enums.GlobalErrorCodeC
 public class GlobalExceptionHandler {
 
     /**
-     * 忽略的 ServiceException 错误提示，避免打印过多 logger
+     * 忽略的 ServiceException 错误提示，避免打印过多的日志。
      */
     public static final Set<String> IGNORE_ERROR_MESSAGES = SetUtils.asSet("无效的刷新令牌");
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private final String applicationName;
 
-    private final ApiErrorLogApi apiErrorLogApi;
+
+    private final ApiErrorLogApi apiErrorLogApiImpl;
 
     /**
-     * 处理所有异常，主要是提供给 Filter 使用
-     * 因为 Filter 不走 SpringMVC 的流程，但是我们又需要兜底处理异常，所以这里提供一个全量的异常处理过程，保持逻辑统一。
+     * 处理所有异常，主要是提供给 Filter 使用。
+     * <p>
+     * 因为 Filter 不走 SpringMVC 的流程，但我们又需要兜底处理异常，所以这里提供一个全量的异常处理过程，保持逻辑统一。
      *
      * @param request 请求
      * @param ex      异常
@@ -90,7 +96,7 @@ public class GlobalExceptionHandler {
             return noHandlerFoundExceptionHandler((NoHandlerFoundException) ex);
         }
         if (ex instanceof NoResourceFoundException) {
-            return noResourceFoundExceptionHandler(request, (NoResourceFoundException) ex);
+            return noResourceFoundExceptionHandler((NoResourceFoundException) ex);
         }
         if (ex instanceof HttpRequestMethodNotSupportedException) {
             return httpRequestMethodNotSupportedExceptionHandler((HttpRequestMethodNotSupportedException) ex);
@@ -105,9 +111,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 SpringMVC 请求参数缺失
+     * 处理 SpringMVC 请求参数缺失。
      * <p>
-     * 例如说，接口上设置了 @RequestParam("xx") 参数，结果并未传递 xx 参数
+     * 例如，接口上设置了 @RequestParam("xx") 参数，结果并未传递 xx 参数。
      */
     @ExceptionHandler(value = MissingServletRequestParameterException.class)
     public CommonResult<?> missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException ex) {
@@ -116,9 +122,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 SpringMVC 请求参数类型错误
+     * 处理 SpringMVC 请求参数类型错误。
      * <p>
-     * 例如说，接口上设置了 @RequestParam("xx") 参数为 Integer，结果传递 xx 参数类型为 String
+     * 例如，接口上设置了 @RequestParam("xx") 参数为 Integer，结果传递 xx 参数类型为 String。
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public CommonResult<?> methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException ex) {
@@ -127,7 +133,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 SpringMVC 参数校验不正确
+     * 处理 SpringMVC 参数校验不正确。
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public CommonResult<?> methodArgumentNotValidExceptionExceptionHandler(MethodArgumentNotValidException ex) {
@@ -138,7 +144,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 SpringMVC 参数绑定不正确，本质上也是通过 Validator 校验
+     * 处理 SpringMVC 参数绑定不正确，本质上也是通过 Validator 校验。
      */
     @ExceptionHandler(BindException.class)
     public CommonResult<?> bindExceptionHandler(BindException ex) {
@@ -149,15 +155,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 SpringMVC 请求参数类型错误
+     * 处理 SpringMVC 请求参数类型错误。
      * <p>
-     * 例如说，接口上设置了 @RequestBody实体中 xx 属性类型为 Integer，结果传递 xx 参数类型为 String
+     * 例如，接口上设置了 @RequestBody 实体中 xx 属性类型为 Integer，结果传递 xx 参数类型为 String。
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public CommonResult<?> methodArgumentTypeInvalidFormatExceptionHandler(HttpMessageNotReadableException ex) {
         log.warn("[methodArgumentTypeInvalidFormatExceptionHandler]", ex);
-        if (ex.getCause() instanceof InvalidFormatException) {
-            InvalidFormatException invalidFormatException = (InvalidFormatException) ex.getCause();
+        if (ex.getCause() instanceof InvalidFormatException invalidFormatException) {
             return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数类型错误:%s", invalidFormatException.getValue()));
         } else {
             return defaultExceptionHandler(ServletUtils.getRequest(), ex);
@@ -165,7 +170,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 Validator 校验不通过产生的异常
+     * 处理 Validator 校验不通过产生的异常。
      */
     @ExceptionHandler(value = ConstraintViolationException.class)
     public CommonResult<?> constraintViolationExceptionHandler(ConstraintViolationException ex) {
@@ -175,19 +180,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 Dubbo Consumer 本地参数校验时，抛出的 ValidationException 异常
+     * 处理 Dubbo Consumer 本地参数校验时，抛出的 ValidationException 异常。
      */
     @ExceptionHandler(value = ValidationException.class)
     public CommonResult<?> validationException(ValidationException ex) {
         log.warn("[constraintViolationExceptionHandler]", ex);
-        // 无法拼接明细的错误信息，因为 Dubbo Consumer 抛出 ValidationException 异常时，是直接的字符串信息，且人类不可读
         return CommonResult.error(BAD_REQUEST);
     }
 
     /**
-     * 处理 SpringMVC 请求地址不存在
+     * 处理 SpringMVC 请求地址不存在。
      * <p>
-     * 注意，它需要设置如下两个配置项：
+     * 需要设置如下配置项：
      * 1. spring.mvc.throw-exception-if-no-handler-found 为 true
      * 2. spring.mvc.static-path-pattern 为 /statics/**
      */
@@ -198,18 +202,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 SpringMVC 请求地址不存在
+     * 处理 SpringMVC 请求地址不存在。
      */
     @ExceptionHandler(NoResourceFoundException.class)
-    private CommonResult<?> noResourceFoundExceptionHandler(HttpServletRequest req, NoResourceFoundException ex) {
+    private CommonResult<?> noResourceFoundExceptionHandler(NoResourceFoundException ex) {
         log.warn("[noResourceFoundExceptionHandler]", ex);
         return CommonResult.error(NOT_FOUND.getCode(), String.format("请求地址不存在:%s", ex.getResourcePath()));
     }
 
     /**
-     * 处理 SpringMVC 请求方法不正确
+     * 处理 SpringMVC 请求方法不正确。
      * <p>
-     * 例如说，A 接口的方法为 GET 方式，结果请求方法为 POST 方式，导致不匹配
+     * 例如，A 接口的方法为 GET 方式，结果请求方法为 POST 方式，导致不匹配。
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public CommonResult<?> httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
@@ -218,9 +222,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理 Spring Security 权限不足的异常
+     * 处理 Spring Security 权限不足的异常。
      * <p>
-     * 来源是，使用 @PreAuthorize 注解，AOP 进行权限拦截
+     * 来源是，使用 @PreAuthorize 注解，AOP 进行权限拦截。
      */
     @ExceptionHandler(value = AccessDeniedException.class)
     public CommonResult<?> accessDeniedExceptionHandler(HttpServletRequest req, AccessDeniedException ex) {
@@ -230,9 +234,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理业务异常 ServiceException
+     * 处理业务异常 ServiceException。
      * <p>
-     * 例如说，商品库存不足，用户手机号已存在。
+     * 例如，商品库存不足，用户手机号已存在。
      */
     @ExceptionHandler(value = ServiceException.class)
     public CommonResult<?> serviceExceptionHandler(ServiceException ex) {
@@ -255,7 +259,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理系统异常，兜底处理所有的一切
+     * 处理系统异常，兜底处理所有的一切。
      */
     @ExceptionHandler(value = Exception.class)
     public CommonResult<?> defaultExceptionHandler(HttpServletRequest req, Throwable ex) {
@@ -267,6 +271,14 @@ public class GlobalExceptionHandler {
         return CommonResult.error(INTERNAL_SERVER_ERROR.getCode(), INTERNAL_SERVER_ERROR.getMsg());
     }
 
+    /**
+     * 创建异常日志。
+     * <p>
+     * 将异常信息记录到日志系统中，以便后续分析。
+     *
+     * @param req 请求对象
+     * @param e   异常对象
+     */
     private void createExceptionLog(HttpServletRequest req, Throwable e) {
         // 插入错误日志
         ApiErrorLogCreateReqDTO errorLog = new ApiErrorLogCreateReqDTO();
@@ -274,12 +286,21 @@ public class GlobalExceptionHandler {
             // 初始化 errorLog
             buildExceptionLog(errorLog, req, e);
             // 执行插入 errorLog
-            apiErrorLogApi.createApiErrorLogAsync(errorLog);
+            apiErrorLogApiImpl.createApiErrorLogAsync(errorLog);
         } catch (Throwable th) {
             log.error("[createExceptionLog][url({}) log({}) 发生异常]", req.getRequestURI(), JsonUtils.toJsonString(errorLog), th);
         }
     }
 
+    /**
+     * 构建异常日志对象。
+     * <p>
+     * 将异常信息转换成日志格式，并填充日志对象。
+     *
+     * @param errorLog 异常日志对象
+     * @param request  请求对象
+     * @param e        异常对象
+     */
     private void buildExceptionLog(ApiErrorLogCreateReqDTO errorLog, HttpServletRequest request, Throwable e) {
         // 处理用户信息
         errorLog.setUserId(WebFrameworkUtils.getLoginUserId(request));
@@ -309,7 +330,6 @@ public class GlobalExceptionHandler {
         errorLog.setUserIp(JakartaServletUtil.getClientIP(request));
         errorLog.setExceptionTime(LocalDateTime.now());
     }
-
 
 
 }

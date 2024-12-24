@@ -36,9 +36,12 @@ import static org.nstep.engine.framework.web.core.util.WebFrameworkUtils.HEADER_
 /**
  * Swagger 自动配置类，基于 OpenAPI + Springdoc 实现。
  * <p>
+ * 该类用于自动配置和初始化 Swagger（OpenAPI）文档生成的相关设置，主要通过 Springdoc 库实现。
+ * 它为 API 提供了分组、请求头参数的自动注入、以及安全认证等功能配置。
+ * <p>
  * 友情提示：
  * 1. Springdoc 文档地址：<a href="https://github.com/springdoc/springdoc-openapi">仓库</a>
- * 2. Swagger 规范，于 2015 更名为 OpenAPI 规范，本质是一个东西
+ * 2. Swagger 规范，于 2015 更名为 OpenAPI 规范，本质是一个东西。
  */
 @AutoConfiguration
 @ConditionalOnClass({OpenAPI.class})
@@ -49,10 +52,23 @@ public class EngineSwaggerAutoConfiguration {
 
     // ========== 全局 OpenAPI 配置 ==========
 
+    /**
+     * 构建分组 OpenAPI 配置
+     *
+     * @param group 分组名称
+     * @return 配置好的 GroupedOpenApi 实例
+     */
     public static GroupedOpenApi buildGroupedOpenApi(String group) {
         return buildGroupedOpenApi(group, group);
     }
 
+    /**
+     * 构建分组 OpenAPI 配置，允许自定义路径
+     *
+     * @param group 分组名称
+     * @param path  自定义路径
+     * @return 配置好的 GroupedOpenApi 实例
+     */
     public static GroupedOpenApi buildGroupedOpenApi(String group, String path) {
         return GroupedOpenApi.builder()
                 .group(group)
@@ -78,7 +94,6 @@ public class EngineSwaggerAutoConfiguration {
 
     /**
      * 构建 Authorization 认证请求头参数
-     * <p>
      * 解决 Knife4j <a href="https://gitee.com/xiaoym/knife4j/issues/I69QBU">Authorize 未生效，请求header里未包含参数</a>
      *
      * @return 认证参数
@@ -93,6 +108,12 @@ public class EngineSwaggerAutoConfiguration {
 
     // ========== 分组 OpenAPI 配置 ==========
 
+    /**
+     * 创建 OpenAPI 配置
+     *
+     * @param properties Swagger 配置属性
+     * @return 配置好的 OpenAPI 实例
+     */
     @Bean
     public OpenAPI createApi(SwaggerProperties properties) {
         Map<String, SecurityScheme> securitySchemas = buildSecuritySchemes();
@@ -107,7 +128,10 @@ public class EngineSwaggerAutoConfiguration {
     }
 
     /**
-     * API 摘要信息
+     * 构建 API 摘要信息
+     *
+     * @param properties Swagger 配置属性
+     * @return 配置好的 Info 实例
      */
     private Info buildInfo(SwaggerProperties properties) {
         return new Info()
@@ -119,7 +143,9 @@ public class EngineSwaggerAutoConfiguration {
     }
 
     /**
-     * 安全模式，这里配置通过请求头 Authorization 传递 token 参数
+     * 配置安全模式，使用请求头 Authorization 传递 token 参数
+     *
+     * @return 安全模式配置
      */
     private Map<String, SecurityScheme> buildSecuritySchemes() {
         Map<String, SecurityScheme> securitySchemes = new HashMap<>();
@@ -132,7 +158,9 @@ public class EngineSwaggerAutoConfiguration {
     }
 
     /**
-     * 自定义 OpenAPI 处理器
+     * 自定义 OpenAPI 处理器，确保我们创建的 OpenAPIService Bean 为主
+     *
+     * @return 配置好的 OpenAPIService 实例
      */
     @Bean
     @Primary // 目的：以我们创建的 OpenAPIService Bean 为主，避免一键改包后，启动报错！
@@ -149,7 +177,9 @@ public class EngineSwaggerAutoConfiguration {
     }
 
     /**
-     * 所有模块的 API 分组
+     * 创建所有模块的 API 分组
+     *
+     * @return 配置好的 GroupedOpenApi 实例
      */
     @Bean
     public GroupedOpenApi allGroupedOpenApi() {
@@ -157,4 +187,3 @@ public class EngineSwaggerAutoConfiguration {
     }
 
 }
-
