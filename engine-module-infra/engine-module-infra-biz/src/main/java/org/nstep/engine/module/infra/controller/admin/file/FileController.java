@@ -27,6 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 import static org.nstep.engine.framework.common.pojo.CommonResult.success;
 import static org.nstep.engine.module.infra.framework.file.core.utils.FileTypeUtils.writeAttachment;
 
+/**
+ * 管理后台 - 文件存储控制器
+ * <p>
+ * 该类处理与文件存储相关的所有操作，包括文件上传、删除、下载、分页查询等。
+ * </p>
+ */
 @Tag(name = "管理后台 - 文件存储")
 @RestController
 @RequestMapping("/infra/file")
@@ -37,6 +43,16 @@ public class FileController {
     @Resource
     private FileService fileService;
 
+    /**
+     * 上传文件
+     * <p>
+     * 后端上传文件到文件存储系统。
+     * </p>
+     *
+     * @param uploadReqVO 上传文件请求 VO
+     * @return 返回文件存储路径
+     * @throws Exception 如果上传过程中发生错误，则抛出异常
+     */
     @PostMapping("/upload")
     @Operation(summary = "上传文件", description = "模式一：后端上传文件")
     public CommonResult<String> uploadFile(FileUploadReqVO uploadReqVO) throws Exception {
@@ -45,18 +61,47 @@ public class FileController {
         return success(fileService.createFile(file.getOriginalFilename(), path, IoUtil.readBytes(file.getInputStream())));
     }
 
+    /**
+     * 获取文件预签名地址
+     * <p>
+     * 该接口用于前端上传文件，返回文件存储服务的预签名 URL（如七牛、阿里云 OSS 等）。
+     * </p>
+     *
+     * @param path 文件存储路径
+     * @return 返回文件预签名地址
+     * @throws Exception 如果获取预签名地址时发生错误，则抛出异常
+     */
     @GetMapping("/presigned-url")
     @Operation(summary = "获取文件预签名地址", description = "模式二：前端上传文件：用于前端直接上传七牛、阿里云 OSS 等文件存储器")
     public CommonResult<FilePresignedUrlRespVO> getFilePresignedUrl(@RequestParam("path") String path) throws Exception {
         return success(fileService.getFilePresignedUrl(path));
     }
 
+    /**
+     * 创建文件
+     * <p>
+     * 该方法用于记录前端上传的文件信息（配合 presigned-url 接口使用）。
+     * </p>
+     *
+     * @param createReqVO 文件创建请求 VO
+     * @return 返回创建的文件 ID
+     */
     @PostMapping("/create")
     @Operation(summary = "创建文件", description = "模式二：前端上传文件：配合 presigned-url 接口，记录上传了上传的文件")
     public CommonResult<Long> createFile(@Valid @RequestBody FileCreateReqVO createReqVO) {
         return success(fileService.createFile(createReqVO));
     }
 
+    /**
+     * 删除文件
+     * <p>
+     * 该方法用于删除指定的文件。
+     * </p>
+     *
+     * @param id 文件 ID
+     * @return 返回操作是否成功
+     * @throws Exception 如果删除文件时发生错误，则抛出异常
+     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除文件")
     @Parameter(name = "id", description = "编号", required = true)
@@ -66,6 +111,17 @@ public class FileController {
         return success(true);
     }
 
+    /**
+     * 下载文件
+     * <p>
+     * 该方法用于根据文件配置 ID 和路径下载文件内容。
+     * </p>
+     *
+     * @param request  请求对象
+     * @param response 响应对象
+     * @param configId 文件配置 ID
+     * @throws Exception 如果下载文件时发生错误，则抛出异常
+     */
     @GetMapping("/{configId}/get/**")
     @PermitAll
     @Operation(summary = "下载文件")
@@ -91,6 +147,15 @@ public class FileController {
         writeAttachment(response, path, content);
     }
 
+    /**
+     * 获取文件分页
+     * <p>
+     * 该方法用于分页查询文件列表。
+     * </p>
+     *
+     * @param pageVO 文件分页请求 VO
+     * @return 返回文件分页结果
+     */
     @GetMapping("/page")
     @Operation(summary = "获得文件分页")
     @PreAuthorize("@ss.hasPermission('infra:file:query')")
@@ -98,5 +163,4 @@ public class FileController {
         PageResult<FileDO> pageResult = fileService.getFilePage(pageVO);
         return success(BeanUtils.toBean(pageResult, FileRespVO.class));
     }
-
 }

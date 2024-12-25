@@ -20,21 +20,45 @@ import org.nstep.engine.module.infra.dal.dataobject.codegen.CodegenTableDO;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 代码生成转换器接口，用于将数据库表信息转换为代码生成所需的数据对象。
+ */
 @Mapper
 public interface CodegenConvert {
 
+    /**
+     * 单例实例。
+     */
     CodegenConvert INSTANCE = Mappers.getMapper(CodegenConvert.class);
 
     // ========== TableInfo 相关 ==========
 
+    /**
+     * 将TableInfo对象转换为CodegenTableDO对象。
+     *
+     * @param bean TableInfo对象。
+     * @return 转换后的CodegenTableDO对象。
+     */
     @Mappings({
             @Mapping(source = "name", target = "tableName"),
             @Mapping(source = "comment", target = "tableComment"),
     })
     CodegenTableDO convert(TableInfo bean);
 
+    /**
+     * 将TableField列表转换为CodegenColumnDO列表。
+     *
+     * @param list TableField列表。
+     * @return 转换后的CodegenColumnDO列表。
+     */
     List<CodegenColumnDO> convertList(List<TableField> list);
 
+    /**
+     * 将TableField对象转换为CodegenColumnDO对象。
+     *
+     * @param bean TableField对象。
+     * @return 转换后的CodegenColumnDO对象。
+     */
     @Mappings({
             @Mapping(source = "name", target = "columnName"),
             @Mapping(source = "metaInfo.jdbcType", target = "dataType", qualifiedByName = "getDataType"),
@@ -46,6 +70,12 @@ public interface CodegenConvert {
     })
     CodegenColumnDO convert(TableField bean);
 
+    /**
+     * 获取JdbcType对应的数据类型名称。
+     *
+     * @param jdbcType JdbcType枚举值。
+     * @return 数据类型名称。
+     */
     @Named("getDataType")
     default String getDataType(JdbcType jdbcType) {
         return jdbcType.name();
@@ -53,6 +83,13 @@ public interface CodegenConvert {
 
     // ========== 其它 ==========
 
+    /**
+     * 将CodegenTableDO对象和CodegenColumnDO列表转换为CodegenDetailRespVO对象。
+     *
+     * @param table   CodegenTableDO对象。
+     * @param columns CodegenColumnDO列表。
+     * @return 转换后的CodegenDetailRespVO对象。
+     */
     default CodegenDetailRespVO convert(CodegenTableDO table, List<CodegenColumnDO> columns) {
         CodegenDetailRespVO respVO = new CodegenDetailRespVO();
         respVO.setTable(BeanUtils.toBean(table, CodegenTableRespVO.class));
@@ -60,6 +97,12 @@ public interface CodegenConvert {
         return respVO;
     }
 
+    /**
+     * 将代码映射转换为CodegenPreviewRespVO列表。
+     *
+     * @param codes 代码映射。
+     * @return 转换后的CodegenPreviewRespVO列表。
+     */
     default List<CodegenPreviewRespVO> convert(Map<String, String> codes) {
         return CollectionUtils.convertList(codes.entrySet(),
                 entry -> {

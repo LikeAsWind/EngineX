@@ -28,6 +28,10 @@ import static org.nstep.engine.framework.apilog.core.enums.OperateTypeEnum.EXPOR
 import static org.nstep.engine.framework.common.pojo.CommonResult.success;
 import static org.nstep.engine.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 
+/**
+ * 管理后台 - API 错误日志控制器
+ * 提供 API 错误日志的状态更新、分页查询和导出 Excel 功能。
+ */
 @Tag(name = "管理后台 - API 错误日志")
 @RestController
 @RequestMapping("/infra/api-error-log")
@@ -35,8 +39,15 @@ import static org.nstep.engine.framework.security.core.util.SecurityFrameworkUti
 public class ApiErrorLogController {
 
     @Resource
-    private ApiErrorLogService apiErrorLogService;
+    private ApiErrorLogService apiErrorLogService; // API 错误日志服务
 
+    /**
+     * 更新 API 错误日志的处理状态
+     *
+     * @param id            错误日志的编号
+     * @param processStatus 处理状态
+     * @return 返回更新是否成功的结果
+     */
     @PutMapping("/update-status")
     @Operation(summary = "更新 API 错误日志的状态")
     @Parameters({
@@ -46,27 +57,46 @@ public class ApiErrorLogController {
     @PreAuthorize("@ss.hasPermission('infra:api-error-log:update-status')")
     public CommonResult<Boolean> updateApiErrorLogProcess(@RequestParam("id") Long id,
                                                           @RequestParam("processStatus") Integer processStatus) {
+        // 调用服务层方法更新错误日志状态
         apiErrorLogService.updateApiErrorLogProcess(id, processStatus, getLoginUserId());
+        // 返回成功的结果
         return success(true);
     }
 
+    /**
+     * 获取 API 错误日志的分页数据
+     *
+     * @param pageReqVO 分页请求参数
+     * @return 返回分页结果，包括日志列表和分页信息
+     */
     @GetMapping("/page")
     @Operation(summary = "获得 API 错误日志分页")
     @PreAuthorize("@ss.hasPermission('infra:api-error-log:query')")
     public CommonResult<PageResult<ApiErrorLogRespVO>> getApiErrorLogPage(@Valid ApiErrorLogPageReqVO pageReqVO) {
+        // 调用服务层方法获取分页数据
         PageResult<ApiErrorLogDO> pageResult = apiErrorLogService.getApiErrorLogPage(pageReqVO);
+        // 将分页数据转换为响应对象并返回
         return success(BeanUtils.toBean(pageResult, ApiErrorLogRespVO.class));
     }
 
+    /**
+     * 导出 API 错误日志为 Excel 文件
+     *
+     * @param exportReqVO 导出请求参数
+     * @param response    HTTP 响应，用于返回 Excel 文件
+     * @throws IOException 如果导出过程中发生 I/O 错误
+     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出 API 错误日志 Excel")
     @PreAuthorize("@ss.hasPermission('infra:api-error-log:export')")
-    @ApiAccessLog(operateType = EXPORT)
+    @ApiAccessLog(operateType = EXPORT) // 记录操作日志
     public void exportApiErrorLogExcel(@Valid ApiErrorLogPageReqVO exportReqVO,
                                        HttpServletResponse response) throws IOException {
+        // 设置导出不分页，获取所有数据
         exportReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
+        // 获取 API 错误日志数据列表
         List<ApiErrorLogDO> list = apiErrorLogService.getApiErrorLogPage(exportReqVO).getList();
-        // 导出 Excel
+        // 导出数据到 Excel 文件
         ExcelUtils.write(response, "API 错误日志.xls", "数据", ApiErrorLogRespVO.class,
                 BeanUtils.toBean(list, ApiErrorLogRespVO.class));
     }

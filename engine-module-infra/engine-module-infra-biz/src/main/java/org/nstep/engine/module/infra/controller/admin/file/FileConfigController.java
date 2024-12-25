@@ -19,6 +19,12 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.nstep.engine.framework.common.pojo.CommonResult.success;
 
+/**
+ * 管理后台 - 文件配置控制器
+ * <p>
+ * 该类用于处理与文件配置相关的所有请求，包括创建、更新、删除、分页查询等操作。
+ * </p>
+ */
 @Tag(name = "管理后台 - 文件配置")
 @RestController
 @RequestMapping("/infra/file-config")
@@ -28,6 +34,15 @@ public class FileConfigController {
     @Resource
     private FileConfigService fileConfigService;
 
+    /**
+     * 创建文件配置
+     * <p>
+     * 该方法用于创建新的文件配置。
+     * </p>
+     *
+     * @param createReqVO 文件配置创建请求 VO
+     * @return 返回创建的文件配置 ID
+     */
     @PostMapping("/create")
     @Operation(summary = "创建文件配置")
     @PreAuthorize("@ss.hasPermission('infra:file-config:create')")
@@ -35,6 +50,15 @@ public class FileConfigController {
         return success(fileConfigService.createFileConfig(createReqVO));
     }
 
+    /**
+     * 更新文件配置
+     * <p>
+     * 该方法用于更新现有的文件配置。
+     * </p>
+     *
+     * @param updateReqVO 文件配置更新请求 VO
+     * @return 返回操作是否成功
+     */
     @PutMapping("/update")
     @Operation(summary = "更新文件配置")
     @PreAuthorize("@ss.hasPermission('infra:file-config:update')")
@@ -43,6 +67,15 @@ public class FileConfigController {
         return success(true);
     }
 
+    /**
+     * 更新文件配置为主配置
+     * <p>
+     * 该方法用于将指定的文件配置设置为主配置。
+     * </p>
+     *
+     * @param id 文件配置 ID
+     * @return 返回操作是否成功
+     */
     @PutMapping("/update-master")
     @Operation(summary = "更新文件配置为 Master")
     @PreAuthorize("@ss.hasPermission('infra:file-config:update')")
@@ -51,6 +84,15 @@ public class FileConfigController {
         return success(true);
     }
 
+    /**
+     * 删除文件配置
+     * <p>
+     * 该方法用于删除指定的文件配置。
+     * </p>
+     *
+     * @param id 文件配置 ID
+     * @return 返回操作是否成功
+     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除文件配置")
     @Parameter(name = "id", description = "编号", required = true)
@@ -60,6 +102,15 @@ public class FileConfigController {
         return success(true);
     }
 
+    /**
+     * 获取文件配置
+     * <p>
+     * 该方法用于获取指定的文件配置详情。
+     * </p>
+     *
+     * @param id 文件配置 ID
+     * @return 返回文件配置详情
+     */
     @GetMapping("/get")
     @Operation(summary = "获得文件配置")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -69,6 +120,15 @@ public class FileConfigController {
         return success(BeanUtils.toBean(config, FileConfigRespVO.class));
     }
 
+    /**
+     * 获取文件配置分页
+     * <p>
+     * 该方法用于分页查询文件配置列表。
+     * </p>
+     *
+     * @param pageVO 文件配置分页请求 VO
+     * @return 返回文件配置分页结果
+     */
     @GetMapping("/page")
     @Operation(summary = "获得文件配置分页")
     @PreAuthorize("@ss.hasPermission('infra:file-config:query')")
@@ -77,6 +137,16 @@ public class FileConfigController {
         return success(BeanUtils.toBean(pageResult, FileConfigRespVO.class));
     }
 
+    /**
+     * 测试文件配置是否正确
+     * <p>
+     * 该方法用于测试文件配置是否有效，并返回相应的 URL。
+     * </p>
+     *
+     * @param id 文件配置 ID
+     * @return 返回测试结果 URL
+     * @throws Exception 如果配置无效，则抛出异常
+     */
     @GetMapping("/test")
     @Operation(summary = "测试文件配置是否正确")
     @PreAuthorize("@ss.hasPermission('infra:file-config:query')")

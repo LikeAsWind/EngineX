@@ -1,7 +1,7 @@
 version: '3'
 services:
   mysql:
-    image: mysql:8.0.30
+    image: mysql:8.0.40
     restart: unless-stopped
     container_name: mysql
     volumes:
@@ -15,6 +15,8 @@ services:
       - TZ=Asia/Shanghai
     ports:
       - 3306:3306
+    networks:
+      - stack
 
   redis:
     image: redis:7.0.4
@@ -79,7 +81,7 @@ services:
     restart: unless-stopped
     container_name: rocketmq-namesrv
     networks:
-      - rocketmq
+      - stack
     ports:
       - 9876:9876
     command: sh mqnamesrv
@@ -96,7 +98,7 @@ services:
     depends_on:
       - rmqnamesrv
     networks:
-      - rocketmq
+      - stack
     ports:
       - 10909:10909
       - 10911:10911
@@ -111,7 +113,7 @@ services:
     depends_on:
       - rmqnamesrv
     networks:
-      - rocketmq
+      - stack
     ports:
       - 8180:8180
 
@@ -128,11 +130,49 @@ services:
     ports:
       - 9001:9001
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - stack
+
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos
+    environment:
+      - MODE=standalone
+      - PREFER_HOST_MODE=hostname
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_PASSWORD=root
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_DB_NAME=nacos_config
+      - JVM_XMS=128m
+      - JVM_XMX=128m
+      - JVM_XMN=128m
+    volumes:
+      - /mydata/nacos/single-logs/nacos-server:/home/nacos/logs
+      - /mydata/nacos/init.d:/home/nacos/init.d
+    ports:
+      - 8848:8848
+      - 9848:9848
+      - 9849:9849
+    restart: on-failure
+    networks:
+      - stack
+
 networks:
-  rocketmq:
-    driver: bridge
   stack:
     driver: bridge
+
 
 # 命令
 #   mkdir /path/to/your/project
