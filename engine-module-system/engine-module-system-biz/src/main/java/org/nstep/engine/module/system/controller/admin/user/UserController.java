@@ -149,7 +149,7 @@ public class UserController {
         List<UserImportExcelVO> list = Arrays.asList(
                 UserImportExcelVO.builder().username("yunai").deptId(1L).email("yunai@nstep.cn").mobile("15601691300")
                         .nickname("engine").status(CommonStatusEnum.ENABLE.getStatus()).sex(SexEnum.MALE.getSex()).build(),
-                UserImportExcelVO.builder().username("yuanma").deptId(2L).email("yuanma@nstep.cn").mobile("15601701300")
+                UserImportExcelVO.builder().username("xxxx").deptId(2L).email("xxxx@nstep.cn").mobile("15601701300")
                         .nickname("源码").status(CommonStatusEnum.DISABLE.getStatus()).sex(SexEnum.FEMALE.getSex()).build()
         );
         // 输出

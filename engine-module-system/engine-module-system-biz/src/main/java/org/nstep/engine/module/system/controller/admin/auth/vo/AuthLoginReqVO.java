@@ -20,7 +20,7 @@ import org.nstep.engine.module.system.enums.social.SocialTypeEnum;
 @Builder
 public class AuthLoginReqVO {
 
-    @Schema(description = "账号", requiredMode = Schema.RequiredMode.REQUIRED, example = "engineyuanma")
+    @Schema(description = "账号", requiredMode = Schema.RequiredMode.REQUIRED, example = "engine")
     @NotEmpty(message = "登录账号不能为空")
     @Length(min = 4, max = 16, message = "账号长度为 4-16 位")
     @Pattern(regexp = "^[A-Za-z0-9]+$", message = "账号格式为数字以及字母")

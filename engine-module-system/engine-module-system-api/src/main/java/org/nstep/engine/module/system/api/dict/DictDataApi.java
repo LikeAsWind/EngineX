@@ -18,12 +18,24 @@ import java.util.List;
 
 import static org.nstep.engine.framework.common.util.collection.CollectionUtils.convertList;
 
-@FeignClient(name = ApiConstants.NAME) // TODO 芋艿：fallbackFactory =
+/**
+ * 字典数据服务接口
+ * <p>
+ * 该接口定义了对字典数据的相关操作，包括校验、查询和解析字典数据。
+ */
+@FeignClient(name = ApiConstants.NAME) // TODO ：fallbackFactory =
 @Tag(name = "RPC 服务 - 字典数据")
 public interface DictDataApi {
 
     String PREFIX = ApiConstants.PREFIX + "/dict-data";
 
+    /**
+     * 校验字典数据们是否有效
+     *
+     * @param dictType 字典类型
+     * @param values   字典数据值的数组
+     * @return 校验结果
+     */
     @GetMapping(PREFIX + "/valid")
     @Operation(summary = "校验字典数据们是否有效")
     @Parameters({
@@ -33,6 +45,13 @@ public interface DictDataApi {
     CommonResult<Boolean> validateDictDataList(@RequestParam("dictType") String dictType,
                                                @RequestParam("values") Collection<String> values);
 
+    /**
+     * 获得指定的字典数据
+     *
+     * @param dictType 字典类型
+     * @param value    字典数据值
+     * @return 指定字典数据的响应
+     */
     @GetMapping(PREFIX + "/get")
     @Operation(summary = "获得指定的字典数据")
     @Parameters({
@@ -43,7 +62,9 @@ public interface DictDataApi {
                                               @RequestParam("value") String value);
 
     /**
-     * 获得指定的字典标签，从缓存中
+     * 获得指定字典类型和字典数据值的字典标签
+     * <p>
+     * 该方法通过字典类型和字典数据值查询字典标签。
      *
      * @param type  字典类型
      * @param value 字典数据值
@@ -57,6 +78,13 @@ public interface DictDataApi {
         return dictData.getLabel();
     }
 
+    /**
+     * 解析获得指定的字典数据
+     *
+     * @param dictType 字典类型
+     * @param label    字典标签
+     * @return 指定字典数据的响应
+     */
     @GetMapping(PREFIX + "/parse")
     @Operation(summary = "解析获得指定的字典数据")
     @Parameters({
@@ -66,6 +94,12 @@ public interface DictDataApi {
     CommonResult<DictDataRespDTO> parseDictData(@RequestParam("dictType") String dictType,
                                                 @RequestParam("label") String label);
 
+    /**
+     * 获得指定字典类型的字典数据列表
+     *
+     * @param dictType 字典类型
+     * @return 字典数据列表
+     */
     @GetMapping(PREFIX + "/list")
     @Operation(summary = "获得指定字典类型的字典数据列表")
     @Parameter(name = "dictType", description = "字典类型", example = "SEX", required = true)

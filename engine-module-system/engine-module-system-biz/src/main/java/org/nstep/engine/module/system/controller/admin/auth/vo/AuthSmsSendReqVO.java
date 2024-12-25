@@ -18,7 +18,7 @@ import org.nstep.engine.module.system.enums.sms.SmsSceneEnum;
 @Builder
 public class AuthSmsSendReqVO {
 
-    @Schema(description = "手机号", requiredMode = Schema.RequiredMode.REQUIRED, example = "engineyuanma")
+    @Schema(description = "手机号", requiredMode = Schema.RequiredMode.REQUIRED, example = "engine")
     @NotEmpty(message = "手机号不能为空")
     @Mobile
     private String mobile;

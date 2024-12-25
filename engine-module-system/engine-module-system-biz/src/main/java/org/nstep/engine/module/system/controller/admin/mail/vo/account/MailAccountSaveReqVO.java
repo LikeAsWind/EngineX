@@ -12,7 +12,7 @@ public class MailAccountSaveReqVO {
     @Schema(description = "编号", example = "1024")
     private Long id;
 
-    @Schema(description = "邮箱", requiredMode = Schema.RequiredMode.REQUIRED, example = "engineyuanma@123.com")
+    @Schema(description = "邮箱", requiredMode = Schema.RequiredMode.REQUIRED, example = "engine@123.com")
     @NotNull(message = "邮箱不能为空")
     @Email(message = "必须是 Email 格式")
     private String mail;

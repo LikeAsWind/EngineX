@@ -2786,7 +2786,7 @@ VALUES (13, '后台用户短信登录', 'admin-sms-login', 1, '奥特曼', '你�
         '[\"code\",\"name\"]', 0, '3', '1', '2021-10-11 08:10:00', '1', '2023-12-02 19:51:14', b'0');
 INSERT INTO `system_mail_template` (`id`, `name`, `code`, `account_id`, `nickname`, `title`, `content`, `params`,
                                     `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
-VALUES (14, '测试模版', 'test_01', 2, '芋艿', '一个标题',
+VALUES (14, '测试模版', 'test_01', 2, '', '一个标题',
         '<p>你是 {key01} 吗？</p><p><br></p><p>是的话，赶紧 {key02} 一下！</p>', '[\"key01\",\"key02\"]', 0, NULL, '1',
         '2023-01-26 01:27:40', '1', '2023-01-27 10:32:16', b'0');
 INSERT INTO `system_mail_template` (`id`, `name`, `code`, `account_id`, `nickname`, `title`, `content`, `params`,
@@ -7146,12 +7146,12 @@ VALUES (4, 103, 2, 2, 'register', '系统消息', '你好，欢迎 哈哈 加入
 INSERT INTO `system_notify_message` (`id`, `user_id`, `user_type`, `template_id`, `template_code`, `template_nickname`,
                                      `template_content`, `template_type`, `template_params`, `read_status`, `read_time`,
                                      `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`)
-VALUES (5, 1, 2, 1, 'test', '123', '我是 芋艿，我开始 写代码 了', 1, '{\"name\":\"芋艿\",\"what\":\"写代码\"}', b'1',
+VALUES (5, 1, 2, 1, 'test', '123', '我是 ，我开始 写代码 了', 1, '{\"name\":\"\",\"what\":\"写代码\"}', b'1',
         '2023-02-10 00:47:04', '1', '2023-01-28 22:21:42', '1', '2023-02-10 00:47:04', b'0', 1);
 INSERT INTO `system_notify_message` (`id`, `user_id`, `user_type`, `template_id`, `template_code`, `template_nickname`,
                                      `template_content`, `template_type`, `template_params`, `read_status`, `read_time`,
                                      `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`)
-VALUES (6, 1, 2, 1, 'test', '123', '我是 芋艿，我开始 写代码 了', 1, '{\"name\":\"芋艿\",\"what\":\"写代码\"}', b'1',
+VALUES (6, 1, 2, 1, 'test', '123', '我是 ，我开始 写代码 了', 1, '{\"name\":\"\",\"what\":\"写代码\"}', b'1',
         '2023-01-29 10:52:06', '1', '2023-01-28 22:22:07', '1', '2023-01-29 10:52:06', b'0', 1);
 INSERT INTO `system_notify_message` (`id`, `user_id`, `user_type`, `template_id`, `template_code`, `template_nickname`,
                                      `template_content`, `template_type`, `template_params`, `read_status`, `read_time`,
@@ -10413,7 +10413,7 @@ BEGIN;
 INSERT INTO `system_tenant` (`id`, `name`, `contact_user_id`, `contact_name`, `contact_mobile`, `status`, `website`,
                              `package_id`, `expire_time`, `account_count`, `creator`, `create_time`, `updater`,
                              `update_time`, `deleted`)
-VALUES (1, 'engine源码', NULL, '芋艿', '17321315478', 0, 'www.nstep.cn', 0, '2099-02-19 17:14:16', 9999, '1',
+VALUES (1, 'engine源码', NULL, '', '17321315478', 0, 'www.nstep.cn', 0, '2099-02-19 17:14:16', 9999, '1',
         '2021-01-05 17:03:47', '1', '2023-11-06 11:41:41', b'0');
 INSERT INTO `system_tenant` (`id`, `name`, `contact_user_id`, `contact_name`, `contact_mobile`, `status`, `website`,
                              `package_id`, `expire_time`, `account_count`, `creator`, `create_time`, `updater`,
@@ -10629,8 +10629,8 @@ VALUES (100, 'engine', '$2a$10$11U48RhyJ5pSBYWSn12AD./ld671.ycSzJHbyrtpeoMeYiw31
 INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, `dept_id`, `post_ids`, `email`,
                             `mobile`, `sex`, `avatar`, `status`, `login_ip`, `login_date`, `creator`, `create_time`,
                             `updater`, `update_time`, `deleted`, `tenant_id`)
-VALUES (103, 'yuanma', '$2a$04$fUBSmjKCPYAUmnMzOb6qE.eZCGPhHi1JmAKclODbfS/O7fHOl2bH6', '源码', NULL, 106, NULL,
-        'yuanma@nstep.cn', '15601701300', 0, '', 0, '0:0:0:0:0:0:0:1', '2024-08-11 17:48:12', '',
+VALUES (103, 'xxxx', '$2a$04$fUBSmjKCPYAUmnMzOb6qE.eZCGPhHi1JmAKclODbfS/O7fHOl2bH6', '源码', NULL, 106, NULL,
+        'xxxx@nstep.cn', '15601701300', 0, '', 0, '0:0:0:0:0:0:0:1', '2024-08-11 17:48:12', '',
         '2021-01-13 23:50:35', NULL, '2024-08-11 17:48:12', b'0', 1);
 INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, `dept_id`, `post_ids`, `email`,
                             `mobile`, `sex`, `avatar`, `status`, `login_ip`, `login_date`, `creator`, `create_time`,
@@ -10641,17 +10641,17 @@ VALUES (104, 'test', '$2a$04$jDFLttgfik0QqJKAbfhMa.2A9xXoZmAIxakdFJUzkX.MgBKT6dd
 INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, `dept_id`, `post_ids`, `email`,
                             `mobile`, `sex`, `avatar`, `status`, `login_ip`, `login_date`, `creator`, `create_time`,
                             `updater`, `update_time`, `deleted`, `tenant_id`)
-VALUES (107, 'admin107', '$2a$10$dYOOBKMO93v/.ReCqzyFg.o67Tqk.bbc2bhrpyBGkIw9aypCtr2pm', '芋艿', NULL, NULL, NULL, '',
+VALUES (107, 'admin107', '$2a$10$dYOOBKMO93v/.ReCqzyFg.o67Tqk.bbc2bhrpyBGkIw9aypCtr2pm', '', NULL, NULL, NULL, '',
         '15601691300', 0, '', 0, '', NULL, '1', '2022-02-20 22:59:33', '1', '2022-02-27 08:26:51', b'0', 118);
 INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, `dept_id`, `post_ids`, `email`,
                             `mobile`, `sex`, `avatar`, `status`, `login_ip`, `login_date`, `creator`, `create_time`,
                             `updater`, `update_time`, `deleted`, `tenant_id`)
-VALUES (108, 'admin108', '$2a$10$y6mfvKoNYL1GXWak8nYwVOH.kCWqjactkzdoIDgiKl93WN3Ejg.Lu', '芋艿', NULL, NULL, NULL, '',
+VALUES (108, 'admin108', '$2a$10$y6mfvKoNYL1GXWak8nYwVOH.kCWqjactkzdoIDgiKl93WN3Ejg.Lu', '', NULL, NULL, NULL, '',
         '15601691300', 0, '', 0, '', NULL, '1', '2022-02-20 23:00:50', '1', '2022-02-27 08:26:53', b'0', 119);
 INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, `dept_id`, `post_ids`, `email`,
                             `mobile`, `sex`, `avatar`, `status`, `login_ip`, `login_date`, `creator`, `create_time`,
                             `updater`, `update_time`, `deleted`, `tenant_id`)
-VALUES (109, 'admin109', '$2a$10$JAqvH0tEc0I7dfDVBI7zyuB4E3j.uH6daIjV53.vUS6PknFkDJkuK', '芋艿', NULL, NULL, NULL, '',
+VALUES (109, 'admin109', '$2a$10$JAqvH0tEc0I7dfDVBI7zyuB4E3j.uH6daIjV53.vUS6PknFkDJkuK', '', NULL, NULL, NULL, '',
         '15601691300', 0, '', 0, '', NULL, '1', '2022-02-20 23:11:50', '1', '2022-02-27 08:26:56', b'0', 120);
 INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, `dept_id`, `post_ids`, `email`,
                             `mobile`, `sex`, `avatar`, `status`, `login_ip`, `login_date`, `creator`, `create_time`,

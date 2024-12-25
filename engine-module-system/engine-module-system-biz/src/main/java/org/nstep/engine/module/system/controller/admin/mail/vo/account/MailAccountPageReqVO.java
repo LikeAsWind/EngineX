@@ -12,7 +12,7 @@ import org.nstep.engine.framework.common.pojo.PageParam;
 @ToString(callSuper = true)
 public class MailAccountPageReqVO extends PageParam {
 
-    @Schema(description = "邮箱", requiredMode = Schema.RequiredMode.REQUIRED, example = "engineyuanma@123.com")
+    @Schema(description = "邮箱", requiredMode = Schema.RequiredMode.REQUIRED, example = "engine@123.com")
     private String mail;
 
     @Schema(description = "用户名", requiredMode = Schema.RequiredMode.REQUIRED, example = "engine")

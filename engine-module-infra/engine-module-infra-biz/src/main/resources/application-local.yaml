@@ -145,7 +145,7 @@ logging:
     org.nstep.engine.module.infra.dal.mysql: debug
     org.nstep.engine.module.infra.dal.mysql.logger.ApiErrorLogMapper: INFO # 配置 ApiErrorLogMapper 的日志级别为 info，避免和 GlobalExceptionHandler 重复打印
     org.nstep.engine.module.infra.dal.mysql.file.FileConfigMapper: INFO # 配置 FileConfigMapper 的日志级别为 info
-    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 芋艿：先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
+    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO ：先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
 
 --- #################### engine相关配置 ####################
 

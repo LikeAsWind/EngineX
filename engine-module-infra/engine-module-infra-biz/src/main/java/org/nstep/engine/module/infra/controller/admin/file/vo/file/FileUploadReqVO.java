@@ -31,7 +31,7 @@ public class FileUploadReqVO {
      * 文件存储的路径，若未提供路径，则使用默认路径。
      * </p>
      */
-    @Schema(description = "文件附件", example = "engineyuanma.png")
+    @Schema(description = "文件附件", example = "engine.png")
     private String path;
 
 }

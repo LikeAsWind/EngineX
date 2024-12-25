@@ -9,7 +9,7 @@ tenant-id: {{adminTenentId}}
 
 {
   "name": "engine",
-  "contactName": "芋艿",
+  "contactName": "",
   "contactMobile": "15601691300",
   "status": 0,
   "domain": "https://www.nstep.cn",

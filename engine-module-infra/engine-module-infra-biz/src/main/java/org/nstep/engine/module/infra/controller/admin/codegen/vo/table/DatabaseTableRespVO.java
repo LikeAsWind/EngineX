@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class DatabaseTableRespVO {
 
-    @Schema(description = "表名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "yuanma")
+    @Schema(description = "表名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "xxxx")
     private String name; // 数据库表的名称
 
     @Schema(description = "表描述", requiredMode = Schema.RequiredMode.REQUIRED, example = "engine源码")

@@ -24,9 +24,9 @@ public class AppFileUploadReqVO {
     /**
      * 文件路径。
      * 用于存储文件上传后的路径。
-     * 示例值："engineyuanma.png"。
+     * 示例值："engine.png"。
      */
-    @Schema(description = "文件附件", example = "engineyuanma.png")
+    @Schema(description = "文件附件", example = "engine.png")
     private String path;
 
 }

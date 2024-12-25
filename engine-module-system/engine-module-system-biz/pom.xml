@@ -97,7 +97,7 @@
             <artifactId>engine-spring-boot-starter-mq</artifactId>
         </dependency>
 
-        <!-- 服务保障相关 TODO 芋艿：暂时去掉 -->
+        <!-- 服务保障相关 TODO ：暂时去掉 -->
         <!--        <dependency>-->
         <!--            <groupId>org.nstep.engine</groupId>-->
         <!--            <artifactId>engine-spring-boot-starter-protection</artifactId>-->

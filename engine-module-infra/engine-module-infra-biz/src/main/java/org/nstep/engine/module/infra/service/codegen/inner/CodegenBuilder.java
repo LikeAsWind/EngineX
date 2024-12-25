@@ -191,7 +191,7 @@ public class CodegenBuilder {
         }
         // name
         if (StrUtil.endWithIgnoreCase(column.getJavaField(), "name")) {
-            column.setExample(randomEle(new String[]{"张三", "李四", "王五", "赵六", "芋艿"}));
+            column.setExample(randomEle(new String[]{"张三", "李四", "王五", "赵六", ""}));
             return;
         }
         // status
