@@ -6,6 +6,9 @@ import org.nstep.engine.framework.common.exception.ErrorCode;
  * Infra 错误码枚举类
  * <p>
  * infra 系统，使用 1-001-000-000 段
+ * <p>
+ * 该类定义了多个错误码，涵盖了系统中不同模块的常见错误类型，如参数配置、定时任务、API 错误日志、文件操作等。
+ * 每个错误码都由四部分组成：模块编号、子模块编号、错误编号、具体错误描述。错误码遵循一定的规则，便于系统的维护与扩展。
  */
 public interface ErrorCodeConstants {
 
@@ -39,7 +42,7 @@ public interface ErrorCodeConstants {
     ErrorCode CODEGEN_IMPORT_TABLE_NULL = new ErrorCode(1_001_004_001, "导入的表不存在");
     ErrorCode CODEGEN_IMPORT_COLUMNS_NULL = new ErrorCode(1_001_004_002, "导入的字段不存在");
     ErrorCode CODEGEN_TABLE_NOT_EXISTS = new ErrorCode(1_001_004_004, "表定义不存在");
-    ErrorCode CODEGEN_COLUMN_NOT_EXISTS = new ErrorCode(1_001_004_005, "字段义不存在");
+    ErrorCode CODEGEN_COLUMN_NOT_EXISTS = new ErrorCode(1_001_004_005, "字段定义不存在");
     ErrorCode CODEGEN_SYNC_COLUMNS_NULL = new ErrorCode(1_001_004_006, "同步的字段不存在");
     ErrorCode CODEGEN_SYNC_NONE_CHANGE = new ErrorCode(1_001_004_007, "同步失败，不存在改变");
     ErrorCode CODEGEN_TABLE_INFO_TABLE_COMMENT_IS_NULL = new ErrorCode(1_001_004_008, "数据库的表注释未填写");
@@ -55,17 +58,5 @@ public interface ErrorCodeConstants {
     // ========== 数据源配置 1-001-007-000 ==========
     ErrorCode DATA_SOURCE_CONFIG_NOT_EXISTS = new ErrorCode(1_001_007_000, "数据源配置不存在");
     ErrorCode DATA_SOURCE_CONFIG_NOT_OK = new ErrorCode(1_001_007_001, "数据源配置不正确，无法进行连接");
-
-    // ========== 学生 1-001-201-000 ==========
-    ErrorCode DEMO01_CONTACT_NOT_EXISTS = new ErrorCode(1_001_201_000, "示例联系人不存在");
-    ErrorCode DEMO02_CATEGORY_NOT_EXISTS = new ErrorCode(1_001_201_001, "示例分类不存在");
-    ErrorCode DEMO02_CATEGORY_EXITS_CHILDREN = new ErrorCode(1_001_201_002, "存在存在子示例分类，无法删除");
-    ErrorCode DEMO02_CATEGORY_PARENT_NOT_EXITS = new ErrorCode(1_001_201_003, "父级示例分类不存在");
-    ErrorCode DEMO02_CATEGORY_PARENT_ERROR = new ErrorCode(1_001_201_004, "不能设置自己为父示例分类");
-    ErrorCode DEMO02_CATEGORY_NAME_DUPLICATE = new ErrorCode(1_001_201_005, "已经存在该名字的示例分类");
-    ErrorCode DEMO02_CATEGORY_PARENT_IS_CHILD = new ErrorCode(1_001_201_006, "不能设置自己的子示例分类为父示例分类");
-    ErrorCode DEMO03_STUDENT_NOT_EXISTS = new ErrorCode(1_001_201_007, "学生不存在");
-    ErrorCode DEMO03_GRADE_NOT_EXISTS = new ErrorCode(1_001_201_008, "学生班级不存在");
-    ErrorCode DEMO03_GRADE_EXISTS = new ErrorCode(1_001_201_009, "学生班级已存在");
 
 }
