@@ -29,15 +29,18 @@ public class CorsResponseHeaderFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         return chain.filter(exchange).then(Mono.defer(() -> {
+            // 遍历响应头，检查重复的 CORS 头部
             exchange.getResponse().getHeaders().entrySet().stream()
+                    // 过滤掉值为 null 或没有多个值的情况
                     .filter(kv -> (kv.getValue() != null && kv.getValue().size() > 1))
+                    // 只关注 CORS 相关的头部
                     .filter(kv -> (kv.getKey().equals(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
                             || kv.getKey().equals(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS)))
-                    .forEach(kv -> kv.setValue(new ArrayList<String>() {{
+                    // 保留第一个值，去掉重复的值
+                    .forEach(kv -> kv.setValue(new ArrayList<>() {{
                         add(kv.getValue().get(0));
                     }}));
             return chain.filter(exchange);
         }));
     }
-
 }

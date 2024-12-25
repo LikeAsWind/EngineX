@@ -13,7 +13,6 @@ import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
-import org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory;
 import org.springframework.cloud.gateway.support.BodyInserterContext;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
@@ -48,9 +47,11 @@ import static cn.hutool.core.date.DatePattern.NORM_DATETIME_MS_FORMATTER;
 /**
  * 网关的访问日志过滤器
  * <p>
- * 从功能上，它类似 engine-spring-boot-starter-web 的 ApiAccessLogFilter 过滤器
+ * 该过滤器用于记录和打印网关的访问日志。它会捕获请求和响应的相关信息，并通过不同的方式（如打印到控制台或远程记录）记录日志。
+ * 该过滤器与 engine-spring-boot-starter-web 的 ApiAccessLogFilter 类似。
  * <p>
- * TODO 芋艿：如果网关执行异常，不会记录访问日志，后续研究下 https://github.com/Silvmike/webflux-demo/blob/master/tests/src/test/java/ru/hardcoders/demo/webflux/web_handler/filters/logging
+ * TODO ：如果网关执行异常，不会记录访问日志，后续研究下
+ * <a href="https://github.com/Silvmike/webflux-demo/blob/master/tests/src/test/java/ru/hardcoders/demo/webflux/web_handler/filters/logging"></a>
  */
 @Slf4j
 @Component
@@ -61,15 +62,17 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
 
     /**
      * 打印日志
+     * <p>
+     * 该方法用于记录网关的访问日志。日志内容包括请求和响应的相关信息，如用户信息、请求参数、响应内容等。
      *
-     * @param gatewayLog 网关日志
+     * @param gatewayLog 网关日志对象，包含请求和响应的详细信息
      */
     private void writeAccessLog(AccessLog gatewayLog) {
         // 方式一：打印 Logger 后，通过 ELK 进行收集
         // log.info("[writeAccessLog][日志内容：{}]", JsonUtils.toJsonString(gatewayLog));
 
         // 方式二：调用远程服务，记录到数据库中
-        // TODO 芋艿：暂未实现
+        // TODO ：暂未实现
 
         // 方式三：打印到控制台，方便排查错误
         Map<String, Object> values = MapUtil.newHashMap(15, true); // 手工拼接，保证排序；15 保证不用扩容
@@ -96,6 +99,7 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
+        // 返回过滤器的执行顺序，保证此过滤器优先执行
         return Ordered.HIGHEST_PRECEDENCE;
     }
 
@@ -114,7 +118,7 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
         gatewayLog.setStartTime(LocalDateTime.now());
         gatewayLog.setUserIp(WebFrameworkUtils.getClientIP(exchange));
 
-        // 继续 filter 过滤
+        // 继续执行下一个过滤器
         MediaType mediaType = request.getHeaders().getContentType();
         if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType)
                 || MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) { // 适合 JSON 和 Form 提交的请求
@@ -123,6 +127,16 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
         return filterWithoutRequestBody(exchange, chain, gatewayLog);
     }
 
+    /**
+     * 处理没有请求体的情况
+     * <p>
+     * 在没有请求体的情况下，记录响应日志并继续执行过滤器链。
+     *
+     * @param exchange  当前请求的交换对象
+     * @param chain     过滤器链
+     * @param accessLog 当前的访问日志对象
+     * @return Mono<Void>
+     */
     private Mono<Void> filterWithoutRequestBody(ServerWebExchange exchange, GatewayFilterChain chain, AccessLog accessLog) {
         // 包装 Response，用于记录 Response Body
         ServerHttpResponseDecorator decoratedResponse = recordResponseLog(exchange, accessLog);
@@ -131,13 +145,18 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * 参考 {@link ModifyRequestBodyGatewayFilterFactory} 实现
+     * 处理带有请求体的情况
      * <p>
-     * 差别主要在于使用 modifiedBody 来读取 Request Body 数据
+     * 在有请求体的情况下，读取请求体内容，并记录响应日志。
+     *
+     * @param exchange   当前请求的交换对象
+     * @param chain      过滤器链
+     * @param gatewayLog 当前的访问日志对象
+     * @return Mono<Void>
      */
     private Mono<Void> filterWithRequestBody(ServerWebExchange exchange, GatewayFilterChain chain, AccessLog gatewayLog) {
         // 设置 Request Body 读取时，设置到网关日志
-        // 此处 codecConfigurer.getReaders() 的目的，是解决 spring.codec.max-in-memory-size 不生效
+        // 此处 codecConfigurer.getReaders() 的目的是解决 spring.codec.max-in-memory-size 不生效的问题
         ServerRequest serverRequest = ServerRequest.create(exchange, codecConfigurer.getReaders());
         Mono<String> modifiedBody = serverRequest.bodyToMono(String.class).flatMap(body -> {
             gatewayLog.setRequestBody(body);
@@ -149,26 +168,26 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
         // 创建 CachedBodyOutputMessage 对象
         HttpHeaders headers = new HttpHeaders();
         headers.putAll(exchange.getRequest().getHeaders());
-        // the new content type will be computed by bodyInserter
-        // and then set in the request decorator
-        headers.remove(HttpHeaders.CONTENT_LENGTH); // 移除
+        headers.remove(HttpHeaders.CONTENT_LENGTH); // 移除 Content-Length
         CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, headers);
-        // 通过 BodyInserter 将 Request Body 写入到 CachedBodyOutputMessage 中
         return bodyInserter.insert(outputMessage, new BodyInserterContext()).then(Mono.defer(() -> {
             // 包装 Request，用于缓存 Request Body
             ServerHttpRequest decoratedRequest = requestDecorate(exchange, headers, outputMessage);
             // 包装 Response，用于记录 Response Body
             ServerHttpResponseDecorator decoratedResponse = recordResponseLog(exchange, gatewayLog);
-            // 记录普通的
             return chain.filter(exchange.mutate().request(decoratedRequest).response(decoratedResponse).build())
                     .then(Mono.fromRunnable(() -> writeAccessLog(gatewayLog))); // 打印日志
-
         }));
     }
 
     /**
      * 记录响应日志
-     * 通过 DataBufferFactory 解决响应体分段传输问题。
+     * <p>
+     * 该方法通过 DataBufferFactory 解决响应体分段传输的问题，并记录响应内容到日志。
+     *
+     * @param exchange   当前请求的交换对象
+     * @param gatewayLog 当前的访问日志对象
+     * @return ServerHttpResponseDecorator 响应装饰器
      */
     private ServerHttpResponseDecorator recordResponseLog(ServerWebExchange exchange, AccessLog gatewayLog) {
         ServerHttpResponse response = exchange.getResponse();
@@ -182,7 +201,6 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
                     gatewayLog.setEndTime(LocalDateTime.now());
                     gatewayLog.setDuration((int) (LocalDateTimeUtil.between(gatewayLog.getStartTime(),
                             gatewayLog.getEndTime()).toMillis()));
-                    // 设置其它字段
                     gatewayLog.setUserId(SecurityFrameworkUtils.getLoginUserId(exchange));
                     gatewayLog.setUserType(SecurityFrameworkUtils.getLoginUserType(exchange));
                     gatewayLog.setResponseHeaders(response.getHeaders());
@@ -204,21 +222,20 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
                         }));
                     }
                 }
-                // if body is not a flux. never got there.
                 return super.writeWith(body);
             }
         };
     }
 
-    // ========== 参考 ModifyRequestBodyGatewayFilterFactory 中的方法 ==========
-
     /**
      * 请求装饰器，支持重新计算 headers、body 缓存
+     * <p>
+     * 该方法用于装饰请求，确保请求体的缓存和头部的正确性。
      *
-     * @param exchange      请求
+     * @param exchange      当前请求的交换对象
      * @param headers       请求头
-     * @param outputMessage body 缓存
-     * @return 请求装饰器
+     * @param outputMessage 请求体缓存
+     * @return ServerHttpRequestDecorator 装饰后的请求对象
      */
     private ServerHttpRequestDecorator requestDecorate(ServerWebExchange exchange, HttpHeaders headers, CachedBodyOutputMessage outputMessage) {
         return new ServerHttpRequestDecorator(exchange.getRequest()) {
@@ -231,8 +248,7 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
                 if (contentLength > 0) {
                     httpHeaders.setContentLength(contentLength);
                 } else {
-                    // TODO: this causes a 'HTTP/1.1 411 Length Required' // on
-                    // httpbin.org
+                    // 如果没有 Content-Length，设置 Transfer-Encoding 为 chunked
                     httpHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
                 }
                 return httpHeaders;
@@ -245,15 +261,20 @@ public class AccessLogFilter implements GlobalFilter, Ordered {
         };
     }
 
-    // ========== 参考 ModifyResponseBodyGatewayFilterFactory 中的方法 ==========
-
+    /**
+     * 合并多个流集合，解决返回体分段传输
+     * <p>
+     * 该方法用于合并响应体的多个数据块，确保完整的响应内容能够被读取。
+     *
+     * @param dataBuffers 响应体的多个数据块
+     * @return byte[] 合并后的响应内容
+     */
     private byte[] readContent(List<? extends DataBuffer> dataBuffers) {
-        // 合并多个流集合，解决返回体分段传输
         DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
         DataBuffer join = dataBufferFactory.join(dataBuffers);
         byte[] content = new byte[join.readableByteCount()];
         join.read(content);
-        // 释放掉内存
+        // 释放内存
         DataBufferUtils.release(join);
         return content;
     }

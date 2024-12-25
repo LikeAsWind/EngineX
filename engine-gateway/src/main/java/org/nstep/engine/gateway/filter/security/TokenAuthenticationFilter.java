@@ -29,26 +29,29 @@ import java.util.function.Function;
 import static org.nstep.engine.framework.common.util.cache.CacheUtils.buildAsyncReloadingCache;
 
 /**
- * Token 过滤器，验证 token 的有效性
- * 1. 验证通过时，将 userId、userType、tenantId 通过 Header 转发给服务
- * 2. 验证不通过，还是会转发给服务。因为，接口是否需要登录的校验，还是交给服务自身处理
+ * Token 过滤器，用于验证 token 的有效性
+ * <p>
+ * 1. 如果 token 验证通过，将 userId、userType、tenantId 等信息通过 Header 转发给后端服务。
+ * 2. 如果 token 验证不通过，依然会转发请求给后端服务。是否需要登录校验交由后端服务自行处理。
+ * <p>
+ * 该过滤器用于处理基于 token 的认证机制，确保只有合法用户能够访问受保护的资源。
  */
 @Component
 public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
 
     /**
-     * CommonResult<OAuth2AccessTokenCheckRespDTO> 对应的 TypeReference 结果，用于解析 checkToken 的结果
+     * 用于解析 checkToken 的结果，表示 OAuth2 访问令牌验证结果的类型。
      */
     private static final TypeReference<CommonResult<OAuth2AccessTokenCheckRespDTO>> CHECK_RESULT_TYPE_REFERENCE
-            = new TypeReference<CommonResult<OAuth2AccessTokenCheckRespDTO>>() {
+            = new TypeReference<>() {
     };
 
     /**
-     * 空的 LoginUser 的结果
+     * 空的 LoginUser 对象
      * <p>
-     * 用于解决如下问题：
-     * 1. {@link #getLoginUser(ServerWebExchange, String)} 返回 Mono.empty() 时，会导致后续的 flatMap 无法进行处理的问题。
-     * 2. {@link #buildUser(String)} 时，如果 Token 已经过期，返回 LOGIN_USER_EMPTY 对象，避免缓存无法刷新
+     * 用于处理以下情况：
+     * 1. 当 {@link #getLoginUser(ServerWebExchange, String)} 返回 Mono.empty() 时，避免后续 flatMap 无法处理。
+     * 2. 当 Token 已经过期时，返回一个空的 LoginUser 对象，避免缓存无法刷新。
      */
     private static final LoginUser LOGIN_USER_EMPTY = new LoginUser();
 
@@ -57,11 +60,10 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
     /**
      * 登录用户的本地缓存
      * <p>
-     * key1：多租户的编号
-     * key2：访问令牌
+     * 使用多租户编号和访问令牌作为缓存的键，缓存登录用户信息。
      */
     private final LoadingCache<KeyValue<Long, String>, LoginUser> loginUserCache = buildAsyncReloadingCache(Duration.ofMinutes(1),
-            new CacheLoader<KeyValue<Long, String>, LoginUser>() {
+            new CacheLoader<>() {
 
                 @Override
                 public LoginUser load(KeyValue<Long, String> token) {
@@ -71,45 +73,63 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
 
             });
 
+    /**
+     * 构造函数，初始化 WebClient 并配置负载均衡功能
+     * <p>
+     * 由于 Spring Cloud OpenFeign 不支持 Reactive，因此使用 WebClient 代替。
+     * 同时通过 ReactorLoadBalancerExchangeFilterFunction 实现负载均衡。
+     */
     public TokenAuthenticationFilter(ReactorLoadBalancerExchangeFilterFunction lbFunction) {
-        // Q：为什么不使用 OAuth2TokenApi 进行调用？
-        // A1：Spring Cloud OpenFeign 官方未内置 Reactive 的支持 https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#reactive-support
-        // A2：校验 Token 的 API 需要使用到 header[tenant-id] 传递租户编号，暂时不想编写 RequestInterceptor 实现
-        // 因此，这里采用 WebClient，通过 lbFunction 实现负载均衡
         this.webClient = WebClient.builder().filter(lbFunction).build();
     }
 
+    /**
+     * 过滤器的核心方法，处理请求中的 Token 验证逻辑
+     * <p>
+     * 1. 如果请求中没有 Token，则直接继续执行后续的过滤器链。
+     * 2. 如果请求中有 Token，则解析对应的用户信息，并将其设置到请求头中转发给后端服务。
+     * <p>
+     * 通过 Mono.empty() 来保证即使用户不存在，过滤器也能继续执行，避免返回空响应。
+     *
+     * @param exchange 请求和响应的交换对象
+     * @param chain    过滤器链
+     * @return Mono<Void> 返回异步执行的结果
+     */
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, GatewayFilterChain chain) {
         // 移除 login-user 的请求头，避免伪造模拟
         SecurityFrameworkUtils.removeLoginUser(exchange);
 
-        // 情况一，如果没有 Token 令牌，则直接继续 filter
+        // 情况一：如果没有 Token 令牌，则直接继续过滤链
         String token = SecurityFrameworkUtils.obtainAuthorization(exchange);
         if (StrUtil.isEmpty(token)) {
             return chain.filter(exchange);
         }
 
-        // 情况二，如果有 Token 令牌，则解析对应 userId、userType、tenantId 等字段，并通过 通过 Header 转发给服务
-        // 重要说明：defaultIfEmpty 作用，保证 Mono.empty() 情况，可以继续执行 `flatMap 的 chain.filter(exchange)` 逻辑，避免返回给前端空的 Response！！
+        // 情况二：如果有 Token 令牌，则解析对应的 userId、userType、tenantId 等字段，并通过 Header 转发给服务
         return getLoginUser(exchange, token).defaultIfEmpty(LOGIN_USER_EMPTY).flatMap(user -> {
-            // 1. 无用户，直接 filter 继续请求
-            if (user == LOGIN_USER_EMPTY || // 下面 expiresTime 的判断，为了解决 token 实际已经过期的情况
-                    user.getExpiresTime() == null || LocalDateTimeUtils.beforeNow(user.getExpiresTime())) {
+            // 1. 如果没有用户信息，直接继续过滤链
+            if (user == LOGIN_USER_EMPTY || user.getExpiresTime() == null || LocalDateTimeUtils.beforeNow(user.getExpiresTime())) {
                 return chain.filter(exchange);
             }
 
-            // 2.1 有用户，则设置登录用户
+            // 2. 有用户信息，则设置登录用户，并将用户信息通过请求头传递给后端服务
             SecurityFrameworkUtils.setLoginUser(exchange, user);
-            // 2.2 将 user 并设置到 login-user 的请求头，使用 json 存储值
             ServerWebExchange newExchange = exchange.mutate()
                     .request(builder -> SecurityFrameworkUtils.setLoginUserHeader(builder, user)).build();
             return chain.filter(newExchange);
         });
     }
 
+    /**
+     * 获取登录用户信息，首先尝试从缓存中获取，如果缓存中没有，则从远程服务获取
+     *
+     * @param exchange 请求交换对象
+     * @param token    访问令牌
+     * @return Mono<LoginUser> 返回登录用户的 Mono 对象
+     */
     private Mono<LoginUser> getLoginUser(ServerWebExchange exchange, String token) {
-        // 从缓存中，获取 LoginUser
+        // 从缓存中获取 LoginUser
         Long tenantId = WebFrameworkUtils.getTenantId(exchange);
         KeyValue<Long, String> cacheKey = new KeyValue<>();
         cacheKey.setKey(tenantId);
@@ -123,7 +143,7 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
         return checkAccessToken(tenantId, token).flatMap((Function<String, Mono<LoginUser>>) body -> {
             LoginUser remoteUser = buildUser(body);
             if (remoteUser != null) {
-                // 非空，则进行缓存
+                // 非空，则缓存用户信息
                 loginUserCache.put(cacheKey, remoteUser);
                 return Mono.just(remoteUser);
             }
@@ -131,6 +151,13 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
         });
     }
 
+    /**
+     * 校验访问令牌的有效性
+     *
+     * @param tenantId 租户编号
+     * @param token    访问令牌
+     * @return Mono<String> 返回验证结果的 Mono 对象
+     */
     private Mono<String> checkAccessToken(Long tenantId, String token) {
         return webClient.get()
                 .uri(OAuth2TokenApi.URL_CHECK, uriBuilder -> uriBuilder.queryParam("accessToken", token).build())
@@ -138,32 +165,41 @@ public class TokenAuthenticationFilter implements GlobalFilter, Ordered {
                 .retrieve().bodyToMono(String.class);
     }
 
+    /**
+     * 根据返回的字符串结果构建 LoginUser 对象
+     *
+     * @param body 返回的结果字符串
+     * @return LoginUser 构建的登录用户对象
+     */
     private LoginUser buildUser(String body) {
-        // 处理结果，结果不正确
         CommonResult<OAuth2AccessTokenCheckRespDTO> result = JsonUtils.parseObject(body, CHECK_RESULT_TYPE_REFERENCE);
-        if (result == null) {
-            return null;
-        }
-        if (result.isError()) {
-            // 特殊情况：令牌已经过期（code = 401），需要返回 LOGIN_USER_EMPTY，避免 Token 一直因为缓存，被误判为有效
+        if (result == null || result.isError()) {
+            // 如果结果为空或错误，返回 null 或 LOGIN_USER_EMPTY
             if (Objects.equals(result.getCode(), HttpStatus.UNAUTHORIZED.value())) {
                 return LOGIN_USER_EMPTY;
             }
             return null;
         }
 
-        // 创建登录用户
+        // 创建并返回 LoginUser 对象
         OAuth2AccessTokenCheckRespDTO tokenInfo = result.getData();
         LoginUser loginUser = new LoginUser();
         loginUser.setId(tokenInfo.getUserId());
         loginUser.setUserType(tokenInfo.getUserType());
-        loginUser.setInfo(tokenInfo.getUserInfo()); // 额外的用户信息
+        loginUser.setInfo(tokenInfo.getUserInfo());
         loginUser.setTenantId(tokenInfo.getTenantId());
         loginUser.setScopes(tokenInfo.getScopes());
         loginUser.setExpiresTime(tokenInfo.getExpiresTime());
         return loginUser;
     }
 
+    /**
+     * 获取过滤器的执行顺序
+     * <p>
+     * 该顺序用于与 Spring Security 的过滤器顺序对齐。
+     *
+     * @return int 返回过滤器的顺序
+     */
     @Override
     public int getOrder() {
         return -100; // 和 Spring Security Filter 的顺序对齐
