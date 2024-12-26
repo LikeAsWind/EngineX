@@ -117,8 +117,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.nstep.engine</groupId>
-            <artifactId>engine-spring-boot-starter-biz-ip</artifactId>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId> <!-- 实现 Spring Boot Admin Server 服务端 -->
         </dependency>
 
         <!-- 三方云服务相关 -->
@@ -140,10 +140,6 @@
             <artifactId>tika-core</artifactId> <!-- 文件客户端：文件类型的识别 -->
         </dependency>
 
-        <dependency>
-            <groupId>org.nstep.engine</groupId>
-            <artifactId>engine-common</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <!-- 设置构建的 jar 包名 -->
