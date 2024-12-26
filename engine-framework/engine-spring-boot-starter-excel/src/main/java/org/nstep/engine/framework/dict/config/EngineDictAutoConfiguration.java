@@ -21,7 +21,7 @@ public class EngineDictAutoConfiguration {
      */
     @Bean
     @SuppressWarnings("InstantiationOfUtilityClass") // 抑制警告，因为工具类通常不需要实例化
-    public DictFrameworkUtils dictUtils(@Qualifier("dictDataApiImpl") DictDataApi dictDataApi) {
+    public DictFrameworkUtils dictUtils(@Qualifier("org.nstep.engine.module.system.api.dict.DictDataApi") DictDataApi dictDataApi) {
         // 调用工具类的初始化方法，将字典数据 API 注入到工具类中
         DictFrameworkUtils.init(dictDataApi);
         // 返回工具类实例

@@ -83,10 +83,6 @@ public class EngineSecurityAutoConfiguration {
     @Bean
     public TokenAuthenticationFilter authenticationTokenFilter(GlobalExceptionHandler globalExceptionHandler,
                                                                @Qualifier("org.nstep.engine.module.system.api.oauth2.OAuth2TokenApi") OAuth2TokenApi oauth2TokenApi) {
-        OAuth2TokenApi oAuth2TokenApiImpl = SpringUtil.getBean("OAuth2TokenApiImpl", OAuth2TokenApi.class);
-        if (oAuth2TokenApiImpl != null) {
-            oauth2TokenApi = oAuth2TokenApiImpl;
-        }
         return new TokenAuthenticationFilter(securityProperties, globalExceptionHandler, oauth2TokenApi); // 自定义 Token 认证过滤器
     }
 
@@ -98,11 +94,6 @@ public class EngineSecurityAutoConfiguration {
      */
     @Bean("ss") // 使用 Spring Security 的缩写，方便使用
     public SecurityFrameworkService securityFrameworkService(@Qualifier("org.nstep.engine.module.system.api.permission.PermissionApi") PermissionApi permissionApi) {
-
-        PermissionApi permissionApiImpl = SpringUtil.getBean("permissionApiImpl", PermissionApi.class);
-        if (permissionApiImpl != null) {
-            permissionApi = permissionApiImpl;
-        }
         return new SecurityFrameworkServiceImpl(permissionApi); // 实现权限 API 的安全框架服务
     }
 
