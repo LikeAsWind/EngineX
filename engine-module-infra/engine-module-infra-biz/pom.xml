@@ -140,6 +140,10 @@
             <artifactId>tika-core</artifactId> <!-- 文件客户端：文件类型的识别 -->
         </dependency>
 
+        <dependency>
+            <groupId>org.nstep.engine</groupId>
+            <artifactId>engine-spring-boot-starter-biz-ip</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <!-- 设置构建的 jar 包名 -->

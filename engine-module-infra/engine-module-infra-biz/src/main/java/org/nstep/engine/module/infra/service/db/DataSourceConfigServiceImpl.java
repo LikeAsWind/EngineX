@@ -4,6 +4,7 @@ import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceProperties;
 import jakarta.annotation.Resource;
 import org.nstep.engine.framework.common.util.object.BeanUtils;
+import org.nstep.engine.framework.ip.core.utils.IPUtils;
 import org.nstep.engine.framework.mybatis.core.util.JdbcUtils;
 import org.nstep.engine.module.infra.controller.admin.db.vo.DataSourceConfigSaveReqVO;
 import org.nstep.engine.module.infra.dal.dataobject.db.DataSourceConfigDO;
@@ -98,7 +99,7 @@ public class DataSourceConfigServiceImpl implements DataSourceConfigService {
         DataSourceConfigDO dataSourceConfigDO = new DataSourceConfigDO();
         dataSourceConfigDO.setId(DataSourceConfigDO.ID_MASTER);
         dataSourceConfigDO.setName(primary);
-        dataSourceConfigDO.setUrl(dataSourceProperty.getUrl());
+        dataSourceConfigDO.setUrl(IPUtils.maskIpAddress(dataSourceProperty.getUrl()));
         dataSourceConfigDO.setUsername(dataSourceProperty.getUsername());
         dataSourceConfigDO.setPassword(dataSourceProperty.getPassword());
         return dataSourceConfigDO;

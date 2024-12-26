@@ -82,4 +82,19 @@ public class IPUtils {
     public static Area getArea(long ip) {
         return AreaUtils.getArea(getAreaId(ip));
     }
+
+
+    /**
+     * 脱敏字符串中的IP地址
+     *
+     * @param url 原始JDBC URL
+     * @return 脱敏后的JDBC URL
+     */
+    public static String maskIpAddress(String url) {
+        // 正则表达式匹配IP地址
+        String regex = "(//)(\\d+\\.\\d+\\.\\d+\\.\\d+)";
+
+        // 使用正则表达式替换IP地址为脱敏的格式
+        return url.replaceAll(regex, "$1xxx.xxx.xxx.xxx");
+    }
 }
