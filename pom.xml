@@ -14,6 +14,7 @@
         <!--  各种 module 拓展 -->
         <module>engine-module-system</module>
         <module>engine-module-infra</module>
+        <module>engine-module-message</module>
     </modules>
 
     <name>${project.artifactId}</name>
