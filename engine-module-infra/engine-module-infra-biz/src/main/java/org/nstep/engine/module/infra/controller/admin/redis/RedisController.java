@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Properties;
 
+import static org.nstep.engine.framework.common.pojo.CommonResult.success;
+
 /**
  * 管理后台 - Redis 监控的控制器类。
  */
@@ -52,14 +54,5 @@ public class RedisController {
         return success(RedisConvert.INSTANCE.build(info, dbSize, commandStats));
     }
 
-    /**
-     * 成功响应的封装方法。
-     *
-     * @param data 响应的数据对象。
-     * @return 返回一个成功的响应对象。
-     */
-    private CommonResult<RedisMonitorRespVO> success(RedisMonitorRespVO data) {
-        // 此处应有实现，但代码未提供，故省略。
-        return null;
-    }
+
 }
