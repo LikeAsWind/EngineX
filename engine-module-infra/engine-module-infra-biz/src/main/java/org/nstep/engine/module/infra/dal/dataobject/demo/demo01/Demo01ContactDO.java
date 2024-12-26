@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 /**
  * 示例联系人 DO
  */
-@TableName("yudao_demo01_contact")
-@KeySequence("yudao_demo01_contact_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
+@TableName("demo01_contact")
+@KeySequence("demo01_contact_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -34,7 +34,7 @@ public class Demo01ContactDO extends BaseDO {
     /**
      * 性别
      * <p>
-     * 枚举 {@link TODO system_user_sex 对应的类}
+     * 枚举
      */
     private Integer sex;
     /**

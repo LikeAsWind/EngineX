@@ -10,8 +10,8 @@ import org.nstep.engine.framework.mybatis.core.dataobject.BaseDO;
 /**
  * 示例分类 DO
  */
-@TableName("yudao_demo02_category")
-@KeySequence("yudao_demo02_category_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
+@TableName("demo02_category")
+@KeySequence("demo02_category_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
