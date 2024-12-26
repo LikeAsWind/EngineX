@@ -9,7 +9,7 @@
       >
         <!-- 左上角的 logo + 系统标题 -->
         <div class="relative flex items-center text-white">
-          <img alt="" class="mr-10px h-49px w-90px" src="https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png" />
+          <img alt="" class="mr-10px h-49px w-90px" src="@/assets/imgs/avatar.jpg" />
           <span class="text-20px font-bold">{{ underlineToHump(appStore.getTitle) }}</span>
         </div>
         <!-- 左边的背景图 + 欢迎语 -->
@@ -36,7 +36,7 @@
           style="color: var(--el-text-color-primary);"
         >
           <div class="flex items-center at-2xl:hidden at-xl:hidden">
-            <img alt="" class="mr-10px h-48px w-48px" src="https://ima.storage.shmedia.tech/20241028/vdaHxDztgG/2ddf789c-72cb-4b86-8f32-234d87872428.png" />
+            <img alt="" class="mr-10px h-48px w-48px" src="@/assets/imgs/avatar.jpg" />
             <span class="text-20px font-bold" >{{ underlineToHump(appStore.getTitle) }}</span>
           </div>
           <div class="flex items-center justify-end space-x-10px h-48px">
