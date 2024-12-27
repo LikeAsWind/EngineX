@@ -117,7 +117,7 @@ public class DataSourceConfigController {
     @Operation(summary = "获得数据源配置列表")
     @PreAuthorize("@ss.hasPermission('infra:data-source-config:query')")
     public CommonResult<List<DataSourceConfigRespVO>> getDataSourceConfigList() {
-        List<DataSourceConfigDO> list = dataSourceConfigService.getDataSourceConfigList();
+        List<DataSourceConfigDO> list = dataSourceConfigService.getDataSourceConfigList(true);
         return success(BeanUtils.toBean(list, DataSourceConfigRespVO.class));
     }
 }

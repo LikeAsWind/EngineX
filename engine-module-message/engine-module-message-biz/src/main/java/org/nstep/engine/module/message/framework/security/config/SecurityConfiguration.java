@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AuthorizeH
 /**
  * Demo 模块的 Security 配置
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration(proxyBeanMethods = false, value = "messageSecurityConfiguration")
 public class SecurityConfiguration {
 
     @Bean

@@ -9,7 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <modules>
-
+        <module>engine-module-message-api</module>
+        <module>engine-module-message-biz</module>
     </modules>
     <artifactId>engine-module-message</artifactId>
     <packaging>pom</packaging>

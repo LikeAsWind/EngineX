@@ -34,7 +34,11 @@
             <artifactId>engine-module-infra-api</artifactId>
             <version>${revision}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.nstep.engine</groupId>
+            <artifactId>engine-module-message-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- 业务组件 -->
         <dependency>
             <groupId>org.nstep.engine</groupId>
@@ -143,7 +147,6 @@
             <groupId>org.dromara.hutool</groupId>
             <artifactId>hutool-extra</artifactId> <!-- 邮件 -->
         </dependency>
-
     </dependencies>
 
     <build>

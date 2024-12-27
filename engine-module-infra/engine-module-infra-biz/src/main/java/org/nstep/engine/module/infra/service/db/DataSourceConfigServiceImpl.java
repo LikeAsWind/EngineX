@@ -72,17 +72,20 @@ public class DataSourceConfigServiceImpl implements DataSourceConfigService {
     public DataSourceConfigDO getDataSourceConfig(Long id) {
         // 如果 id 为 0，默认为 master 的数据源
         if (Objects.equals(id, DataSourceConfigDO.ID_MASTER)) {
-            return buildMasterDataSourceConfig();
+            return buildMasterDataSourceConfig(false);
         }
         // 从 DB 中读取
         return dataSourceConfigMapper.selectById(id);
     }
 
     @Override
-    public List<DataSourceConfigDO> getDataSourceConfigList() {
+    public List<DataSourceConfigDO> getDataSourceConfigList(boolean maskIpAddress) {
         List<DataSourceConfigDO> result = dataSourceConfigMapper.selectList();
         // 补充 master 数据源
-        result.add(0, buildMasterDataSourceConfig());
+        if (maskIpAddress) {
+            result.forEach(dataSourceConfigDO -> dataSourceConfigDO.setUrl(IPUtils.maskIpAddress(dataSourceConfigDO.getUrl())));
+        }
+        result.add(0, buildMasterDataSourceConfig(maskIpAddress));
         return result;
     }
 
@@ -93,13 +96,13 @@ public class DataSourceConfigServiceImpl implements DataSourceConfigService {
         }
     }
 
-    private DataSourceConfigDO buildMasterDataSourceConfig() {
+    private DataSourceConfigDO buildMasterDataSourceConfig(boolean maskIpAddress) {
         String primary = dynamicDataSourceProperties.getPrimary();
         DataSourceProperty dataSourceProperty = dynamicDataSourceProperties.getDatasource().get(primary);
         DataSourceConfigDO dataSourceConfigDO = new DataSourceConfigDO();
         dataSourceConfigDO.setId(DataSourceConfigDO.ID_MASTER);
         dataSourceConfigDO.setName(primary);
-        dataSourceConfigDO.setUrl(IPUtils.maskIpAddress(dataSourceProperty.getUrl()));
+        dataSourceConfigDO.setUrl(maskIpAddress ? IPUtils.maskIpAddress(dataSourceProperty.getUrl()) : dataSourceProperty.getUrl());
         dataSourceConfigDO.setUsername(dataSourceProperty.getUsername());
         dataSourceConfigDO.setPassword(dataSourceProperty.getPassword());
         return dataSourceConfigDO;

@@ -154,6 +154,8 @@ declare module 'vue' {
     SummaryCard: typeof import('./../components/SummaryCard/index.vue')['default']
     Table: typeof import('./../components/Table/src/Table.vue')['default']
     TableSelectForm: typeof import('./../components/Table/src/TableSelectForm.vue')['default']
+    Template: typeof import('./../api/message/template/index.ts')['default']
+    TemplateForm: typeof import('./../views/message/template/TemplateForm.vue')['default']
     Tooltip: typeof import('./../components/Tooltip/src/Tooltip.vue')['default']
     UploadFile: typeof import('./../components/UploadFile/src/UploadFile.vue')['default']
     UploadImg: typeof import('./../components/UploadFile/src/UploadImg.vue')['default']
