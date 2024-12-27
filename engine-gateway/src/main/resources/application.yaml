@@ -52,8 +52,21 @@ spring:
           uri: grayLb://infra-server
           predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
             - Path=/infra/ws/**
+         ## message-server 服务
+        - id: message-admin-api # 路由的编号
+          uri: grayLb://message-server
+          predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+            - Path=/admin-api/message/**
+          filters:
+              - RewritePath=/admin-api/message/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
+        - id: message-app-api # 路由的编号
+          uri: grayLb://message-server
+          predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+            - Path=/app-api/message/**
+          filters:
+              - RewritePath=/app-api/message/v3/api-docs, /v3/api-docs
       x-forwarded:
-        prefix-enabled: false # 避免 Swagger 重复带上额外的 /admin-api/system 前缀
+        prefix-enabled: false # 避免 Swagger 重复带上额外的 /admin-api/message 前缀
 
 server:
   port: 48080
