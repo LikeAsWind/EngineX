@@ -251,6 +251,12 @@ public class TemplateServiceImpl implements TemplateService {
     public void updateTemplate(TemplateSaveReqVO updateReqVO) {
         // 校验模板是否存在
         validateTemplateExists(updateReqVO.getId());
+        // 校验创建请求的有效性
+        boolean isTrue = checkCreateReqVO(updateReqVO);
+        // 校验请求的有效性
+        if (!isTrue) {
+            throw exception(ErrorCodeConstants.INVALID_FIELDS); // 如果校验不通过，抛出异常
+        }
         // 更新模板
         TemplateDO updateObj = BeanUtils.toBean(updateReqVO, TemplateDO.class);
         templateMapper.updateById(updateObj);
