@@ -22,6 +22,14 @@ public interface ErrorCodeConstants {
     ErrorCode SCHEDULED_TASK_DELETION_FAILURE = new ErrorCode(1_003_000_008, "定时消息任务删除失败：{}!");
     ErrorCode TEMPLATE_ALREADY_USED = new ErrorCode(1_003_000_009, "该模板已被其它用户使用!");
     ErrorCode TEMPLATE_NOT_APPROVED = new ErrorCode(1_003_000_010, "该模板尚未通过审核!");
+    ErrorCode PROCESS_CONTEXT_INTERRUPTION = new ErrorCode(1_003_000_011, "发送流程上下文断裂!");
+    ErrorCode MESSAGE_TEMPLATE_ID_RECEIVER_EMPTY = new ErrorCode(1_003_000_012, "消息模板id: {} 接受者为空!");
+    ErrorCode TEMPLATE_ID_IS_NULL = new ErrorCode(1_003_000_013, "模板id为空!");
+    ErrorCode MESSAGE_TEMPLATE_ID_PLACEHOLDER_NEEDS_VALUE = new ErrorCode(1_003_000_014, "消息模板id:{} 消息模板带有占位符 请赋值!");
+    ErrorCode MESSAGE_TEMPLATE_ID_PLACEHOLDER_DATA_EMPTY = new ErrorCode(1_003_000_015, "消息模板id:{} 存在占位符数据为空!");
+    ErrorCode NO_NEED_TO_ASSIGN_PLACEHOLDER = new ErrorCode(1_003_000_016, "无需要赋值的占位符! ");
+
+
 
     // ========== 消息模板信息 1-003-001-000 ==========
     ErrorCode ACCOUNT_NOT_EXISTS = new ErrorCode(1_003_000_000, "渠道配置信息不存在");

@@ -10,6 +10,8 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.util.Objects;
 
+import static org.nstep.engine.framework.common.exception.util.ServiceExceptionUtil.doFormat;
+
 /**
  * 通用返回
  *
@@ -54,6 +56,11 @@ public class CommonResult<T> implements Serializable {
         result.code = code;
         result.msg = message;
         return result;
+    }
+
+    public static <T> CommonResult<T> error0(Integer code, String messagePattern, Object... params) {
+        String message = doFormat(code, messagePattern, params);
+        return error(code, message);
     }
 
     public static <T> CommonResult<T> error(ErrorCode errorCode) {
