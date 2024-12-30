@@ -21,7 +21,7 @@ import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
 import org.nstep.engine.module.message.dal.mysql.template.TemplateMapper;
 import org.nstep.engine.module.message.domain.dingding.DingDingRobotParam;
 import org.nstep.engine.module.message.domain.weChat.EnterpriseWeChatRobotParam;
-import org.nstep.engine.module.message.dto.*;
+import org.nstep.engine.module.message.dto.content.*;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.nstep.engine.module.message.service.xxljob.XxlJobService;
 import org.nstep.engine.module.message.util.RedisKeyUtil;

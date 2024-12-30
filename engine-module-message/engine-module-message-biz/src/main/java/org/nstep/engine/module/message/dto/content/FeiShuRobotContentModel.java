@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.dto;
+package org.nstep.engine.module.message.dto.content;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

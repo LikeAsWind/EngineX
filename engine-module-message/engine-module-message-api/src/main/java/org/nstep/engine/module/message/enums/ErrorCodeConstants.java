@@ -20,6 +20,9 @@ public interface ErrorCodeConstants {
     ErrorCode CRON_EXPRESSION_ERROR = new ErrorCode(1_003_000_006, "定时消息任务:{} {}失败:{}!");
     ErrorCode CRON_EXPRESSION_INVALID_ERROR = new ErrorCode(1_003_000_007, "定时消息任务: {} cron表达式存在错误 请修改!");
     ErrorCode SCHEDULED_TASK_DELETION_FAILURE = new ErrorCode(1_003_000_008, "定时消息任务删除失败：{}!");
+    ErrorCode TEMPLATE_ALREADY_USED = new ErrorCode(1_003_000_009, "该模板已被其它用户使用!");
+    ErrorCode TEMPLATE_NOT_APPROVED = new ErrorCode(1_003_000_010, "该模板尚未通过审核!");
+
     // ========== 消息模板信息 1-003-001-000 ==========
     ErrorCode ACCOUNT_NOT_EXISTS = new ErrorCode(1_003_000_000, "渠道配置信息不存在");
     ErrorCode CHANNEL_CODE_EMPTY = new ErrorCode(1_003_000_000, "发送账号为空");

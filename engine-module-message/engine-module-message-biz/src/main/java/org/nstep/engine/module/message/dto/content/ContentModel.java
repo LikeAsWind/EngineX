@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.dto;
+package org.nstep.engine.module.message.dto.content;
 
 /**
  * 消息模型类
