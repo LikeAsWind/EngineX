@@ -13,8 +13,7 @@ import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
  * @author engine
  */
 @Mapper
-public interface TemplateMapper extends BaseMapperX
-        <TemplateDO> {
+public interface TemplateMapper extends BaseMapperX<TemplateDO> {
 
     default PageResult
             <TemplateDO> selectPage(TemplatePageReqVO reqVO) {

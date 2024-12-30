@@ -86,7 +86,9 @@ knife4j:
       - name: infra-server
         service-name: infra-server
         url: /admin-api/infra/v3/api-docs
-
+      - name: message-server
+        service-name: message-server
+        url: /admin-api/message/v3/api-docs
 
 
 --- #################### engine相关配置 ####################

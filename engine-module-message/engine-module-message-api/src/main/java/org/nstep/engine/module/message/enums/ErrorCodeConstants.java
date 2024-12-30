@@ -11,6 +11,10 @@ public interface ErrorCodeConstants {
 
 
     // ========== 消息模板信息 1-003-000-000 ==========
-    ErrorCode TEMPLATE_NOT_EXISTS = new ErrorCode(1_003_000_001, "消息模板信息不存在");
+    ErrorCode TEMPLATE_NOT_EXISTS = new ErrorCode(1_003_000_001, "消息模板信息不存在!");
+    ErrorCode TEMPLATE_INFO_FETCH_FAILED = new ErrorCode(1_003_000_002, "微信服务号模板信息获取失败!");
+    ErrorCode EXCEEDED_DOMAIN_REDIRECT_LIMIT = new ErrorCode(1_003_000_003, "跳转链接不允许存在多个!");
+    ErrorCode TEMPLATE_ID_NOT_EXIST = new ErrorCode(1_003_000_004, "微信模板库没有该模板!");
+    ErrorCode PLACEHOLDER_RESOLUTION_FAILURE = new ErrorCode(1_003_000_004, "占位符数据解析失败!");
 
 }

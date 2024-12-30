@@ -46,9 +46,10 @@ public interface TemplateService {
     /**
      * 获得消息模板信息分页
      *
-     * @param pageReqVO 分页查询
+     * @param pageReqVO   分页查询
+     * @param isLoginUser 是否登陆人
      * @return 消息模板信息分页
      */
-    PageResult<TemplateDO> getTemplatePage(TemplatePageReqVO pageReqVO);
+    PageResult<TemplateDO> getTemplatePage(TemplatePageReqVO pageReqVO, boolean isLoginUser);
 
 }

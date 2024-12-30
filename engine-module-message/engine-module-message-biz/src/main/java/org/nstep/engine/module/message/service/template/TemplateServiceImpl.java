@@ -1,8 +1,11 @@
 package org.nstep.engine.module.message.service.template;
 
+import cn.hutool.core.util.ObjUtil;
 import jakarta.annotation.Resource;
 import org.nstep.engine.framework.common.pojo.PageResult;
 import org.nstep.engine.framework.common.util.object.BeanUtils;
+import org.nstep.engine.framework.mybatis.core.query.LambdaQueryWrapperX;
+import org.nstep.engine.framework.security.core.util.SecurityFrameworkUtils;
 import org.nstep.engine.module.message.controller.admin.template.vo.TemplatePageReqVO;
 import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSaveReqVO;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
@@ -64,8 +67,13 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public PageResult<TemplateDO> getTemplatePage(TemplatePageReqVO pageReqVO) {
-        return templateMapper.selectPage(pageReqVO);
+    public PageResult<TemplateDO> getTemplatePage(TemplatePageReqVO pageReqVO, boolean isLoginUser) {
+        LambdaQueryWrapperX<TemplateDO> lambdaQueryWrapperX = new LambdaQueryWrapperX<TemplateDO>().likeIfPresent(TemplateDO::getName, pageReqVO.getName()).eq(TemplateDO::getMsgStatus, pageReqVO.getMsgStatus()).eq(TemplateDO::getPushType, pageReqVO.getPushType()).eq(TemplateDO::getSendChannel, pageReqVO.getSendChannel()).eq(TemplateDO::getMsgType, pageReqVO.getMsgType()).eq(TemplateDO::getAuditStatus, pageReqVO.getAuditStatus()).likeIfPresent(TemplateDO::getSendAccount, String.valueOf(ObjUtil.isEmpty(pageReqVO.getSendAccount()) ? null : pageReqVO.getSendAccount())).betweenIfPresent(TemplateDO::getCreateTime, pageReqVO.getCreateTime()).orderByDesc(TemplateDO::getUpdateTime);
+        // 登陆人过滤
+        if (isLoginUser) {
+            lambdaQueryWrapperX.eq(TemplateDO::getCreator, SecurityFrameworkUtils.getLoginUserId());
+        }
+        return templateMapper.selectPage(pageReqVO, lambdaQueryWrapperX);
     }
 
 }
