@@ -80,9 +80,9 @@ public class MessageDataConstants {
     public static final String RECALL_CODE = "recall";  // 撤回
 
     // 消息交换机和路由键
-    public static final String EXCHANGE_NAME = "metax.point";
-    public static final String TOPIC_KEY = "metax_KEY";
-    public static final String ROTING_KEY = "metax_KEY";
+    public static final String EXCHANGE_NAME = "engineX.point";
+    public static final String TOPIC_KEY = "engineX_KEY";
+    public static final String ROTING_KEY = "engineX_KEY";
 
     /**
      * Redis消息键前缀：engineX:message:userId:todayTime
@@ -175,7 +175,7 @@ public class MessageDataConstants {
     /**
      * 执行任务名称
      */
-    public static final String JOB_HANDLER_NAME = "metaxJob";
+    public static final String JOB_HANDLER_NAME = "engineXJob";
 
     /**
      * 超时时间（秒）

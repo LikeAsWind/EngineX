@@ -16,8 +16,10 @@ public interface ErrorCodeConstants {
     ErrorCode EXCEEDED_DOMAIN_REDIRECT_LIMIT = new ErrorCode(1_003_000_002, "跳转链接不允许存在多个!");
     ErrorCode TEMPLATE_ID_NOT_EXIST = new ErrorCode(1_003_000_003, "微信模板库没有该模板!");
     ErrorCode PLACEHOLDER_RESOLUTION_FAILURE = new ErrorCode(1_003_000_004, "占位符数据解析失败!");
-    ErrorCode INVALID_FIELDS = new ErrorCode(1_003_000_004, "存在未通过校验字段!");
-
+    ErrorCode INVALID_FIELDS = new ErrorCode(1_003_000_005, "存在未通过校验字段!");
+    ErrorCode CRON_EXPRESSION_ERROR = new ErrorCode(1_003_000_006, "定时消息任务:{} {}失败:{}!");
+    ErrorCode CRON_EXPRESSION_INVALID_ERROR = new ErrorCode(1_003_000_007, "定时消息任务: {} cron表达式存在错误 请修改!");
+    ErrorCode SCHEDULED_TASK_DELETION_FAILURE = new ErrorCode(1_003_000_008, "定时消息任务删除失败：{}!");
     // ========== 消息模板信息 1-003-001-000 ==========
     ErrorCode ACCOUNT_NOT_EXISTS = new ErrorCode(1_003_000_000, "渠道配置信息不存在");
     ErrorCode CHANNEL_CODE_EMPTY = new ErrorCode(1_003_000_000, "发送账号为空");

@@ -44,6 +44,15 @@ public interface TemplateService {
     void deleteTemplate(Long id);
 
     /**
+     * 删除消息模板信息
+     * <p>
+     * 该方法接收一个模板编号（id），并删除对应的消息模板。
+     *
+     * @param ids 模板的编号数组
+     */
+    void deleteTemplate(Long[] ids);
+
+    /**
      * 获得消息模板信息
      * <p>
      * 该方法根据提供的模板编号（id），返回对应的消息模板信息。

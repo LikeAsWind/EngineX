@@ -1,6 +1,7 @@
 package org.nstep.engine.module.message.service.template;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
@@ -22,9 +23,14 @@ import org.nstep.engine.module.message.domain.dingding.DingDingRobotParam;
 import org.nstep.engine.module.message.domain.weChat.EnterpriseWeChatRobotParam;
 import org.nstep.engine.module.message.dto.*;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
+import org.nstep.engine.module.message.service.xxljob.XxlJobService;
+import org.nstep.engine.module.message.util.RedisKeyUtil;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static org.nstep.engine.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -40,6 +46,12 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Resource
     private TemplateMapper templateMapper;
+
+    @Resource
+    private XxlJobService xxlJobService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 创建消息模板
@@ -274,6 +286,42 @@ public class TemplateServiceImpl implements TemplateService {
         // 删除模板
         templateMapper.deleteById(id);
     }
+
+    /**
+     * 删除消息模板
+     * <p>
+     * 该方法用于删除指定的消息模板。如果模板包含定时任务ID，首先会删除XXL调度中心中的定时任务。
+     * 如果模板包含定时任务的群体路径，则会删除相关文件。此外，如果模板属于定时任务类型，还会删除定时任务的链路追踪记录。
+     *
+     * @param ids 模板ID数组，包含需要删除的多个模板ID
+     */
+    @Override
+    public void deleteTemplate(Long[] ids) {
+        // 根据模板ID数组查询对应的模板信息
+        List<TemplateDO> messageTemplates = templateMapper.selectByIds(Arrays.asList(ids));
+
+        // 遍历每个模板
+        for (TemplateDO messageTemplate : messageTemplates) {
+            // 如果模板的定时任务ID不为空，说明该模板已经在XXL调度中心注册过定时任务
+            if (Objects.nonNull(messageTemplate.getCronTaskId())) {
+                // 删除XXL调度中心中的定时任务
+                xxlJobService.remove(messageTemplate.getCronTaskId());
+            }
+
+            // 如果模板的定时任务群体路径不为空，说明该模板包含定时任务的群体文件
+            if (Objects.nonNull(messageTemplate.getCronCrowdPath())) {
+                // 删除与定时任务群体相关的文件
+                FileUtil.del(messageTemplate.getCronCrowdPath());
+            }
+
+            // 如果模板的推送类型为定时任务类型
+            if (messageTemplate.getPushType().equals(MessageDataConstants.TIMING)) {
+                // 删除定时模板的链路追踪记录
+                stringRedisTemplate.delete(RedisKeyUtil.getCronTaskCordsRedisKey(SecurityFrameworkUtils.getLoginUserId(), messageTemplate.getId().toString()));
+            }
+        }
+    }
+
 
     /**
      * 校验模板是否存在

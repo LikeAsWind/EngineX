@@ -79,9 +79,9 @@ public class MessageTemplateController {
      */
     @DeleteMapping("/delete")
     @Operation(summary = "删除消息模板信息")
-    @Parameter(name = "id", description = "编号", required = true)
+    @Parameter(name = "ids", description = "编号", required = true)
     @PreAuthorize("@ss.hasPermission('message:template:delete')")
-    public CommonResult<Boolean> deleteTemplate(@RequestParam("id") Long id) {
+    public CommonResult<Boolean> deleteTemplate(@RequestParam("ids") Long[] id) {
         templateService.deleteTemplate(id); // 调用服务删除模板
         return success(true); // 返回成功标识
     }
