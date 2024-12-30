@@ -1,5 +1,6 @@
 package org.nstep.engine.module.message.service.template;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -10,12 +11,14 @@ import jakarta.annotation.Resource;
 import org.nstep.engine.framework.common.pojo.PageResult;
 import org.nstep.engine.framework.common.util.object.BeanUtils;
 import org.nstep.engine.framework.mybatis.core.query.LambdaQueryWrapperX;
+import org.nstep.engine.framework.mybatis.core.query.QueryWrapperX;
 import org.nstep.engine.framework.security.core.util.SecurityFrameworkUtils;
 import org.nstep.engine.module.message.constant.DDingDingSendMessageTypeConstants;
 import org.nstep.engine.module.message.constant.GeTuiConstants;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
 import org.nstep.engine.module.message.constant.WeChatConstants;
 import org.nstep.engine.module.message.controller.admin.template.vo.TemplatePageReqVO;
+import org.nstep.engine.module.message.controller.admin.template.vo.TemplateRespVO;
 import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSaveReqVO;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
 import org.nstep.engine.module.message.dal.mysql.template.TemplateMapper;
@@ -371,4 +374,45 @@ public class TemplateServiceImpl implements TemplateService {
         }
         return templateMapper.selectPage(pageReqVO, lambdaQueryWrapperX);
     }
+
+    /**
+     * 更新模板的审核状态
+     * <p>
+     * 该方法用于修改指定消息模板的审核状态，例如审核通过或未通过。
+     *
+     * @param id     模板的唯一标识 ID
+     * @param status 新的审核状态值
+     * @return 返回布尔值，表示操作是否成功
+     */
+    @Override
+    public Boolean updateAudit(Long id, Integer status) {
+        // 更新模板的审核状态
+        // 构建一个 TemplateDO 对象，设置模板 ID 和新的审核状态
+        int i = templateMapper.updateById(TemplateDO.builder()
+                .id(id)
+                .auditStatus(status)
+                .build());
+
+        // 返回更新结果，1 表示成功，其他值表示失败
+        return 1 == i;
+    }
+
+    /**
+     * 获取当前用户的消息模板列表
+     * <p>
+     * 该方法用于查询当前登录用户所拥有的消息模板列表。
+     *
+     * @return 包含模板信息的 {@code List<TemplateRespVO>} 对象
+     */
+    @Override
+    public List<TemplateRespVO> list4CurrUser() {
+        // 查询当前用户创建的消息模板列表
+        List<TemplateDO> templateDoList = templateMapper.selectList(new QueryWrapperX<TemplateDO>()
+                .eq("creator", SecurityFrameworkUtils.getLoginUserId()) // 根据当前登录用户 ID 查询
+                .orderByDesc("updateTime")); // 按更新时间降序排列
+
+        // 将查询结果从 TemplateDO 转换为 TemplateRespVO 类型的列表
+        return BeanUtil.copyToList(templateDoList, TemplateRespVO.class);
+    }
+
 }

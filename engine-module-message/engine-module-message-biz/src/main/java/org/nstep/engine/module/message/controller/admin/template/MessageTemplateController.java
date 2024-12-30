@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static org.nstep.engine.framework.apilog.core.enums.OperateTypeEnum.EXPORT;
+import static org.nstep.engine.framework.apilog.core.enums.OperateTypeEnum.*;
 import static org.nstep.engine.framework.common.pojo.CommonResult.success;
 
 /**
@@ -52,6 +52,7 @@ public class MessageTemplateController {
      */
     @PostMapping("/create")
     @Operation(summary = "创建消息模板信息")
+    @ApiAccessLog(operateType = CREATE)
     @PreAuthorize("@ss.hasPermission('message:template:create')") // 权限控制，确保用户有权限
     public CommonResult<Long> createTemplate(@Valid @RequestBody TemplateSaveReqVO createReqVO) {
         return success(templateService.createTemplate(createReqVO)); // 调用服务创建模板并返回ID
@@ -65,6 +66,7 @@ public class MessageTemplateController {
      */
     @PutMapping("/update")
     @Operation(summary = "更新消息模板信息")
+    @ApiAccessLog(operateType = UPDATE)
     @PreAuthorize("@ss.hasPermission('message:template:update')")
     public CommonResult<Boolean> updateTemplate(@Valid @RequestBody TemplateSaveReqVO updateReqVO) {
         templateService.updateTemplate(updateReqVO); // 调用服务更新模板
@@ -161,4 +163,39 @@ public class MessageTemplateController {
         List<String> variables = contentHolderUtil.getVariables(template); // 提取占位符名称
         return success(variables); // 返回占位符名称列表
     }
+
+    /**
+     * 修改模板审核状态
+     * <p>
+     * 该方法用于修改指定消息模板的审核状态。
+     * 根据模板 ID 和新的审核状态，调用服务层接口执行更新操作。
+     *
+     * @param id     消息模板的唯一标识 ID
+     * @param status 新的审核状态值
+     * @return 包含操作结果的 {@code CommonResult} 对象，表示更新操作是否成功
+     */
+    @GetMapping("/audit/{id}/{status}")
+    @Operation(summary = "修改模板审核状态")
+    @PreAuthorize("@ss.hasPermission('message:template:updateAudit')")
+    @ApiAccessLog(operateType = UPDATE)
+    public CommonResult<Boolean> updateAudit(@PathVariable Long id, @PathVariable Integer status) {
+        return success(templateService.updateAudit(id, status));
+    }
+
+    /**
+     * 查询当前用户的消息模板列表
+     * <p>
+     * 该方法用于获取当前登录用户的消息模板列表。
+     * 调用服务层接口查询模板数据，并返回结果。
+     *
+     * @return 包含模板列表的 {@code CommonResult} 对象，模板信息以 {@code TemplateRespVO} 对象的形式返回
+     */
+    @GetMapping("/list/currUser")
+    @Operation(summary = "查询当前用户的消息模板列表")
+    @PreAuthorize("@ss.hasPermission('message:template:list4CurrUser')")
+    public CommonResult<List<TemplateRespVO>> list4CurrUser() {
+        List<TemplateRespVO> result = templateService.list4CurrUser();
+        return success(result);
+    }
+
 }

@@ -3,8 +3,11 @@ package org.nstep.engine.module.message.service.template;
 import jakarta.validation.Valid;
 import org.nstep.engine.framework.common.pojo.PageResult;
 import org.nstep.engine.module.message.controller.admin.template.vo.TemplatePageReqVO;
+import org.nstep.engine.module.message.controller.admin.template.vo.TemplateRespVO;
 import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSaveReqVO;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
+
+import java.util.List;
 
 /**
  * 消息模板信息 Service 接口
@@ -72,5 +75,26 @@ public interface TemplateService {
      * @return 返回分页后的消息模板信息
      */
     PageResult<TemplateDO> getTemplatePage(TemplatePageReqVO pageReqVO, boolean isLoginUser);
+
+    /**
+     * 更新模板的审核状态
+     * <p>
+     * 该方法用于修改指定消息模板的审核状态，例如审核通过或未通过。
+     *
+     * @param id     模板的唯一标识 ID
+     * @param status 新的审核状态值
+     * @return 返回布尔值，表示操作是否成功
+     */
+    Boolean updateAudit(Long id, Integer status);
+
+    /**
+     * 获取当前用户的消息模板列表
+     * <p>
+     * 该方法用于查询当前登录用户所拥有的消息模板列表。
+     *
+     * @return 包含模板信息的 {@code List<TemplateRespVO>} 对象
+     */
+    List<TemplateRespVO> list4CurrUser();
+
 
 }
