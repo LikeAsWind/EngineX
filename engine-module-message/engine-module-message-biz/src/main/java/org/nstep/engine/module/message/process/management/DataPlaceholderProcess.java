@@ -19,6 +19,7 @@ import org.nstep.engine.module.message.dto.content.WeChatServiceAccountContentMo
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.nstep.engine.module.message.util.ContentHolderUtil;
 import org.nstep.engine.module.message.util.RedisKeyUtil;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ import java.util.*;
  * 为发送前进行数据填充，处理占位符和发送任务的生成
  * 实现了 BusinessProcess 接口，负责在消息发送前填充占位符数据并构建发送任务。
  */
-@Service
+@Component
 @Slf4j
 public class DataPlaceholderProcess implements BusinessProcess {
 

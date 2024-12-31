@@ -30,6 +30,12 @@ public interface ErrorCodeConstants {
     ErrorCode NO_NEED_TO_ASSIGN_PLACEHOLDER = new ErrorCode(1_003_000_016, "无需要赋值的占位符! ");
     ErrorCode RECEIVER_AND_PLACEHOLDER_DATA_COUNT_MISMATCH = new ErrorCode(1_003_000_017, "接受者和占位符数据数量不一致! ");
     ErrorCode ILLEGAL_RECIPIENT = new ErrorCode(1_003_000_018, "存在非法接受者:{} ");
+    ErrorCode MQ_SEND_EXCEPTION = new ErrorCode(1_003_000_019, "消息发送mq异常:{} ");
+    ErrorCode ILLEGAL_OPERATION_USER = new ErrorCode(1_003_000_020, "非法操作用户");
+    ErrorCode IS_NULL_TEMPLATE = new ErrorCode(1_003_000_021, "{} is null");
+    ErrorCode MESSAGE_DATA_LOST = new ErrorCode(1_003_000_022, "消息数据丢失");
+
+
 
     // ========== 消息模板信息 1-003-001-000 ==========
     ErrorCode ACCOUNT_NOT_EXISTS = new ErrorCode(1_003_000_000, "渠道配置信息不存在");
