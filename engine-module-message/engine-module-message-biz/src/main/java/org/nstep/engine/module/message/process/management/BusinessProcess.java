@@ -1,7 +1,7 @@
 package org.nstep.engine.module.message.process.management;
 
 
-import org.nstep.engine.module.message.domain.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
 
 /**
  * 业务流程责任链

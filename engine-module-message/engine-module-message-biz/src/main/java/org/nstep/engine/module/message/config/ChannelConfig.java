@@ -2,6 +2,7 @@ package org.nstep.engine.module.message.config;
 
 import cn.hutool.core.util.StrUtil;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
+import org.nstep.engine.module.message.constant.QueueConstants;
 
 import java.util.Arrays;
 import java.util.List;

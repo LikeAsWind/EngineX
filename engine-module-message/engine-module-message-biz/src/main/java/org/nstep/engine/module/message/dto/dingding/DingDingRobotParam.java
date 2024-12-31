@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.domain.dingding;
+package org.nstep.engine.module.message.dto.dingding;
 
 
 import com.alibaba.fastjson.annotation.JSONField;

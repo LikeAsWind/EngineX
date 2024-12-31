@@ -3,7 +3,7 @@ package org.nstep.engine.module.message.rabbitmq.consumer;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
-import org.nstep.engine.module.message.domain.content.SendContent;
+import org.nstep.engine.module.message.dto.content.SendContent;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;

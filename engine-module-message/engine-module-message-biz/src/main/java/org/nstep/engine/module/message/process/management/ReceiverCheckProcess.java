@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.nstep.engine.framework.common.pojo.CommonResult;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
-import org.nstep.engine.module.message.domain.content.SendTaskParamContent;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.SendTaskParamContent;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.stereotype.Component;
 

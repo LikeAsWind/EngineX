@@ -1,7 +1,7 @@
 package org.nstep.engine.module.message.service.template;
 
 import org.nstep.engine.framework.common.pojo.CommonResult;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
 
 /**
  * 消息管理服务接口

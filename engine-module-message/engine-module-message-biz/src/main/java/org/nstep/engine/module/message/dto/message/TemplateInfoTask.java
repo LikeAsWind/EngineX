@@ -1,10 +1,9 @@
-package org.nstep.engine.module.message.domain.weChat;
+package org.nstep.engine.module.message.dto.message;
 
 
 import jakarta.annotation.Resource;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
 import org.nstep.engine.module.message.handler.ChannelHandler;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -22,14 +21,14 @@ import java.util.Map;
 @Accessors(chain = true) // 链式setter并返回对象
 @Component // 将该类标记为Spring管理的Bean
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE) // 指定Bean的作用域为原型作用域，即每次请求都会创建一个新的实例
-public class Task implements Runnable {
+public class TemplateInfoTask implements Runnable {
 
     /**
      * 发送任务信息
      * <p>
      * 该字段保存了与该任务相关的所有任务信息，包括消息模板、发送的内容和其他元数据。
      */
-    private SendTaskInfo sendTaskInfo;
+    private TemplateSendTask sendTaskInfo;
 
     /**
      * 渠道处理器映射

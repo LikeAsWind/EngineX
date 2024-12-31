@@ -8,8 +8,8 @@ import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.nstep.engine.framework.common.pojo.CommonResult;
 import org.nstep.engine.framework.security.core.util.SecurityFrameworkUtils;
-import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSendReqVO;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
+import org.nstep.engine.module.message.dto.message.TemplateSend;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +39,7 @@ public class PreCheckProcess implements BusinessProcess {
     @Override
     public ProcessContent process(ProcessContent context) {
         // 校验上下文对象类型是否正确
-        if (!(context instanceof TemplateSendReqVO templateSendReqVO)) {
+        if (!(context instanceof TemplateSend templateSendReqVO)) {
             log.warn("发送流程上下文断裂，PreCheckProcess.process");
             context.setIsNeedBreak(true);
             context.setResponse(

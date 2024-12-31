@@ -14,12 +14,11 @@ import org.nstep.engine.module.message.constant.DDingDingSendMessageTypeConstant
 import org.nstep.engine.module.message.constant.MessageDataConstants;
 import org.nstep.engine.module.message.constant.RedissonConstants;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
-import org.nstep.engine.module.message.domain.content.SendContent;
+import org.nstep.engine.module.message.dto.message.TemplateSendTask;
+import org.nstep.engine.module.message.dto.content.SendContent;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -269,8 +268,8 @@ public class DataUtil {
         // 从后往前遍历消息上下文，找到对应的发送任务
         for (int i = sendContexts.size() - 1; i >= 0; i--) {
             if (Objects.equals(sendContexts.get(i).getSendTaskId(), sendTaskId)) {
-                List<SendTaskInfo> sendTasks = sendContexts.get(i).getSendTasks();
-                for (SendTaskInfo sendTask : sendTasks) {
+                List<TemplateSendTask> sendTasks = sendContexts.get(i).getSendTasks();
+                for (TemplateSendTask sendTask : sendTasks) {
                     if (Objects.equals(sendTask.getMessageId(), messageId)) {
                         TemplateDO messageTemplate = sendTask.getMessageTemplate();
                         if (!MessageDataConstants.MSG_SENDING.equals(messageTemplate.getMsgStatus())) {

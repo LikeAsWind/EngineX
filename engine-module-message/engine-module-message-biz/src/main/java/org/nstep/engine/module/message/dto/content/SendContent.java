@@ -1,8 +1,8 @@
-package org.nstep.engine.module.message.domain.content;
+package org.nstep.engine.module.message.dto.content;
 
 
 import lombok.*;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
+import org.nstep.engine.module.message.dto.message.TemplateSendTask;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,7 +51,7 @@ public class SendContent extends ProcessContent {
      * 该字段包含了所有需要发送的任务信息，每个任务包含了具体的发送内容、接收者等信息。
      * </p>
      */
-    private List<SendTaskInfo> sendTasks;
+    private List<TemplateSendTask> sendTasks;
 
     /**
      * 发送时间

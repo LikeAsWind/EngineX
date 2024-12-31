@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.domain.weChat;
+package org.nstep.engine.module.message.dto.weChat;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;

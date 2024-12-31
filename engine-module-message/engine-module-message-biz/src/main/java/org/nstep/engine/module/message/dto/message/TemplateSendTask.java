@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.domain;
+package org.nstep.engine.module.message.dto.message;
 
 
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.Set;
 @Builder  // 提供构建者模式，方便创建对象
 @AllArgsConstructor  // 自动生成带有所有字段的构造函数
 @NoArgsConstructor  // 自动生成无参构造函数
-public class SendTaskInfo {
+public class TemplateSendTask {
 
     /**
      * 消息id(不是模板id)

@@ -9,10 +9,10 @@ import org.nstep.engine.framework.common.pojo.CommonResult;
 import org.nstep.engine.module.message.config.ChannelConfig;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
 import org.nstep.engine.module.message.constant.RedissonConstants;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
-import org.nstep.engine.module.message.domain.content.SendContent;
-import org.nstep.engine.module.message.dto.DelayQueueTask;
+import org.nstep.engine.module.message.dto.message.TemplateSendTask;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.SendContent;
+import org.nstep.engine.module.message.dto.message.DelayQueueTask;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.nstep.engine.module.message.rabbitmq.service.DelayMqService;
 import org.nstep.engine.module.message.rabbitmq.service.RabbitMQService;
@@ -139,7 +139,7 @@ public class SendMqProcess implements BusinessProcess {
     private void sendXdl(SendContent sendContext) {
         // 创建延迟队列任务列表
         List<DelayQueueTask> delayTasks = new ArrayList<>();
-        for (SendTaskInfo sendTask : sendContext.getSendTasks()) {
+        for (TemplateSendTask sendTask : sendContext.getSendTasks()) {
             // 将任务信息封装到 DelayQueueTask 对象中
             delayTasks.add(DelayQueueTask.builder().sendTaskId(sendTask.getSendTaskId())
                     .messageRedisKey(sendTask.getSendMessageKey())
@@ -239,7 +239,7 @@ public class SendMqProcess implements BusinessProcess {
      */
     public static Integer countSendNumber(SendContent sendContext) {
         int sendNumber = 0;
-        for (SendTaskInfo sendTask : sendContext.getSendTasks()) {
+        for (TemplateSendTask sendTask : sendContext.getSendTasks()) {
             sendNumber += sendTask.getReceivers().size();
         }
         return sendNumber;

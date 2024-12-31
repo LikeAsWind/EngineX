@@ -5,10 +5,10 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.nstep.engine.framework.common.pojo.CommonResult;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
-import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSendReqVO;
+import org.nstep.engine.module.message.dto.message.TemplateSend;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
 import org.nstep.engine.module.message.dal.mysql.template.TemplateMapper;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class PermissionVerificationProcess implements BusinessProcess {
     @Override
     public ProcessContent process(ProcessContent context) {
         // 获取发送请求中的消息模板 ID
-        TemplateSendReqVO sendForm = (TemplateSendReqVO) context;
+        TemplateSend sendForm = (TemplateSend) context;
 
         // 根据模板 ID 查询模板信息
         TemplateDO messageTemplate = templateMapper.selectById(sendForm.getMessageTemplateId());

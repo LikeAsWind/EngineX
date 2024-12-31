@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.nstep.engine.framework.common.pojo.CommonResult;
-import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSendReqVO;
+import org.nstep.engine.module.message.dto.message.TemplateSend;
 import org.nstep.engine.module.message.service.template.MessageManagementService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -41,7 +41,7 @@ public class MessageManagementController {
     @PostMapping("/send")
     @Operation(summary = "发送消息--实时")
     @PreAuthorize("@ss.hasPermission('message:management:send')")
-    public CommonResult<?> send(@Valid @RequestBody TemplateSendReqVO sendForm) {
+    public CommonResult<?> send(@Valid @RequestBody TemplateSend sendForm) {
         return messageManagementService.send(sendForm);
     }
 

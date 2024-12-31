@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
-import org.nstep.engine.module.message.dto.content.SmsContentModel;
+import org.nstep.engine.module.message.dto.message.TemplateSendTask;
+import org.nstep.engine.module.message.dto.model.SmsContentModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +27,13 @@ public abstract class ChannelHandler {
      *
      * @param sendTaskInfo 发送任务的详细信息，包括发送的内容和目标等。
      */
-    public void handler(SendTaskInfo sendTaskInfo) {
+    public void handler(TemplateSendTask sendTaskInfo) {
         // 调用具体实现的 doHandler 方法进行任务处理
         doHandler(sendTaskInfo);
     }
 
     // 抽象方法，子类必须实现，具体的任务处理逻辑将在这里定义
-    abstract void doHandler(SendTaskInfo sendTaskInfo);
+    abstract void doHandler(TemplateSendTask sendTaskInfo);
 
     /**
      * 长链接转短链，功能尚未实现

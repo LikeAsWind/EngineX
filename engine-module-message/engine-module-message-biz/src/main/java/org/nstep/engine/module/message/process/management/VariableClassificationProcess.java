@@ -5,9 +5,9 @@ import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.nstep.engine.framework.common.pojo.CommonResult;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
-import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSendReqVO;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
-import org.nstep.engine.module.message.domain.content.SendTaskParamContent;
+import org.nstep.engine.module.message.dto.message.TemplateSend;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.SendTaskParamContent;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +36,7 @@ public class VariableClassificationProcess implements BusinessProcess {
     @Override
     public ProcessContent process(ProcessContent context) {
         // 确保上下文是 TemplateSendReqVO 类型，如果不是，则中断流程并返回错误信息
-        if (!(context instanceof TemplateSendReqVO sendForm)) {
+        if (!(context instanceof TemplateSend sendForm)) {
             log.warn("发送流程上下文断裂，PreCheckProcess.process");
             context.setIsNeedBreak(true);  // 标记需要中断后续流程
             context.setResponse(

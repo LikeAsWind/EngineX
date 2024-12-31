@@ -10,17 +10,16 @@ import org.nstep.engine.module.message.config.ChannelConfig;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
 import org.nstep.engine.module.message.dal.mysql.template.TemplateMapper;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
-import org.nstep.engine.module.message.domain.content.SendContent;
-import org.nstep.engine.module.message.domain.content.SendTaskParamContent;
-import org.nstep.engine.module.message.dto.content.SmsContentModel;
-import org.nstep.engine.module.message.dto.content.WeChatServiceAccountContentModel;
+import org.nstep.engine.module.message.dto.message.TemplateSendTask;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.SendContent;
+import org.nstep.engine.module.message.dto.content.SendTaskParamContent;
+import org.nstep.engine.module.message.dto.model.SmsContentModel;
+import org.nstep.engine.module.message.dto.model.WeChatServiceAccountContentModel;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.nstep.engine.module.message.util.ContentHolderUtil;
 import org.nstep.engine.module.message.util.RedisKeyUtil;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -97,7 +96,7 @@ public class DataPlaceholderProcess implements BusinessProcess {
         processSpecialChannels(sendTaskParamContext.getSendChannel(), messageTemplate);
 
         // 构建发送任务信息
-        SendTaskInfo sendTask = SendTaskInfo.builder().messageTemplate(messageTemplate)
+        TemplateSendTask sendTask = TemplateSendTask.builder().messageTemplate(messageTemplate)
                 .receivers(sendTaskParamContext.getSendTaskParams().get(StrUtil.EMPTY))
                 .messageId(redisKeyUtil.createMessageId(messageTemplate.getId()))
                 .sendMessageKey(messageRedisKey)
@@ -174,7 +173,7 @@ public class DataPlaceholderProcess implements BusinessProcess {
         String messageRedisKey = RedisKeyUtil.createMessageRedisKey(sendTaskParamContext.getSender());
 
         // 存储所有的发送任务
-        List<SendTaskInfo> sendTasks = new ArrayList<>();
+        List<TemplateSendTask> sendTasks = new ArrayList<>();
         String content = messageTemplate.getMsgContent();
 
         // 遍历所有的占位符参数
@@ -192,7 +191,7 @@ public class DataPlaceholderProcess implements BusinessProcess {
             }
 
             // 构建发送任务信息
-            SendTaskInfo sendTask = SendTaskInfo.builder().receivers(entry.getValue()).messageTemplate(copyMessageTemplate)
+            TemplateSendTask sendTask = TemplateSendTask.builder().receivers(entry.getValue()).messageTemplate(copyMessageTemplate)
                     .messageId(redisKeyUtil.createMessageId(copyMessageTemplate.getId()))
                     .sendMessageKey(messageRedisKey)
                     .sendTaskId(sendTaskId)

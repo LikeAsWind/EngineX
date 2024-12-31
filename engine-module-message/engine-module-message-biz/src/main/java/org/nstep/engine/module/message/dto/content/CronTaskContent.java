@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.domain.content;
+package org.nstep.engine.module.message.dto.content;
 
 import lombok.*;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;

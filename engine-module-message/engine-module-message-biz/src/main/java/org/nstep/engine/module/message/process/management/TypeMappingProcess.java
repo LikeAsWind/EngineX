@@ -5,10 +5,10 @@ import com.alibaba.fastjson.JSON;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
-import org.nstep.engine.module.message.domain.content.SendContent;
-import org.nstep.engine.module.message.dto.content.DingDingRobotContentModel;
+import org.nstep.engine.module.message.dto.message.TemplateSendTask;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.SendContent;
+import org.nstep.engine.module.message.dto.model.DingDingRobotContentModel;
 import org.nstep.engine.module.message.util.DataUtil;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +45,7 @@ public class TypeMappingProcess implements BusinessProcess {
         SendContent sendContext = (SendContent) context; // 将上下文转换为 SendContent 对象
 
         // 遍历所有发送任务进行类型映射转换
-        for (SendTaskInfo sendTask : sendContext.getSendTasks()) {
+        for (TemplateSendTask sendTask : sendContext.getSendTasks()) {
             String msgContent = sendTask.getMessageTemplate().getMsgContent(); // 获取消息内容
 
             // 如果消息的发送渠道是钉钉机器人

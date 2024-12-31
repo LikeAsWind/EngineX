@@ -10,7 +10,7 @@ import me.chanjar.weixin.mp.config.impl.WxMpRedisConfigImpl;
 import org.nstep.engine.module.message.constant.WeChatConstants;
 import org.nstep.engine.module.message.dal.dataobject.account.AccountDO;
 import org.nstep.engine.module.message.dal.mysql.account.AccountMapper;
-import org.nstep.engine.module.message.domain.weChat.WeChatServiceAccountConfig;
+import org.nstep.engine.module.message.dto.weChat.WeChatServiceAccountConfig;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

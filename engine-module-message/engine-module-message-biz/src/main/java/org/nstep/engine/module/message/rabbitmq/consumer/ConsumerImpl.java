@@ -3,9 +3,9 @@ package org.nstep.engine.module.message.rabbitmq.consumer;
 import com.google.common.base.Throwables;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.nstep.engine.module.message.domain.SendTaskInfo;
-import org.nstep.engine.module.message.domain.content.SendContent;
-import org.nstep.engine.module.message.domain.weChat.Task;
+import org.nstep.engine.module.message.dto.message.TemplateSendTask;
+import org.nstep.engine.module.message.dto.content.SendContent;
+import org.nstep.engine.module.message.dto.message.TemplateInfoTask;
 import org.nstep.engine.module.message.util.DataUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -44,13 +44,13 @@ public class ConsumerImpl implements ConsumerService {
     @Override
     public void consumerSend(SendContent sendContext) {
         Integer sendChannel = sendContext.getSendChannel(); // 获取发送渠道
-        List<SendTaskInfo> sendTasks = sendContext.getSendTasks(); // 获取当前的所有发送任务
+        List<TemplateSendTask> sendTasks = sendContext.getSendTasks(); // 获取当前的所有发送任务
 
         // 遍历每个发送任务并提交给线程池执行
-        for (SendTaskInfo sendTaskInfo : sendTasks) {
+        for (TemplateSendTask sendTaskInfo : sendTasks) {
             try {
                 // 从 Spring 上下文获取 Task 实例，并设置相应的发送任务信息
-                Task task = applicationContext.getBean(Task.class).setSendTaskInfo(sendTaskInfo);
+                TemplateInfoTask task = applicationContext.getBean(TemplateInfoTask.class).setSendTaskInfo(sendTaskInfo);
                 // 根据发送渠道获取对应的线程池，执行任务
                 dtpThreadPoolExecutors.get(sendChannel).execute(task);
             } catch (Exception e) {

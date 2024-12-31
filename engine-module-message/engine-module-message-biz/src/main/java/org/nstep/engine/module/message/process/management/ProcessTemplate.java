@@ -1,9 +1,8 @@
-package org.nstep.engine.module.message.domain;
+package org.nstep.engine.module.message.process.management;
 
 
 import lombok.Builder;
 import lombok.Data;
-import org.nstep.engine.module.message.process.management.BusinessProcess;
 
 import java.util.List;
 

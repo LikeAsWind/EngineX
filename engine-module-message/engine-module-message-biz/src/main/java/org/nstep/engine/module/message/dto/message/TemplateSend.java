@@ -1,10 +1,10 @@
-package org.nstep.engine.module.message.controller.admin.template.vo;
+package org.nstep.engine.module.message.dto.message;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-import org.nstep.engine.module.message.domain.content.ProcessContent;
+import org.nstep.engine.module.message.dto.content.ProcessContent;
 
 /**
  * 对应前端发送表单对象=
@@ -12,7 +12,7 @@ import org.nstep.engine.module.message.domain.content.ProcessContent;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Schema(description = "管理后台 - 消息发送VO Request VO")
-public class TemplateSendReqVO extends ProcessContent {
+public class TemplateSend extends ProcessContent {
 
     @Schema(description = "模板编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "24546")
     @NotEmpty(message = "模板编号不能为空")

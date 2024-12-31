@@ -1,7 +1,7 @@
 package org.nstep.engine.module.message.rabbitmq.consumer;
 
 
-import org.nstep.engine.module.message.domain.content.SendContent;
+import org.nstep.engine.module.message.dto.content.SendContent;
 
 /**
  * 消费者服务接口

@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.config;
+package org.nstep.engine.module.message.constant;
 
 
 public class QueueConstants {

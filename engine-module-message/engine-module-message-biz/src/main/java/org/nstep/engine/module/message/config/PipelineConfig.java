@@ -2,7 +2,7 @@ package org.nstep.engine.module.message.config;
 
 
 import jakarta.annotation.Resource;
-import org.nstep.engine.module.message.domain.ProcessTemplate;
+import org.nstep.engine.module.message.process.management.ProcessTemplate;
 import org.nstep.engine.module.message.process.management.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

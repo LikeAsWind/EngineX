@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.dto.content;
+package org.nstep.engine.module.message.dto.model;
 
 import lombok.*;
 

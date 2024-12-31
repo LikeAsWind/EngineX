@@ -14,7 +14,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.nstep.engine.framework.common.pojo.CommonResult;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
-import org.nstep.engine.module.message.controller.admin.template.vo.TemplateSendReqVO;
+import org.nstep.engine.module.message.dto.message.TemplateSend;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.stereotype.Component;
@@ -41,11 +41,11 @@ public class CsvFileUtil {
      * @param sender          发送方的ID
      * @return 返回生成的发送请求表单（TemplateSendReqVO）
      */
-    public TemplateSendReqVO readCsvBuildSendFom(TemplateDO messageTemplate, Long sender) {
+    public TemplateSend readCsvBuildSendFom(TemplateDO messageTemplate, Long sender) {
 
         // 获取模板中的变量名集合，用于后续生成请求表单中的变量
         List<String> varNames = contentHolderUtil.getVariables(messageTemplate);
-        TemplateSendReqVO sendForm = new TemplateSendReqVO(); // 初始化发送请求表单对象
+        TemplateSend sendForm = new TemplateSend(); // 初始化发送请求表单对象
 
         try {
             // 使用CSV读取工具获取CSV文件数据

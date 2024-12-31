@@ -12,7 +12,7 @@ import org.nstep.engine.framework.common.exception.ServiceException;
 import org.nstep.engine.module.message.constant.MessageDataConstants;
 import org.nstep.engine.module.message.constant.WeChatConstants;
 import org.nstep.engine.module.message.dal.dataobject.template.TemplateDO;
-import org.nstep.engine.module.message.dto.content.WeChatServiceAccountContentModel;
+import org.nstep.engine.module.message.dto.model.WeChatServiceAccountContentModel;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.nstep.engine.module.message.service.content.WeChatServiceAccountService;
 import org.springframework.stereotype.Component;
