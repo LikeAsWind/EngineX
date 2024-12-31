@@ -29,7 +29,7 @@ public interface ErrorCodeConstants {
     ErrorCode MESSAGE_TEMPLATE_ID_PLACEHOLDER_DATA_EMPTY = new ErrorCode(1_003_000_015, "消息模板id:{} 存在占位符数据为空!");
     ErrorCode NO_NEED_TO_ASSIGN_PLACEHOLDER = new ErrorCode(1_003_000_016, "无需要赋值的占位符! ");
     ErrorCode RECEIVER_AND_PLACEHOLDER_DATA_COUNT_MISMATCH = new ErrorCode(1_003_000_017, "接受者和占位符数据数量不一致! ");
-
+    ErrorCode ILLEGAL_RECIPIENT = new ErrorCode(1_003_000_018, "存在非法接受者:{} ");
 
     // ========== 消息模板信息 1-003-001-000 ==========
     ErrorCode ACCOUNT_NOT_EXISTS = new ErrorCode(1_003_000_000, "渠道配置信息不存在");
