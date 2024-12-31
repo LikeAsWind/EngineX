@@ -34,8 +34,9 @@ public interface ErrorCodeConstants {
     ErrorCode ILLEGAL_OPERATION_USER = new ErrorCode(1_003_000_020, "非法操作用户");
     ErrorCode IS_NULL_TEMPLATE = new ErrorCode(1_003_000_021, "{} is null");
     ErrorCode MESSAGE_DATA_LOST = new ErrorCode(1_003_000_022, "消息数据丢失");
-
-
+    ErrorCode CONTEXT_BROKEN = new ErrorCode(1_003_000_023, "定时任务处理流程上下文断裂");
+    ErrorCode READ_CSV_FAILED = new ErrorCode(1_003_000_024, "读取CSV文件失败: {} ");
+    ErrorCode MESSAGE_CROWD_FILE_EMPTY = new ErrorCode(1_003_000_025, "消息:{} 人群文件为空  ");
 
     // ========== 消息模板信息 1-003-001-000 ==========
     ErrorCode ACCOUNT_NOT_EXISTS = new ErrorCode(1_003_000_000, "渠道配置信息不存在");
