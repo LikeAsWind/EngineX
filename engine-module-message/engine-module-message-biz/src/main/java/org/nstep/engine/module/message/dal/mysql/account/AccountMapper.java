@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.nstep.engine.framework.common.pojo.PageResult;
 import org.nstep.engine.framework.mybatis.core.mapper.BaseMapperX;
 import org.nstep.engine.framework.mybatis.core.query.LambdaQueryWrapperX;
+import org.nstep.engine.framework.security.core.util.SecurityFrameworkUtils;
 import org.nstep.engine.module.message.controller.admin.account.vo.AccountPageReqVO;
 import org.nstep.engine.module.message.dal.dataobject.account.AccountDO;
 
@@ -32,6 +33,7 @@ public interface AccountMapper extends BaseMapperX<AccountDO> {
      */
     default PageResult<AccountDO> selectPage(AccountPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<AccountDO>()
+                .eq(AccountDO::getCreator, SecurityFrameworkUtils.getLoginUserId())
                 // 如果名称字段不为空，则进行模糊查询
                 .likeIfPresent(AccountDO::getName, reqVO.getName())
                 // 如果发送渠道字段不为空，则进行精确匹配
@@ -41,7 +43,7 @@ public interface AccountMapper extends BaseMapperX<AccountDO> {
                 // 如果创建时间字段不为空，则进行时间范围查询
                 .betweenIfPresent(AccountDO::getCreateTime, reqVO.getCreateTime())
                 // 按 ID 降序排列结果
-                .orderByDesc(AccountDO::getId));
+                .orderByDesc(AccountDO::getUpdater));
     }
 
 }
