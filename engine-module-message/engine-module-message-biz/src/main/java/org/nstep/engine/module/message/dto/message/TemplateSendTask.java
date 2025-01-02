@@ -14,7 +14,7 @@ import java.util.Set;
  * 最后真正需要发送的任务信息
  * <p>
  * 该类封装了最终需要发送的任务信息。每个任务包含了消息 ID、接收者、消息模板以及发送相关的时间信息。
- * 如果多个接收者的消息内容完全相同，则会将其封装为一个 `SendTaskInfo` 对象。
+ * 如果多个接收者的消息内容完全相同，则会将其封装为一个 `TemplateSendTask` 对象。
  * </p>
  */
 @Data  // 自动生成 getter、setter、toString、equals 和 hashCode 方法

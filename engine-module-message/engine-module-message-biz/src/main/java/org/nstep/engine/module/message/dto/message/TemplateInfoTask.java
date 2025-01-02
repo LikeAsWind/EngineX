@@ -4,7 +4,7 @@ package org.nstep.engine.module.message.dto.message;
 import jakarta.annotation.Resource;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.nstep.engine.module.message.handler.ChannelHandler;
+import org.nstep.engine.module.message.handler.real.ChannelHandler;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * 发送任务
  * <p>
- * 该类实现了 Runnable 接口，用于表示一个发送任务。它包含一个 SendTaskInfo 对象和一个 ChannelHandler 映射，用于根据消息模板的发送渠道来处理任务。
+ * 该类实现了 Runnable 接口，用于表示一个发送任务。它包含一个 TemplateSendTask 对象和一个 ChannelHandler 映射，用于根据消息模板的发送渠道来处理任务。
  * 该任务会在独立线程中运行，并根据具体的发送渠道通过不同的 ChannelHandler 进行处理。
  */
 @Data
@@ -28,7 +28,7 @@ public class TemplateInfoTask implements Runnable {
      * <p>
      * 该字段保存了与该任务相关的所有任务信息，包括消息模板、发送的内容和其他元数据。
      */
-    private TemplateSendTask sendTaskInfo;
+    private TemplateSendTask TemplateSendTask;
 
     /**
      * 渠道处理器映射
@@ -48,6 +48,6 @@ public class TemplateInfoTask implements Runnable {
     @Override
     public void run() {
         // 路由到对应的渠道handler，获取该渠道对应的处理器并执行处理逻辑
-        channelHandlers.get(sendTaskInfo.getMessageTemplate().getSendChannel()).handler(sendTaskInfo);
+        channelHandlers.get(TemplateSendTask.getMessageTemplate().getSendChannel()).handler(TemplateSendTask);
     }
 }

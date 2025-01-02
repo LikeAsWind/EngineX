@@ -2,18 +2,25 @@ package org.nstep.engine.framework.common.util.io;
 
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.google.common.base.Throwables;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 文件工具类
  */
+@Slf4j
 public class FileUtils {
 
     /**
@@ -79,4 +86,82 @@ public class FileUtils {
         return sha256Hex + '.' + FileTypeUtil.getType(new ByteArrayInputStream(content));
     }
 
+    /**
+     * 读取远程链接或本地文件路径，返回File对象
+     *
+     * @param path         文件路径
+     * @param resourcePath 远程链接或本地文件路径
+     * @return File对象，如果读取失败则返回null
+     */
+    public static File getResourceAsFile(String path, String resourcePath) {
+        InputStream urlStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+            URL url = null;
+            File file;
+
+            // 判断是否为远程URL
+            if (resourcePath.startsWith("http://") || resourcePath.startsWith("https://")) {
+                url = new URL(resourcePath);
+                file = new File(path, new File(url.getPath()).getName());
+
+                // 如果文件不存在，则下载文件
+                if (!file.exists()) {
+                    file.getParentFile().mkdirs();
+                    urlStream = url.openStream();
+                    fileOutputStream = new FileOutputStream(file);
+                    IoUtil.copy(urlStream, fileOutputStream);
+                }
+            } else {
+                file = new File(resourcePath);
+
+                // 如果本地文件不存在，则抛出异常
+                if (!file.exists()) {
+                    throw new IllegalArgumentException("Local file does not exist: " + resourcePath);
+                }
+            }
+            return file;
+        } catch (Exception e) {
+            log.error("FileUtils#getResourceAsFile failed: {}, resourcePath: {}", Throwables.getStackTraceAsString(e), resourcePath);
+            return null; // 返回null表示失败
+        } finally {
+            // 确保流被关闭，避免资源泄漏
+            closeQuietly(urlStream);
+            closeQuietly(fileOutputStream);
+        }
+    }
+
+    /**
+     * 读取远程链接或本地文件路径集合，返回有效的File对象集合
+     *
+     * @param path       文件路径
+     * @param remoteUrls cdn/oss文件访问链接集合
+     * @return 有效的File对象集合
+     */
+    public static List<File> getRemoteUrl2File(String path, Collection<String> remoteUrls) {
+        List<File> files = new ArrayList<>();
+        // 遍历URL集合，获取每个URL对应的文件
+        for (String remoteUrl : remoteUrls) {
+            File file = getResourceAsFile(path, remoteUrl);
+            if (file != null) {
+                files.add(file); // 如果文件有效，加入结果集合
+            }
+        }
+        return files;
+    }
+
+    /**
+     * 安全关闭流的辅助方法，避免重复代码
+     *
+     * @param closeable 可关闭的资源（流）
+     */
+    private static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                log.error("Failed to close resource: {}", Throwables.getStackTraceAsString(e));
+            }
+        }
+    }
 }

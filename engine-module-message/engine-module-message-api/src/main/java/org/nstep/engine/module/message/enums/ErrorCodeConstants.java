@@ -37,6 +37,13 @@ public interface ErrorCodeConstants {
     ErrorCode CONTEXT_BROKEN = new ErrorCode(1_003_000_023, "定时任务处理流程上下文断裂");
     ErrorCode READ_CSV_FAILED = new ErrorCode(1_003_000_024, "读取CSV文件失败: {} ");
     ErrorCode MESSAGE_CROWD_FILE_EMPTY = new ErrorCode(1_003_000_025, "消息:{} 人群文件为空  ");
+    ErrorCode EMPTY_OBJECT = new ErrorCode(1_003_000_026, "{}");
+    ErrorCode SMS_SEND_FAILURE = new ErrorCode(1_003_000_027, "短信发送失败:响应码code报错信息:{} ");
+    ErrorCode DINGTALK_ROBOT_SEND_EXCEPTION = new ErrorCode(1_003_000_028, "钉钉自定义机器人发送异常:{}");
+    ErrorCode BATCH_PUSH_TASK_ID_ERROR = new ErrorCode(1_003_000_029, "批量推送获取taskId失败");
+    ErrorCode TOKEN_EXCEPTION = new ErrorCode(1_003_000_030, "个推token获取出现异常!");
+    ErrorCode SMS_SEND_EXCEPTION = new ErrorCode(1_003_000_031, "腾讯云短信发送异常:{}");
+
 
     // ========== 消息模板信息 1-003-001-000 ==========
     ErrorCode ACCOUNT_NOT_EXISTS = new ErrorCode(1_003_000_000, "渠道配置信息不存在");

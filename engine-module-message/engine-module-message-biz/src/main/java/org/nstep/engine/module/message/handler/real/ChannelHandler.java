@@ -1,4 +1,4 @@
-package org.nstep.engine.module.message.handler;
+package org.nstep.engine.module.message.handler.real;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
@@ -25,15 +25,15 @@ public abstract class ChannelHandler {
      * <p>
      * 该方法是公开的入口方法，所有具体的渠道处理器都可以调用该方法来处理任务。内部调用了 `doHandler` 方法，实际的任务处理逻辑由子类实现。
      *
-     * @param sendTaskInfo 发送任务的详细信息，包括发送的内容和目标等。
+     * @param TemplateSendTask 发送任务的详细信息，包括发送的内容和目标等。
      */
-    public void handler(TemplateSendTask sendTaskInfo) {
+    public void handler(TemplateSendTask TemplateSendTask) {
         // 调用具体实现的 doHandler 方法进行任务处理
-        doHandler(sendTaskInfo);
+        doHandler(TemplateSendTask);
     }
 
     // 抽象方法，子类必须实现，具体的任务处理逻辑将在这里定义
-    abstract void doHandler(TemplateSendTask sendTaskInfo);
+    abstract void doHandler(TemplateSendTask TemplateSendTask);
 
     /**
      * 长链接转短链，功能尚未实现
@@ -62,10 +62,8 @@ public abstract class ChannelHandler {
                     // 长链转短链的功能尚未实现
                 }
             }
-            return jsonObject;
-        } else {
-            return jsonObject;
         }
+        return jsonObject;
     }
 
     /**

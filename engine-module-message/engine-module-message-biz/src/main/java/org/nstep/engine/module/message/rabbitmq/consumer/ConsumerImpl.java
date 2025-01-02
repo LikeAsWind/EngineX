@@ -47,17 +47,17 @@ public class ConsumerImpl implements ConsumerService {
         List<TemplateSendTask> sendTasks = sendContext.getSendTasks(); // 获取当前的所有发送任务
 
         // 遍历每个发送任务并提交给线程池执行
-        for (TemplateSendTask sendTaskInfo : sendTasks) {
+        for (TemplateSendTask TemplateSendTask : sendTasks) {
             try {
                 // 从 Spring 上下文获取 Task 实例，并设置相应的发送任务信息
-                TemplateInfoTask task = applicationContext.getBean(TemplateInfoTask.class).setSendTaskInfo(sendTaskInfo);
+                TemplateInfoTask task = applicationContext.getBean(TemplateInfoTask.class).setTemplateSendTask(TemplateSendTask);
                 // 根据发送渠道获取对应的线程池，执行任务
                 dtpThreadPoolExecutors.get(sendChannel).execute(task);
             } catch (Exception e) {
                 // 处理消息消费失败的异常
                 log.error("消息消费失败:{}", Throwables.getStackTraceAsString(e));
                 // 调用 DataUtil 的 confirmSend 方法，确认失败任务的状态
-                dataUtil.confirmSend(null, sendTaskInfo.getMessageId(), sendTaskInfo.getSendMessageKey(), sendTaskInfo.getSendTaskId(), e);
+                dataUtil.confirmSend(null, TemplateSendTask.getMessageId(), TemplateSendTask.getSendMessageKey(), TemplateSendTask.getSendTaskId(), e);
             }
         }
     }
