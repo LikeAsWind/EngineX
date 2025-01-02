@@ -1,15 +1,21 @@
 package org.nstep.engine.module.message.service.account;
 
+import cn.hutool.core.bean.BeanUtil;
 import jakarta.annotation.Resource;
 import org.nstep.engine.framework.common.pojo.PageResult;
 import org.nstep.engine.framework.common.util.object.BeanUtils;
+import org.nstep.engine.framework.mybatis.core.query.QueryWrapperX;
+import org.nstep.engine.framework.security.core.util.SecurityFrameworkUtils;
 import org.nstep.engine.module.message.controller.admin.account.vo.AccountPageReqVO;
+import org.nstep.engine.module.message.controller.admin.account.vo.AccountRespVO;
 import org.nstep.engine.module.message.controller.admin.account.vo.AccountSaveReqVO;
 import org.nstep.engine.module.message.dal.dataobject.account.AccountDO;
 import org.nstep.engine.module.message.dal.mysql.account.AccountMapper;
 import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 import static org.nstep.engine.framework.common.exception.util.ServiceExceptionUtil.exception;
 
@@ -119,6 +125,24 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public PageResult<AccountDO> getAccountPage(AccountPageReqVO pageReqVO) {
         return accountMapper.selectPage(pageReqVO);
+    }
+
+    /**
+     * 获取当前用户指定渠道类型的所有渠道账号
+     *
+     * @param sendChannel 渠道类型，表示需要查询的渠道类别。不同的渠道类型对应不同的配置。
+     * @return 返回一个包含所有符合条件的渠道账号的列表，类型为 {@link AccountRespVO}，该类包含了渠道账号的详细信息。
+     */
+    @Override
+    public List<AccountRespVO> list4CurrUser(Integer sendChannel) {
+        // 查询当前用户创建的消息模板列表，条件为：当前用户 ID 和 渠道类型
+        List<AccountDO> templateDoList = accountMapper.selectList(new QueryWrapperX<AccountDO>()
+                .eq("creator", SecurityFrameworkUtils.getLoginUserId()) // 根据当前登录用户 ID 查询
+                .eq("sendChannel", sendChannel) // 根据渠道类型查询
+                .orderByDesc("updateTime")); // 按更新时间降序排列，最新的记录排在前面
+
+        // 将查询结果从 AccountDO 转换为 AccountRespVO 类型的列表
+        return BeanUtil.copyToList(templateDoList, AccountRespVO.class);
     }
 
 }

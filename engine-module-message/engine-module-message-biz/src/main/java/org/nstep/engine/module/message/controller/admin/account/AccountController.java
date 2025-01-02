@@ -135,4 +135,17 @@ public class AccountController {
         ExcelUtils.write(response, "渠道配置信息.xls", "数据", AccountRespVO.class, BeanUtils.toBean(list, AccountRespVO.class));
     }
 
+
+    @GetMapping("/get")
+    @Operation(summary = "获取当前用户所有渠道账号") // Swagger 注解，提供接口说明
+    @Parameter(name = "sendChannel", description = "渠道类型", required = true, example = "10") // 参数描述
+    @PreAuthorize("@ss.hasPermission('channel:account:query')") // 权限校验
+    public CommonResult<List<AccountRespVO>> list4CurrUser(@RequestParam("sendChannel") Integer sendChannel) {
+        // 调用服务层获取渠道配置信息
+        List<AccountRespVO> accountList = accountService.list4CurrUser(sendChannel);
+        // 返回成功结果
+        return success(accountList);
+    }
+
+
 }
