@@ -15,6 +15,7 @@ import org.nstep.engine.module.message.enums.ErrorCodeConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.nstep.engine.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -144,5 +145,19 @@ public class AccountServiceImpl implements AccountService {
         // 将查询结果从 AccountDO 转换为 AccountRespVO 类型的列表
         return BeanUtil.copyToList(templateDoList, AccountRespVO.class);
     }
+
+    /**
+     * 删除指定 ID 的渠道账号
+     *
+     * @param ids 渠道账号的 ID 数组，表示需要删除的渠道账号的唯一标识。
+     *            该方法将会根据这些 ID 删除对应的渠道账号记录。
+     */
+    @Override
+    public void deleteAccounts(Long[] ids) {
+        // 执行删除操作，删除对应 ID 的渠道账号记录
+        // 使用 accountMapper 的 deleteBatchIds 方法批量删除数据库中的记录
+        accountMapper.deleteByIds(Arrays.asList(ids));
+    }
+
 
 }

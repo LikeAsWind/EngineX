@@ -64,4 +64,11 @@ public interface AccountService {
      */
     List<AccountRespVO> list4CurrUser(Integer sendChannel);
 
+    /**
+     * 删除指定 ID 的渠道账号
+     *
+     * @param ids 渠道账号的 ID 数组，表示需要删除的渠道账号的唯一标识。
+     *            该方法将会根据这些 ID 删除对应的渠道账号记录。
+     */
+    void deleteAccounts(Long[] ids);
 }

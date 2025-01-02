@@ -86,6 +86,22 @@ public class AccountController {
     }
 
     /**
+     * 批量删除渠道配置信息
+     * 通过 DELETE 请求删除指定的渠道配置信息
+     *
+     * @param ids 渠道配置信息的主键 IDS
+     * @return 返回操作是否成功的布尔值
+     */
+    @DeleteMapping("/delete/{ids}")
+    @Operation(summary = "批量删除渠道配置信息") // Swagger 注解，提供接口说明
+    @Parameter(name = "id", description = "编号", required = true) // 参数描述
+    @PreAuthorize("@ss.hasPermission('channel:account:deletes')") // 权限校验
+    public CommonResult<Boolean> deleteAccounts(@PathVariable Long[] ids) {
+        accountService.deleteAccounts(ids); // 调用服务层删除方法
+        return success(true); // 返回成功结果
+    }
+
+    /**
      * 获取渠道配置信息
      * 通过 GET 请求获取指定 ID 的渠道配置信息
      *
